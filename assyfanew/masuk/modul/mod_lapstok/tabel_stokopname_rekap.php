@@ -1,0 +1,74 @@
+<?php
+session_start();
+include "../../../configurasi/koneksi.php";
+include "../../../configurasi/fungsi_rupiah.php";
+
+?>
+<table id="example11" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th class="text-center">No</th>
+            <th class="text-center">Kode Barang</th>
+            <th class="text-center">Nama Obat</th>
+            <th class="text-center">Satuan</th>
+            <?php if($_SESSION['level']=='pemilik'):?>
+            <th class="text-center">Stok Sistem <br>(SS)</th>
+            <?php endif;?>
+            <th class="text-center">Stok Fisik <br>(SF)</th>
+            <th class="text-center">Exp Date  <br>(SF)</th>
+            <th class="text-center">Jml <br>(ED)</th>
+            <th class="text-center">Hasil <br>(SF - SS)</th>
+            <th class="text-center">Current Time</th>
+            <th class="text-center">Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $jenisobat = $_POST['jenisobat'];
+        $tgl = $_POST['tgl_awal'];
+
+        $query1 = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM stok_opname a 
+                            JOIN barang b ON a.id_barang = b.id_barang WHERE b.jenisobat='$jenisobat' AND a.tgl_stokopname = '$tgl' ORDER BY b.nm_barang");
+
+        $nomor = 1;
+        while ($tampil = mysqli_fetch_array($query1)) :
+
+        ?>
+
+            <tr>
+                <td class="text-center"><?= $nomor++; ?></td>
+                <td class="text-center"><?= $tampil['kd_barang']; ?></td>
+                <td class="text-center"><?= $tampil['nm_barang']; ?></td>
+                <td class="text-center"><?= $tampil['sat_barang']; ?></td>
+                <?php if($_SESSION['level']=='pemilik'):?>
+                <td class="text-center"><?= $tampil['stok_sistem']; ?></td>
+                <?php endif;?>
+                <td class="text-center"><?= $tampil['stok_fisik']; ?></td>
+                <td class="text-center"><?= $tampil['exp_date']; ?></td>
+                <td class="text-center"><?= $tampil['jml']; ?></td>
+                <td class="text-center"><?= $tampil['selisih']; ?></td>
+                <td class="text-center"><?= date("d M Y - H:i:s", strtotime($tampil['tgl_current'])); ?></td>
+                <td class="text-center">
+                    <?php if ($_SESSION['level'] == 'pemilik'): ?>
+                        <button type="button" id="hapus_<?= $tampil['id_stok_opname'] ?>" class="btn btn-danger btn-sm" onclick="javascript:hapus_stok_opname('<?= $tampil['id_stok_opname'] ?>')" data-id_stok="<?= $tampil['id_stok_opname'] ?>">
+                            <i class="fa fa-fw fa-trash"></i>HAPUS
+                        </button>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endwhile; ?>
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function() {
+
+        $('#example11').dataTable({
+            "aLengthMenu": [
+                [5, 25, 50, 75, -1],
+                [5, 25, 50, 75, "All"]
+            ],
+            "iDisplayLength": 5
+        });
+    });
+</script>
