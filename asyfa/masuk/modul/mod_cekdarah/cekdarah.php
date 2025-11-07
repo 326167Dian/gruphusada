@@ -293,7 +293,12 @@ switch($_GET[act]){
   });
  });
  
- $("#frmAddPelanggan").submit(function(e) {
+    function tutupModal(){
+        //hilangkan modal
+    	$(".close").click();
+    }
+    
+    $("#frmAddPelanggan").submit(function(e) {
     
         e.preventDefault(); // avoid to execute the actual submit of the form.
                     

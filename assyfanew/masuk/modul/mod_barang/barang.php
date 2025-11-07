@@ -48,13 +48,13 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 								<th style="text-align: right; ">Harga Beli</th>
 								<th style="text-align: right; ">Harga Jual</th>
 								<th style="text-align: center; ">Komposisi dan Indikasi</th>
-								<!--<th style="text-align: center; ">Aksi</th>-->
+								<th style="text-align: center; ">Aksi</th>
 								<?php
-								$lupa = $_SESSION['level'];
-								if ($lupa == 'pemilik') {
-									echo "<th>Aksi</th> ";
-								} else {
-								}
+								// $lupa = $_SESSION['level'];
+								// if ($lupa == 'pemilik') {
+								// 	echo "<th>Aksi</th> ";
+								// } else {
+								// }
 								?>
 							</tr>
 						</thead>
@@ -138,14 +138,14 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 							  <div class='form-group'>
 									<label class='col-sm-2 control-label'>Harga Beli</label>        		
 									 <div class='col-sm-3'>
-										<input type='number' min='0' name='hrgsat_barang' class='form-control' required='required' autocomplete='off'>
+										<input type='text' name='hrgsat_barang' id='hrgsat_barang' class='form-control' required='required' autocomplete='off'>
 									 </div>
 							  </div>
 							  
 							  <div class='form-group'>
 									<label class='col-sm-2 control-label'>Harga Jual</label>        		
 									 <div class='col-sm-3'>
-										<input type='number' min='0' name='hrgjual_barang' class='form-control' required='required' autocomplete='off'>
+										<input type='text' name='hrgjual_barang' id='hrgjual_barang' class='form-control' required='required' autocomplete='off'>
 									 </div>
 							  </div>
 							  
@@ -169,7 +169,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-4'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-danger' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel'>
 										</div>
 								</div>
 								
@@ -196,7 +196,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                     </div><!-- /.box-tools -->
 				</div>
 				<div class='box-body table-responsive'>
-						<form method=POST method=POST action=$aksi?module=barang&act=update_barang  enctype='multipart/form-data' class='form-horizontal'>
+						<form method=POST action=$aksi?module=barang&act=update_barang  enctype='multipart/form-data' class='form-horizontal' id='frmEditBrg'>
 							  <input type=hidden name=id value='$r[id_barang]'>
 							  
 							 
@@ -258,14 +258,14 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 							  <div class='form-group'>
 									<label class='col-sm-2 control-label'>Harga Beli</label>        		
 									 <div class='col-sm-3'>
-										<input type='number' min='0' name='hrgsat_barang' class='form-control' required='required' value='$r[hrgsat_barang]' autocomplete='off'>
+										<input type='text' name='hrgsat_barang' id='hrgsat_barang' class='form-control' required='required' value='$r[hrgsat_barang]' autocomplete='off'>
 									 </div>
 							  </div>
 							  
 							  <div class='form-group'>
 									<label class='col-sm-2 control-label'>Harga Jual</label>        		
 									 <div class='col-sm-3'>
-										<input type='number' min='0' name='hrgjual_barang' class='form-control' required='required' value='$r[hrgjual_barang]' autocomplete='off'>
+										<input type='text' name='hrgjual_barang' id='hrgjual_barang' class='form-control' required='required' value='$r[hrgjual_barang]' autocomplete='off'>
 									 </div>
 							  </div>
 							  
@@ -289,7 +289,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-4'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-danger' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel' data-page='".$_GET['page']."'>
 										</div>
 								</div>
 								
@@ -316,10 +316,22 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 	});
 </script>
 <script>
+    
 	$(document).ready(function() {
-		$('#tes').DataTable({
+	    $("#hrgsat_barang").mask('000.000.000.000.000', {
+            reverse: true
+        });
+	    $("#hrgjual_barang").mask('000.000.000.000.000', {
+            reverse: true
+        });
+        
+	    var table = $('#tes').DataTable({
 			processing: true,
 			serverSide: true,
+            lengthChange: false,
+            displayStart: getPageFromUrl() * 10,
+            pageLength: 10,
+            order: [[ 0, "desc" ]],
 			ajax: {
 				"url": "modul/mod_barang/barang-serverside.php?action=table_data",
 				"dataType": "JSON",
@@ -390,12 +402,85 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					"data": "aksi",
 					"visible": <?= ($_SESSION['level'] == 'pemilik') ? 'true' : 'false'; ?>,
 					"render": function(data, type, row) {
-						var btn = "<div style='text-align:center'><a href='?module=barang&act=edit&id=" + data + "' title='EDIT' class='btn btn-warning btn-xs'>EDIT</a> <a href=javascript:confirmdelete('modul/mod_barang/aksi_barang.php?module=barang&act=hapus&id=" + data + "') title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</a></div>";
-
+						var btn = "<div style='text-align:center'><button type='button' id='btn_edit' class='btn btn-warning btn-xs' data-id='"+data+"'>EDIT</button> <button type='button' id='btn_hapus' class='btn btn-danger btn-xs' data-id='"+data+"'>HAPUS</button></div>";
+						
+				// 		var btn = "<div style='text-align:center'><a href='?module=barang&act=edit&id=" + data + "' title='EDIT' class='btn btn-warning btn-xs'>EDIT</a> <a href=javascript:confirmdelete('modul/mod_barang/aksi_barang.php?module=barang&act=hapus&id=" + data + "') title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</a></div>";
+				
 						return btn;
 					}
 				},
-			]
+			],
+// 			initComplete: function () {
+// 			    table.page(vpage).draw(false);
+// 			}
 		});
+		
+// 		table.page(vpage).draw(false);
+		
+		table.on('draw', function () {
+            const info = table.page.info();
+            const currentPage = info.page + 1; // konversi ke 1-based
+            const url = new URL(window.location);
+            url.searchParams.set('page', currentPage);
+            window.history.pushState({}, '', url);
+        });
+                
+                
+		// Tombol hapus
+        $('#tes tbody').on('click', '#btn_hapus', function () {
+            var id = $(this).data('id');
+        
+            if (confirm('Anda yakin ingin menghapus?') == true) {
+                $.ajax({
+    				url: 'modul/mod_barang/aksi_barang.php?module=barang&act=hapus&id='+id,
+    				type: 'POST',
+    			}).success(function() {
+    			    table.ajax.reload(null, false);
+    			});
+            } 
+        });
+		
+		// Tombol edit
+        $('#tes tbody').on('click', '#btn_edit', function () {
+            var id = $(this).data('id');
+            var currentPage = table.page() + 1;
+            location.href = '?module=barang&act=edit&id='+id+'&page='+currentPage; 
+        });
+		
+		// Tombol cancel form
+        $('#btn_cancel').on('click', function(){
+            var currentPage = $(this).data('page');
+            location.href = '?module=barang&page='+currentPage;
+                    
+        });
+        
+        // Form Edit barang
+        $("#frmEditBrg").submit(function(e) {
+
+            e.preventDefault(); // avoid to execute the actual submit of the form.
+                
+            var form = $(this);
+            var actionUrl = form.attr('action');
+            var vpage = <?=isset($_GET['page']) ? intval($_GET['page']) : 1;?>;
+                    
+            $.ajax({
+                type: "POST",
+                url: actionUrl,
+                data: form.serialize(), // serializes the form's elements.
+                success: function(data)
+                {
+                    location.href = '?module=barang&page='+vpage;
+                }
+            });
+                    
+        });
+        
+        function getPageFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const page = parseInt(params.get("page"));
+            return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+        }        
 	});
+	
+	
 </script>

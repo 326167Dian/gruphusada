@@ -33,7 +33,6 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 						<button type="button" class="btn btn-warning">PROFIT = 30 - 100%"</button>
 						<button type="button" class="btn btn-danger">PROFIT < 30% </button>
 					</center>
-					<input type="hidden" id="pageUrl" value="<?=$_GET['page']?>">
 					<br><br>
 
 
@@ -273,7 +272,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 							  <div class='form-group'>
 									<label class='col-sm-2 control-label'>Komposisi dan Indikasi</label>
 										<div class='col-sm-4'>
-											<div>	
+											<div >	
 													<textarea name='indikasi' class='ckeditor' id='content' rows='3'>$r[indikasi]</textarea>
 											</div>
 										</div>
@@ -317,11 +316,11 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 	});
 </script>
 <script>
-    $(document).ready(function() {
+    
+	$(document).ready(function() {
 	    $("#hrgsat_barang").mask('000.000.000.000.000', {
             reverse: true
         });
-        
 	    $("#hrgjual_barang").mask('000.000.000.000.000', {
             reverse: true
         });
@@ -405,11 +404,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					"render": function(data, type, row) {
 						var btn = "<div style='text-align:center'><button type='button' id='btn_edit' class='btn btn-warning btn-xs' data-id='"+data+"'>EDIT</button> <button type='button' id='btn_hapus' class='btn btn-danger btn-xs' data-id='"+data+"'>HAPUS</button></div>";
 						
-						const infoP = table.page.info();
-                        // const currentP = infoP.page + 1;
-                        const currentP = <?=isset($_GET['page']) ? intval($_GET['page']) : 1;?>;
-						
-				// 		var btn = "<div style='text-align:center'><button type='button' id='btn_edit' class='btn btn-warning btn-xs' data-id='"+data+"'>EDIT</button> <a href=javascript:confirmdelete('modul/mod_barang/aksi_barang.php?module=barang&act=hapus&id=" + data + "&page="+currentP+"') title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</a></div>";
+				// 		var btn = "<div style='text-align:center'><a href='?module=barang&act=edit&id=" + data + "' title='EDIT' class='btn btn-warning btn-xs'>EDIT</a> <a href=javascript:confirmdelete('modul/mod_barang/aksi_barang.php?module=barang&act=hapus&id=" + data + "') title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</a></div>";
 				
 						return btn;
 					}
@@ -434,7 +429,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 		// Tombol hapus
         $('#tes tbody').on('click', '#btn_hapus', function () {
             var id = $(this).data('id');
-            // console.log(id)
+        
             if (confirm('Anda yakin ingin menghapus?') == true) {
                 $.ajax({
     				url: 'modul/mod_barang/aksi_barang.php?module=barang&act=hapus&id='+id,

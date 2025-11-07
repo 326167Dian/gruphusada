@@ -2,18 +2,22 @@
 session_start();
 include "../../../configurasi/koneksi.php";
 
-$kd_trkasir         = $_POST['kd_trkasir'];
-$id_dtrkasir        = $_POST['id_dtrkasir'];
-$id_barang          = $_POST['id_barang'];
-$kd_barang          = $_POST['kd_barang'];
-$nmbrg_dtrkasir     = $_POST['nmbrg_dtrkasir'];
-$qty_dtrkasir       = $_POST['qty_dtrkasir'];
-$sat_dtrkasir       = $_POST['sat_dtrkasir'];
-$hrgjual_dtrkasir   = $_POST['hrgjual_dtrkasir'];
-$indikasi           = $_POST['indikasi'];
-$komisi             = $_POST['komisi_dtrkasir'];
-$currentdate        = date('Y-m-d',time());
-$id_admin           = $_POST['id_admin'];
+$kd_trkasir = $_POST['kd_trkasir'];
+$id_dtrkasir = $_POST['id_dtrkasir'];
+$id_barang = $_POST['id_barang'];
+$beli = $db->query("SELECT * FROM barang WHERE id_barang='$id_barang'");
+$rbeli = mysqli_fetch_array($beli);
+$hrgbeli = $rbeli['hrgsat_barang'];
+
+$kd_barang = $_POST['kd_barang'];
+$nmbrg_dtrkasir = $_POST['nmbrg_dtrkasir'];
+$qty_dtrkasir = $_POST['qty_dtrkasir'];
+$sat_dtrkasir = $_POST['sat_dtrkasir'];
+$hrgjual_dtrkasir = $_POST['hrgjual_dtrkasir'];
+$indikasi = $_POST['indikasi'];
+$komisi = $_POST['komisi_dtrkasir'];
+$currentdate = date('Y-m-d',time());
+$id_admin = $_POST['id_admin'];
 
 if($qty_dtrkasir == ""){
 $qty_dtrkasir = "1";
@@ -32,16 +36,15 @@ $ketemucekdetail=mysqli_num_rows($cekdetail);
 $rcek=mysqli_fetch_array($cekdetail);
 if ($ketemucekdetail > 0){
 
-    $id_dtrkasir    = $rcek['id_dtrkasir'];
-    $qtylama        = $rcek['qty_dtrkasir'];
-    $ttlqty         = $qtylama + $qty_dtrkasir;
-    $ttlharga       = $ttlqty * $hrgjual_dtrkasir;
-    
-    mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE trkasir_detail SET 
-                                                qty_dtrkasir        = '$ttlqty',
-        										hrgjual_dtrkasir    = '$hrgjual_dtrkasir',
-        										hrgttl_dtrkasir     = '$ttlharga'
-        										WHERE id_dtrkasir = '$id_dtrkasir' AND kd_barang = '$kd_barang'");
+$id_dtrkasir = $rcek['id_dtrkasir'];
+$qtylama = $rcek['qty_dtrkasir'];
+$ttlqty = $qtylama + $qty_dtrkasir;
+$ttlharga = $ttlqty * $hrgjual_dtrkasir;
+
+mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE trkasir_detail SET qty_dtrkasir = '$ttlqty',
+										hrgjual_dtrkasir = '$hrgjual_dtrkasir',
+										hrgttl_dtrkasir = '$ttlharga'
+										WHERE id_dtrkasir = '$id_dtrkasir' and kd_barang='$kd_barang'");
 										
 //update stok
 //cek tambah stok
@@ -78,7 +81,7 @@ if ($ketemucekdetail > 0){
 }else{
 
 $ttlharga = $qty_dtrkasir * $hrgjual_dtrkasir;
-
+$profit = $hrgjual_dtrkasir - $hrgbeli;
 
 mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO trkasir_detail(kd_trkasir,
 										id_barang,
@@ -86,16 +89,20 @@ mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO trkasir_detail(kd_trkasir,
 										nmbrg_dtrkasir,
 										qty_dtrkasir,
 										sat_dtrkasir,
+                                        profit,
 										hrgjual_dtrkasir,
-										hrgttl_dtrkasir)
+										hrgttl_dtrkasir,
+                                        idadmin)
 								  VALUES('$kd_trkasir',
 										'$id_barang',
 										'$kd_barang',
 										'$nmbrg_dtrkasir',
 										'$qty_dtrkasir',
 										'$sat_dtrkasir',
+										'$profit',
 										'$hrgjual_dtrkasir',
-										'$ttlharga')");
+										'$ttlharga',
+                                        '$id_admin')");
 
 $insertid_dtrkasir = mysqli_insert_id($GLOBALS["___mysqli_ston"]);
 

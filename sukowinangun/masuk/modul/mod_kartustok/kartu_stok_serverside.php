@@ -33,7 +33,7 @@ $draw       = intval($_POST['draw'] ?? 0);
 $start      = intval($_POST['start'] ?? 0);
 $length     = intval($_POST['length'] ?? 10);
 $search     = $_POST['search']['value'] ?? '';
-$orderColIx = $_POST['order'][0]['column'] ?? 0;
+$orderColIx = $_POST['order'][0]['column'] ?? 2;
 $orderDir   = strtolower($_POST['order'][0]['dir'] ?? 'asc');
 
 // Validasi input order

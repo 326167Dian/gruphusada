@@ -43,6 +43,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 	$sisa = $stok_fisik - $selisih;
 	$total_sisa = $sisa * $hrgsat_barang;
 	$tgl_stok = $_POST['tgl_awal'];
+	$tgl_current = date('Y-m-d H:i:s', time());
 
 	mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO stok_opname(id_barang,
 										 kd_barang,
@@ -54,6 +55,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 										 hrgsat_barang,
 										 ttl_hrgbrg,
 										 tgl_stokopname,
+										 tgl_current,
 										 id_admin)			
 								 VALUES('$id_barang',
 								        '$kd_barang',
@@ -65,5 +67,6 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 										'$hrgsat_barang',
 										'$total_sisa',
 										'$tgl_stok',
+										'$tgl_current',
 										'$_SESSION[idadmin]')");
 }

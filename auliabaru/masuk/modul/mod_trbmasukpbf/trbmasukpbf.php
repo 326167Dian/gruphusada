@@ -209,7 +209,6 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				if($ketemucekkd2 > 0){
 				    $kdunik2 = date('dmyHis') + 1;
                     $kdtransaksi = "BMP-" . $kdunik2;
-                
 				} 
                 mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kdbm(kd_trbmasuk,id_resto,id_admin) VALUES('$kdtransaksi','pusat','$_SESSION[idadmin]')");
             }

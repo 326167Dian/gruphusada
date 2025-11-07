@@ -503,7 +503,6 @@ switch($_GET['act']){
 												</div>
 										</div>
 										
-										
 								</div>
 								
 								
@@ -558,7 +557,7 @@ switch($_GET['act']){
 						</thead>
 						<tbody>
 						<?php $no=1;
-							    $tampil_dproyek=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM barang WHERE isactive = 'active' ORDER BY id_barang ASC");
+							    $tampil_dproyek=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM barang ORDER BY id_barang ASC");
 								while ($rd=mysqli_fetch_array($tampil_dproyek)){
 								
 								$stok1 = format_rupiah($rd['stok_barang']);

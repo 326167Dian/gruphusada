@@ -231,7 +231,7 @@ switch($_GET['act']){
                         },
                         success: function(data) {
                             $('#tabel_stokopname').html(data);
-                            console.log(data)
+                            // console.log(data)
                         }
 
                     });

@@ -13,7 +13,7 @@ switch($_GET[act]){
   default:
 
   
-      $tampil_carabayar = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM carabayar ORDER BY id_carabayar ");
+      $tampil_carabayar = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM carabayar ORDER BY id_carabayar DESC");
       
 	  ?>
 			
@@ -52,8 +52,7 @@ switch($_GET[act]){
 											 
 								// 			</td>
 								// 		</tr>";
-								
-								    echo "<tr class='warnabaris' >
+									echo "<tr class='warnabaris' >
 											<td width='20px'>$no</td>           
 											 <td>$r[nm_carabayar]</td>
 											 <td>$r[urutan]</td>
@@ -105,7 +104,7 @@ switch($_GET[act]){
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-5'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-danger' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel'>
 										</div>
 								</div>
 								
@@ -131,7 +130,7 @@ switch($_GET[act]){
                     </div><!-- /.box-tools -->
 				</div>
 				<div class='box-body'>
-						<form method=POST action=$aksi?module=carabayar&act=update_carabayar  enctype='multipart/form-data' class='form-horizontal' id='frmEditCarabayar'>
+						<form method=POST method=POST action=$aksi?module=carabayar&act=update_carabayar  enctype='multipart/form-data' class='form-horizontal' id='frmEditCabay'>
 							  <input type=hidden name=id value='$r[id_carabayar]'>
 							  
 							  <div class='form-group'>
@@ -151,7 +150,7 @@ switch($_GET[act]){
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-5'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-danger' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel'>
 										</div>
 								</div>
 								
@@ -217,7 +216,7 @@ switch($_GET[act]){
                     
                 });
             
-                $("#frmEditCarabayar").submit(function(e) {
+                $("#frmEditCabay").submit(function(e) {
 
                     e.preventDefault(); // avoid to execute the actual submit of the form.
                 

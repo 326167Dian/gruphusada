@@ -114,7 +114,9 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 			$tglharini = date('Y-m-d');
 			$tgl_akhir = date('Y-m-d');
 			$tgl_awal = date('Y-m-d', strtotime('-30 days', strtotime($tgl_awal)));
-
+    
+            echo "<small>F1 => Simpan Detail || F2 => Simpan Transaksi</small>";
+				
 			echo "
 		  <div class='box box-primary box-solid'>
 				<div class='box-header with-border'>
@@ -176,7 +178,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 											<textarea name='ket_trbmasuk' id='ket_trbmasuk' class='form-control' rows='2'></textarea>
 											</p>
 											<div class='buttons'>
-												<button type='button' class='btn btn-primary right-block' onclick='simpan_transaksi();'>SIMPAN TRANSAKSI</button>
+												<button type='button' class='btn btn-primary right-block' onclick='simpan_transaksi();'>SIMPAN TRANSAKSI [F2]</button>
 												&nbsp&nbsp&nbsp
 												<input class='btn btn-danger' type='button' value=BATAL onclick=self.history.back()>
 											</div>
@@ -245,7 +247,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 											<input type=text name='hrgsat_dtrbmasuk' id='hrgsat_dtrbmasuk' class='form-control' autocomplete='off'>
 											</p>
 												<div class='buttons'>
-													<button type='button' class='btn btn-success right-block' onclick='simpan_detail();'>SIMPAN DETAIL</button>
+													<button type='button' class='btn btn-success right-block' onclick='simpan_detail();'>SIMPAN DETAIL [F1]</button>
 												</div>
 										</div>
 										
@@ -336,7 +338,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 											<div class='buttons'>
 											  <button type='button' class='btn btn-primary right-block' onclick='simpan_transaksi();'>SIMPAN TRANSAKSI</button>
 												&nbsp&nbsp&nbsp
-												<input class='btn btn-danger' type='button' value=BATAL onclick=self.history.back()>
+												<input class='btn btn-danger' type='button' value=BATAL id='btn_cancel' page='".$_GET['page']."'>
 											</div>
 								  
 										</div>
@@ -534,8 +536,12 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 <script>
     $(document).ready(function() {
-		$("#tes_table").DataTable({
+		var table = $("#tes_table").DataTable({
 			serverSide: true,
+			lengthChange: false,
+            displayStart: getPageFromUrl() * 10,
+            pageLength: 10,
+            order: [[ 0, "desc" ]],
 			ajax: {
 				"url": "modul/mod_orders/orders_serverside.php?action=table_data",
 				"dataType": "JSON",
@@ -590,6 +596,56 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				"className": "text-center"
 			}]
 		});
+		
+		table.on('draw', function () {
+            const info = table.page.info();
+            const currentPage = info.page + 1; // konversi ke 1-based
+            const url = new URL(window.location);
+            url.searchParams.set('page', currentPage);
+            window.history.pushState({}, '', url);
+        });
+        
+		function getPageFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const page = parseInt(params.get("page"));
+            return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+        }
+        
+        // Tombol edit
+        $('#tes_table tbody').on('click', '#btn_edit', function () {
+            var id = $(this).data('id');
+            var currentPage = table.page() + 1;
+            location.href = '?module=orders&act=ubah&id='+id+'&page='+currentPage; 
+        });
+        
+        // Tombol reguler
+        $('#tes_table tbody').on('click', '#btn_reguler', function () {
+            var id = $(this).data('id');
+            var currentPage = table.page() + 1;
+            // location.href = 'modul/mod_orders/tampil_orders.php?id='+id+'&page='+currentPage; 
+            window.open('modul/mod_orders/tampil_orders.php?id='+id+'&page='+currentPage, '_blank');
+        });
+        
+        // Tombol Form Cancel
+        $('#btn_cancel').on('click', function(){
+            var currentPage = $(this).data('page');
+            location.href = '?module=orders&page='+currentPage;
+                    
+        });
+        
+        // Tombol hapus
+        $('#tes_table tbody').on('click', '#btn_hapus', function () {
+            var id = $(this).data('id');
+        
+            if (confirm('Anda yakin ingin menghapus?') == true) {
+                $.ajax({
+    				url: 'modul/mod_orders/aksi_orders.php?module=orders&act=hapus&id='+id,
+    				type: 'POST',
+    			}).success(function() {
+    			    table.ajax.reload(null, false);
+    			});
+            } 
+        });
 	});
 	
 	// item barang per supplie
@@ -948,4 +1004,27 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 			});
 		}
 	}
+	
+	document.addEventListener('keydown', function(event) {
+        if (event.key === 'F1' || event.keyCode === 112) {
+            event.preventDefault(); // Mencegah help browser muncul
+            simpan_detail();
+        }
+    });
+	
+	document.addEventListener('keydown', function(event) {
+        if (event.key === 'F2' || event.keyCode === 113) {
+            event.preventDefault(); // Mencegah help browser muncul
+            simpan_transaksi();
+        }
+    });
+    
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'F3' || event.keyCode === 114) {
+            event.preventDefault(); // Mencegah help browser muncul
+            // simpan_detail();
+            $('#dp_bayar').focus();
+        }
+    });
+    
 </script>

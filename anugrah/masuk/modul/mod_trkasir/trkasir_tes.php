@@ -28,7 +28,7 @@ if (empty($_SESSION['username']) AND empty($_SESSION['passuser'])){
 			<table id="example11" class="table table-bordered table-striped" >
 				<thead>
 					<tr>
-						<th>No</th>
+						<th width="5%">No</th>
 						<th>Kode</th>
 						<th>Tanggal</th>
 						<th>Pelanggan</th>
@@ -96,16 +96,6 @@ if (empty($_SESSION['username']) AND empty($_SESSION['passuser'])){
                     //     console.log(dta);
                     // },
                 },
-                "rowCallback": function(row, data, index) {
-                    let q = data['carabayar'];
-                    
-                    if(q == 3){
-                        $(row).find('td:eq(0)').css('background-color', '#ffbf00');
-                        $(row).find('td:eq(1)').css('background-color', '#ffbf00');
-                        
-                    } 
-                    
-                },
                 "columns": [
                     { "data": "no", "className": "text-center" },
                     { "data": "kd_trkasir" },
@@ -119,7 +109,17 @@ if (empty($_SESSION['username']) AND empty($_SESSION['passuser'])){
     					}
                     },
                     { "data": "aksi", "orderable": false, "searchable": false, "className":"text-center" }
-                ]
+                ],
+                "rowCallback": function(row, data, index) {
+                    let q = data['carabayar'];
+                    
+                    if(q == 3){
+                        $(row).find('td:eq(0)').css('background-color', '#ffbf00');
+                        $(row).find('td:eq(1)').css('background-color', '#ffbf00');
+                        
+                    } 
+                    
+                },
             });
             
             table.on('draw', function () {

@@ -13,7 +13,6 @@ else{
     
     $module=$_GET['module'];
     $act=$_GET['act'];
-    $komisi = str_replace(".","",$_POST['komisi']);
     
     // Input admin
     if ($module=='komisi' AND $act=='input_komisi'){
@@ -23,40 +22,74 @@ else{
             if($_POST['metode'] == 'nominal'){
                 
                 mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE barang SET
-                                        komisi = '$komisi' ");
+                                        komisi = '$_POST[komisi]' ");
             }else{
                 mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE barang SET
-                                        komisi = ROUND((hrgsat_barang*$komisi)/100,0) ");
+                                        komisi = ROUND((hrgsat_barang*$_POST[komisi])/100,0) ");
             }
         } else {
             if($_POST['metode'] == 'nominal'){
             
                 mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE barang SET
-                                        komisi = '$komisi'
-    									WHERE nm_barang = '$_POST[barang]'");
+                                        komisi = '$_POST[komisi]'
+    									WHERE nm_barang = '$_POST[nm_barang]'");
             }else{
                 mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE barang SET
-                                        komisi = ROUND((hrgsat_barang*$komisi)/100,0)
-    									WHERE nm_barang = '$_POST[barang]'");
+                                        komisi = ROUND((hrgsat_barang*$_POST[komisi])/100,0)
+    									WHERE nm_barang = '$_POST[nm_barang]'");
                 
             }							
         }
         //echo "<script type='text/javascript'>alert('Data berhasil ditambahkan !');window.location='../../media_admin.php?module=".$module."'</script>";
         header('location:../../media_admin.php?module='.$module);
-        
+
     }
+    elseif ($module=='komisi' AND $act=='input_komisiglobal'){
+        $tgl_awal = date('Y-m-d');
+        $bulan = substr($tgl_awal,5,2);
+        $petugas = $_SESSION['namalengkap'];
+        //ambil data table komisiglobal
+        $stat = $db->query("select * from komisiglobal where month(tgl)='$bulan' ");
+        $stat2 = mysqli_num_rows($stat);
+        if($stat2>0) {
+            mysqli_query($GLOBALS["___mysqli_ston"], "update komisiglobal set
+                                         nilai = '$_POST[nilai]',
+                                         tgl = '$tgl_awal',
+										 petugas = '$petugas',
+										 status = '$_POST[status]'
+										 WHERE status='ON'								
+                                           ");
+            header('location:../../media_admin.php?module=' . $module . '&act=global');
+        }
+        else {
+            mysqli_query($GLOBALS["___mysqli_ston"], "insert into komisiglobal 
+                                        ( 
+                                        nilai,
+                                        tgl,
+                                        petugas,
+                                        status
+                                        )
+                                        VALUES (
+                                        '$_POST[nilai]',
+                                        '$tgl_awal',
+                                        '$petugas',
+                                        '$_POST[status]'
+                                        )");
+            mysqli_query($GLOBALS["___mysqli_ston"], "update komisiglobal set status='OFF' WHERE month(tgl) <'$bulan'  ");
+            header('location:../../media_admin.php?module=' . $module . '&act=global');
+        }}
      //update barang
     elseif ($module=='komisi' AND $act=='update_komisi'){
     
         if($_POST['metode'] == 'nominal'){
             
                 mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE barang SET
-                                        komisi = '$komisi'
+                                        komisi = '$_POST[komisi]'
     									WHERE id_barang = '$_POST[barang]'");
     									
         }else{
                 mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE barang SET
-                                        komisi = ROUND((hrgsat_barang*$komisi)/100,0)
+                                        komisi = ROUND((hrgsat_barang*$_POST[komisi])/100,0)
     									WHERE id_barang = '$_POST[barang]'");
                 
         }

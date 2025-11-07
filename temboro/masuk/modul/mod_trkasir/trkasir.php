@@ -19,7 +19,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 			} else {
 			    $tampil_trkasir = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir  
                                     where tgl_trkasir = '$tgl_awal' order by id_trkasir desc limit 1");
-			}           
+			}       
 
 			/*$tgl_awal = date('Y-m-d');
       $tgl_akhir = date('Y-m-d', strtotime('-7 days', strtotime( $tgl_awal)));
@@ -43,8 +43,11 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                     <?php
                     $cari = $_SESSION['level'];
                     if ($cari=='pemilik')
-                    { echo"<a class='btn btn-primary btn-flat' href='?module=trkasir&act=cari'>CARI TRANSAKSI KEMARIN</a>";
+                    { echo"<a class='btn btn-primary btn-flat' href='?module=trkasir&act=cari'>CARI TRANSAKSI KEMARIN</a>
+                       <a class='btn  btn-info btn-flat' href='?module=trkasir&act=cari2'>CARI BERDASARKAN NO TRANSAKSI</a>";
                     }
+                
+                  
                     ?>
 					<div></div>
 					<!--<a  class ='btn  btn-warning  btn-flat' href='?module=trkasir&act=jualsebelumnya'>PENJUALAN SEBELUMNYA</a>
@@ -103,11 +106,14 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 											<td align='center'>$cabay1[nm_carabayar]</td>";
 								echo "
 											<td align=right>$ttl_trkasir2</td>
-											<td align=right>$shift</td>
+											<td align=center>$shift</td>
 											<td align='center'>";
 								$lupa = $_SESSION['level'];
 								if ($lupa == 'pemilik') {
-									echo " <a href='?module=trkasir&act=ubah&id=$r[id_trkasir]' title='EDIT' class='glyphicon glyphicon-pencil'>&nbsp</a>
+								// 	echo " <a href='?module=trkasir&act=ubah&id=$r[id_trkasir]' title='EDIT' class='glyphicon glyphicon-pencil'>&nbsp</a>
+								// 	         <a href=javascript:confirmdelete('$aksi?module=trkasir&act=hapus&id=$r[id_trkasir]') title='HAPUS' class='glyphicon glyphicon-remove'>&nbsp</a>                                            
+								// 	        ";
+									echo " <a href='#' id='btn_edit' data-id='$r[id_trkasir]' title='EDIT' class='glyphicon glyphicon-pencil'>&nbsp</a>
 									         <a href=javascript:confirmdelete('$aksi?module=trkasir&act=hapus&id=$r[id_trkasir]') title='HAPUS' class='glyphicon glyphicon-remove'>&nbsp</a>                                            
 									        ";
 								}
@@ -115,7 +121,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 								<a class='glyphicon glyphicon-print' onclick="window.open('modul/mod_laporan/struk.php?kd_trkasir=<?php echo $r['kd_trkasir'] ?>',
                                             'nama window','width=500,height=600,toolbar=no,location=no,directories=no,status=no,menubar=no, ' +
                                             'scrollbars=no,resizable=yes,copyhistory=no')">&nbsp</a>
-                                <a href='modul/mod_laporan/kwitansi.php?kd_trkasir=<?php echo $r['kd_trkasir'] ?>' target='_blank' title='KWITANSI' class='btn btn-warning btn-xs'>KWITANSI</a>
+                                <!--<a href='modul/mod_laporan/kwitansi.php?kd_trkasir=<?php echo $r['kd_trkasir'] ?>' target='_blank' title='KWITANSI' class='btn btn-warning btn-xs'>KWITANSI</a>-->
+                                <button type='button' id='btn_kwitansi' data-kd_trkasir='<?= $r['kd_trkasir'] ?>' title='KWITANSI' class='btn btn-warning btn-xs'>KWITANSI</button>
                                 <a href='modul/mod_laporan/faktur.php?kd_trkasir=<?php echo $r['kd_trkasir'] ?>' target='_blank' title='FAKTUR' class='btn btn-primary btn-xs'>FAKTUR</a>
 							<?php
 
@@ -126,7 +133,6 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 							echo "</tbody>
                         </table>               
                         ";
-                        
                             if($_SESSION['level']=='pemilik'):
 							?>
                             <table class="table table-striped table-bordered table-responsive">
@@ -209,7 +215,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                                 ?>
                                 </tfoot>
                             </table>
-                            <?php endif; ?>
+                        <?php endif; ?>    
 				</div>
 			</div>
 			<a  class ='btn  btn-success btn-flat' href='modul/mod_lapstok/sinkronisasi_stok.php'>SINKRONISASI</a>
@@ -223,6 +229,91 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                 echo "<h4><b>Total Komisi Anda Saat Ini = Rp ".format_rupiah($rk['total_komisi'])."</b></h4>";
 			}
 			?>
+			
+			<script>
+                $(document).ready(function() {
+                    
+                    var table = $('#example12').DataTable({
+                        'lengthChange': false,
+                        'displayStart': getPageFromUrl() * 10,
+                        'pageLength': 10,
+                    });
+                    
+                    table.on('draw', function () {
+                        const info = table.page.info();
+                        const currentPage = info.page + 1; // konversi ke 1-based
+                        const url = new URL(window.location);
+                        url.searchParams.set('page', currentPage);
+                        window.history.pushState({}, '', url);
+                    });
+                    
+                    // Tombol hapus
+                    $('#example11 tbody').on('click', '#btn_hapus', function () {
+                        var id = $(this).data('id');
+                        var row = $(this).closest('tr');
+            
+                        if (confirm('Anda yakin ingin menghapus?') == true) {
+                            $.ajax({
+                        		url: 'modul/mod_admin/aksi_admin.php?module=admin&act=hapus&id='+id,
+                        		type: 'POST',
+                        	}).success(function() {
+                        		// Hapus dari DataTable tanpa mengganti halaman
+                                table.row(row).remove().draw(false);
+                        	});
+                        }
+                    });
+                    
+                    // Button Kwitansi
+                    $('#example12 tbody').on('click', '#btn_kwitansi', function () {
+                        var id = $(this).data('kd_trkasir');
+                        var currentPage = table.page() + 1;
+                        // location.href = '?module=admin&act=editadmin&id='+id+'&page='+currentPage;
+                        window.open('modul/mod_laporan/kwitansi.php?kd_trkasir='+id,'_blank')
+                    });
+                    
+                    // Button Edit
+                    $('#example12 tbody').on('click', '#btn_edit', function () {
+                        var id = $(this).data('id');
+                        var currentPage = table.page() + 1;
+                        location.href = '?module=trkasir&act=ubah&id='+id+'&page='+currentPage;
+                    });
+                            
+                    // $('#btn_cancel').on('click', function(){
+                    //     // var currentPage = $(this).data('page');
+                    //     var currentPage = getPageFromUrl() + 1
+                    //     location.href = '?module=admin&page='+currentPage;
+                        
+                    // });
+                
+                    $("#frmEditAdmin").submit(function(e) {
+    
+                        e.preventDefault(); // avoid to execute the actual submit of the form.
+                    
+                        var form = $(this);
+                        var actionUrl = form.attr('action');
+                        var vpage = getPageFromUrl() + 1;
+                        
+                        $.ajax({
+                            type: "POST",
+                            url: actionUrl,
+                            data: form.serialize(), // serializes the form's elements.
+                            success: function(data)
+                            {
+                                location.href = '?module=admin&page='+vpage;
+                            }
+                        });
+                        
+                    });
+                    
+                    function getPageFromUrl() {
+                        const params = new URLSearchParams(window.location.search);
+                        const page = parseInt(params.get("page"));
+                        return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+                    }
+                });
+                
+                     
+            </script>
 
 <?php
 
@@ -254,12 +345,11 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					$kdunik = date('dmyHis');
 					$kdtransaksi = "TKP-" . $kdunik;
 					$cekkd2 = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM kdtk WHERE kd_trkasir='$kdtransaksi'");
-					$ketemucekkd2 = mysqli_num_rows($cekkd2);
-					if($ketemucekkd2 > 0){
-					    $kdunik2 = date('dmyHis') + 1;
+				    $ketemucekkd2 = mysqli_num_rows($cekkd2);
+				    if ($ketemucekkd2 > 0) {
+				        $kdunik2 = date('dmyHis') + 1;
 					    $kdtransaksi = "TKP-" . $kdunik2;
-					
-					} 
+				    }
 					mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kdtk(kd_trkasir,id_admin) VALUES('$kdtransaksi','$_SESSION[idadmin]')");
 				}
 
@@ -397,7 +487,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 											<input type=text name='indikasi' id='indikasi' class='form-control' autocomplete='off'>
 											</p>
 												<div class='buttons'>
-													<button type='button' class='btn btn-success right-block' onclick='simpan_detail();'>SIMPAN DETAIL</button>
+													<button type='button' class='btn btn-success right-block' onclick='simpan_detail();'>SIMPAN DETAIL [F1]</button>
 												</div>
 										</div>
 										
@@ -411,6 +501,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				<div id='tabeldata'>
 				
 			</div>";
+			
 			}
 
 			break;
@@ -420,6 +511,393 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 		case "ubah":
 			$ubah = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir 
 	WHERE trkasir.id_trkasir='$_GET[id]'");
+			$re = mysqli_fetch_array($ubah);
+			$shift = $re['shift'];
+			$petugas = $_SESSION['namalengkap'];
+
+            $admin = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM komisi_pegawai 
+	WHERE kd_trkasir='$re[kd_trkasir]'");
+	        $radmin = mysqli_fetch_array($admin);
+	        
+			echo "
+		  <div class='box box-primary box-solid table-responsive'>
+				<div class='box-header with-border'>
+					<h3 class='box-title'>UBAH PENJUALAN</h3>
+					<div class='box-tools pull-right'>
+						<button class='btn btn-box-tool' data-widget='collapse'><i class='fa fa-minus'></i></button>
+                    </div><!-- /.box-tools -->
+				</div>
+				<div class='box-body table-responsive'>
+				
+						<form onsubmit='return false;' method=POST action='$aksi?module=trkasir&act=ubah_trkasir' enctype='multipart/form-data' class='form-horizontal'>
+						
+						       <input type=hidden name='id_trkasir' id='id_trkasir' value='$re[id_trkasir]'>
+							   <input type=hidden name='kd_trkasir' id='kd_trkasir' value='$re[kd_trkasir]'>
+							   <input type=hidden name='stt_aksi' id='stt_aksi' value='ubah_trkasir'>
+							   <input type=hidden name='petugas' id='petugas' value='$petugas'>
+							   <input type=hidden name='shift' id='shift' value='$shift'>
+							 
+						<div class='col-lg-6'>
+							  
+								<div class='form-group'>
+							  
+									<label class='col-sm-4 control-label'>Tanggal</label>
+										<div class='col-sm-6'>
+											<div class='input-group date'>
+												<div class='input-group-addon'>
+													<span class='glyphicon glyphicon-th'></span>
+												</div>
+													<input type='text' class='datepicker' name='tgl_trkasir' id='tgl_trkasir' value='$re[tgl_trkasir]' required='required' value='$tglharini' autocomplete='off'>
+											</div>
+										</div>
+										
+									<label class='col-sm-4 control-label'>Kode Transaksi</label>        		
+										<div class='col-sm-6'>
+											<input type=text name='kd_hid' id='kd_hid' class='form-control' required='required' value='$re[kd_trkasir]' autocomplete='off' Disabled>
+										</div>
+									
+									<label class='col-sm-4 control-label'>Pelanggan</label>        		
+										<div class='col-sm-6'>
+											<input type=text name='nm_pelanggan' id='nm_pelanggan' class='typeahead form-control' value='$re[nm_pelanggan]' autocomplete='off'>
+										</div>
+										
+									<label class='col-sm-4 control-label'>Telepon</label>        		
+										<div class='col-sm-6'>
+											<input type=text name='tlp_pelanggan' id='tlp_pelanggan' class='form-control' value='$re[tlp_pelanggan]' autocomplete='off'>
+										</div>
+										
+									<label class='col-sm-4 control-label'>Alamat</label>        		
+										<div class='col-sm-6'>
+											<textarea name='alamat_pelanggan' id='alamat_pelanggan' class='form-control' rows='2'>$re[alamat_pelanggan]</textarea>
+										</div>
+										
+									<label class='col-sm-4 control-label'>Keterangan</label>        		
+										<div class='col-sm-6'>
+											<textarea name='ket_trkasir' id='ket_trkasir' class='form-control' rows='2'>$re[ket_trkasir]</textarea>
+										</div>
+										
+								</div>
+							  
+						</div>
+						
+						<div class='col-lg-6'>
+						
+						
+								<input type=hidden name='id_barang' id='id_barang'>
+								<input type=hidden name='stok_barang' id='stok_barang' >
+								<input type=hidden name='id_admin' id='id_admin' value='$radmin[id_admin]'>
+								<input type=hidden name='komisi_dtrkasir' id='komisi_dtrkasir'>
+								
+								<div class='form-group'>
+									<label class='col-sm-4 control-label'>Kode Barang</label>        		
+									 <div class='col-sm-7'>
+									 <div class='input-group'>
+										<input type=text name='kd_barang' id='kd_barang' class='form-control' autocomplete='off'>
+										<div class='input-group-addon'>
+											<button type=button data-toggle='modal' data-target='#ModalItem' href='#' id='kode'><span class='glyphicon glyphicon-search'></span></button>
+										</div>
+										</div>
+									 </div>
+									 
+									<label class='col-sm-4 control-label'>Nama Barang</label>        		
+											<div class='col-sm-7'>
+													<input type=text name='nmbrg_dtrkasir' id='nmbrg_dtrkasir' class='form-control' autocomplete='off'>
+											</div>
+									
+									<label class='col-sm-4 control-label'>ETALASE</label>        		
+											<div class='col-sm-7'>
+													<select class='form-control' name='jenisobat' id='jenisobat'>
+													    <option></option>
+													    ";
+									
+									               while($rj=mysqli_fetch_array($tampil_jenisobat)){
+									                   echo "<option value='$rj[jenisobat]'>$rj[jenisobat]</option>";
+									               }
+								
+								    echo "
+													</select>
+											</div>
+											
+									
+									<label class='col-sm-4 control-label'>Qty</label>        		
+										<div class='col-sm-7'>
+											<input type='number' name='qty_dtrkasir' id='qty_dtrkasir' class='form-control' autocomplete='off'>
+										</div>
+											
+									<label class='col-sm-4 control-label'>Satuan</label>        		
+										<div class='col-sm-7'>
+											<input type=text name='sat_dtrkasir' id='sat_dtrkasir' class='form-control' autocomplete='off'>
+										</div>
+										
+									<label class='col-sm-4 control-label'>Harga</label>        		
+										<div class='col-sm-7'>
+											<input type=number name='hrgjual_dtrkasir' id='hrgjual_dtrkasir' class='form-control' autocomplete='off'>
+										</div>
+										
+									<label class='col-sm-4 control-label'>Komposisi & Indikasi</label>        		
+										<div class='col-sm-7'>
+											<input type=text name='indikasi' id='indikasi' class='form-control' autocomplete='off'>
+											</p>
+												<div class='buttons'>
+													<button type='button' class='btn btn-success right-block' onclick='simpan_detail();'>SIMPAN DETAIL [F1]</button>
+												</div>
+										</div>
+								</div>
+								
+								
+						</div>
+						</form>
+							  
+				</div> 
+				
+				<div id='tabeldata'>
+				
+			</div>";
+
+
+			break;
+        case "cari" :
+        $tgl_awal = date('Y-m-d');
+        $tgl_kemarin = date('Y-m-d', strtotime('-1 days', strtotime( $tgl_awal)));
+        $tgl_akhir = date('Y-m-d', strtotime('-60 days', strtotime( $tgl_awal)));
+        $tampil_trkasir = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir  
+                where tgl_trkasir between '$tgl_akhir' and '$tgl_kemarin'ORDER BY id_trkasir desc ") ;
+        ?>
+
+
+    <div class="box box-primary box-solid table-responsive">
+        <div class="box-header with-border">
+            <h3 class="box-title">TRANSAKSI PENJUALAN KEMARIN</h3>
+            <div class="box-tools pull-right">
+                <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            </div><!-- /.box-tools -->
+        </div>
+        <div class="box-body">
+
+            <a  class ='btn  btn-warning  btn-flat' href='#'></a>
+            <small>* Pembayaran belum lunas</small>
+            <div></div>
+            <!--	<a  class ='btn  btn-warning  btn-flat' href='?module=trkasir&act=penjualansebelum'>PENJUALAN SEBELUMNYA</a>
+                <small>* Pembayaran belum lunas</small> -->
+            <br><br>
+
+
+            <table id="example11" class="table table-bordered table-striped" >
+                <thead>
+                    <tr>
+                        <th>No</th>
+    					<th>Kode</th>
+    					<th>Tanggal</th>
+    					<th>Pelanggan</th>
+    					<th>Kasir</th>
+    					<th>Cara Bayar</th>
+    					<th>Total</th>
+                        <th width="70">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php
+                // $no=1;
+                // $tgl_awal = date('Y-m-d');
+                // while ($r=mysqli_fetch_array($tampil_trkasir)){
+                //     $ttl_trkasir = $r['ttl_trkasir'];
+                //     $ttl_trkasir2 = format_rupiah($ttl_trkasir);
+                //     $ttljual += $ttl_trkasir;
+                //     $ttljual1 = format_rupiah($ttljual);
+
+                //     $query2=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT                                         
+                //                             id_trkasir,
+                //                             kd_trkasir,
+                //                             SUM(ttl_trkasir)as ttlskrg1                                                              
+                //                             FROM trkasir                                         
+                //                             WHERE tgl_trkasir='$tgl_awal'");
+                //     $r2=mysqli_fetch_array($query2);
+                //     $ttlskrg = $r2['ttlskrg1'];
+
+
+
+
+                //     if($r['id_carabayar']==3){
+                //         echo"<td style='background-color:#ffbf00;'>$no</td>
+                //                                  <td style='background-color:#ffbf00;'>$r[kd_trkasir]</td>";}
+                //     else{ echo "<td>$no</td>
+                //                                     <td>$r[kd_trkasir]";
+                //     }
+
+
+                //     echo"	<td>$r[tgl_trkasir]</td>
+                //                                 <td>$r[nm_pelanggan]</td>";
+                //     $cabay = mysqli_query($GLOBALS["___mysqli_ston"],
+                //         "SELECT * FROM trkasir JOIN carabayar on trkasir.id_carabayar = carabayar.id_carabayar WHERE trkasir.kd_trkasir ='$r[kd_trkasir]'");
+                //     $cabay1 = mysqli_fetch_array($cabay);
+
+                //     echo"
+                //                                 <td align='center'>$cabay1[nm_carabayar]</td>";
+                //     echo"													
+                //                                 <td align=right>$ttl_trkasir2</td>
+                                                
+                //                                  <td><a href='?module=trkasir&act=ubah&id=$r[id_trkasir]' title='EDIT' class='glyphicon glyphicon-pencil'>&nbsp</a> 
+                //                                  ";
+                //     ?>
+                <!--//     <a class='glyphicon glyphicon-print' onclick="window.open('modul/mod_laporan/struk.php?kd_trkasir=<?php echo $r['kd_trkasir']?>','nama window','width=500,height=600,toolbar=no,location=no,directories=no,status=no,menubar=no, scrollbars=no,resizable=yes,copyhistory=no')">&nbsp</a>-->
+                     <?php
+                //     echo"
+                //                                  <a href=javascript:confirmdelete('$aksi?module=trkasir&act=hapus&id=$r[id_trkasir]') title='HAPUS' class='glyphicon glyphicon-remove'>&nbsp</a>
+                                                 
+                //                                  <a href='modul/mod_laporan/faktur.php?kd_trkasir=$r[kd_trkasir]' target='_blank' title='FAKTUR' class='btn btn-primary btn-xs'>FAKTUR</a>
+                                                 
+                //                                 </td>
+                //                             </tr>";
+                //     $no++;
+                // }
+                // echo "</tbody>
+                                
+                //             </table>";
+                ?>
+                </tbody>
+            </table>    
+        </div>
+    </div>
+    
+    <script>
+        $(document).ready(function() {
+            var table = $('#example11').DataTable({
+               "processing": true,
+                "serverSide": true,
+                "lengthChange": false,
+                "displayStart": getPageFromUrl() * 10,
+                "pageLength": 10,
+                "order": [[ 0, "desc" ]],
+                "ajax": {
+                    "url": "modul/mod_trkasir/trkasir_kemaren_serverside.php",
+                    "type": "post",
+                    "dataType": "json",
+                    "error": function (xhr, error, thrown) {
+                        console.log("XHR Response:", xhr.responseText);
+                        alert("Error: " + xhr.status + " - " + thrown);
+                    }
+                },
+                "rowCallback": function(row, data, index) {
+                    let q = data['carabayar'];
+                    
+                    if(q == 3){
+                        $(row).find('td:eq(0)').css('background-color', '#ffbf00');
+                        $(row).find('td:eq(1)').css('background-color', '#ffbf00');
+                        
+                    } 
+                    
+                },
+                "columns": [
+                    { "data": "no", "className": "text-center" },
+                    { "data": "kd_trkasir" },
+                    { "data": "tgl_trkasir" },
+                    { "data": "nm_pelanggan" },
+                    { "data": "petugas" },
+                    { "data": "nm_carabayar", "className": "text-center" },
+                    { "data": "ttl_trkasir", "className": "text-right",
+                        "render": function(data, type, row) {
+    						return formatRupiah(data);
+    					}
+                    },
+                    { "data": "aksi", "orderable": false, "searchable": false, "className":"text-center" }
+                ]
+            });
+            
+            table.on('draw', function () {
+                const info = table.page.info();
+                const currentPage = info.page + 1; // konversi ke 1-based
+                const url = new URL(window.location);
+                url.searchParams.set('page', currentPage);
+                window.history.pushState({}, '', url);
+            });
+            
+            // button edit
+            $('#example11 tbody').on('click', '#btn_edit', function(e){
+                var id = $(this).data('id');
+                var currentPage = table.page() + 1;
+                location.href = '?module=trkasir&act=ubah&id='+id+'&page='+currentPage; 
+            });
+            
+            // button print
+            $('#example11 tbody').on('click', '#btn_print', function(e){
+                var kode = $(this).data('kd_trkasir');
+                var currentPage = table.page() + 1;
+                window.open('modul/mod_laporan/struk.php?kd_trkasir='+kode,'popup','width=500,height=600') 
+            });
+            
+            // button faktur
+            $('#example11 tbody').on('click', '#btn_faktur', function(e){
+                var kode = $(this).data('kd_trkasir');
+                var currentPage = table.page() + 1;
+                window.open('modul/mod_laporan/faktur.php?kd_trkasir='+kode, '_blank') 
+            });
+            
+            // Tombol hapus
+            $('#tes tbody').on('click', '#btn_hapus', function () {
+                var id = $(this).data('id');
+            
+                if (confirm('Anda yakin ingin menghapus?') == true) {
+                    $.ajax({
+        				url: 'modul/mod_trkasir/aksi_trkasir.php?module=trkasir&act=hapus&id='+id,
+        				type: 'POST',
+        			}).success(function() {
+        			    table.ajax.reload(null, false);
+        			});
+                } 
+            });
+            
+            function getPageFromUrl() {
+                const params = new URLSearchParams(window.location.search);
+                const page = parseInt(params.get("page"));
+                return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+            }
+        });
+    </script>
+<?php
+        break;
+        case "cari2":
+
+            ?>
+            <div class="box box-primary box-solid">
+                <div class='box-header with-border'>
+                    <h3 class='box-title'>SEACRH BY Kode Transaksi</h3>
+                    <div class='box-tools pull-right'>
+                        <button class='btn btn-box-tool' data-widget='collapse'><i class='fa fa-minus'></i></button>
+                    </div><!-- /.box-tools -->
+                </div>
+                <div class='box-body'>
+                    <form method="post" action="?module=trkasir&act=ubah2">
+
+                        <div class="form-group row">
+                            <label for="staticEmail" class="col-sm-2 col-form-label">Kode Transaksi</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="kd_trkasir" name="kd_trkasir">
+                            </div>
+                        </div>
+                        <div class="form-group row justify-contend-end">
+                            <label for="inputPassword" class="col-sm-2 col-form-label">&nbsp;</label>
+                            <div class="col-sm-10">
+                                <button type="submit" class="btn btn-primary">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                    Search
+                                </button>
+
+                                <button class='btn btn-primary' type='button' onclick=self.history.back()>
+                                    <span class="glyphicon glyphicon-chevron-left"></span>
+                                    Kembali
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <?php
+            break;
+            case "ubah2":
+         
+                
+			$ubah = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir 
+	WHERE trkasir.kd_trkasir='$_POST[kd_trkasir]'");
 			$re = mysqli_fetch_array($ubah);
 			$shift = $re['shift'];
 			$petugas = $_SESSION['namalengkap'];
@@ -565,215 +1043,13 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 
 			break;
-        case "cari" :
-        $tgl_awal = date('Y-m-d');
-        $tgl_kemarin = date('Y-m-d', strtotime('-1 days', strtotime( $tgl_awal)));
-        $tgl_akhir = date('Y-m-d', strtotime('-60 days', strtotime( $tgl_awal)));
-        $tampil_trkasir = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir  
-                where tgl_trkasir between '$tgl_akhir' and '$tgl_kemarin'ORDER BY id_trkasir desc ") ;
-        ?>
-
-
-    <div class="box box-primary box-solid table-responsive">
-        <div class="box-header with-border">
-            <h3 class="box-title">TRANSAKSI PENJUALAN KEMARIN</h3>
-            <div class="box-tools pull-right">
-                <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-            </div><!-- /.box-tools -->
-        </div>
-        <div class="box-body">
-
-            <a  class ='btn  btn-warning  btn-flat' href='#'></a>
-            <small>* Pembayaran belum lunas</small>
-            <div></div>
-            <!--	<a  class ='btn  btn-warning  btn-flat' href='?module=trkasir&act=penjualansebelum'>PENJUALAN SEBELUMNYA</a>
-                <small>* Pembayaran belum lunas</small> -->
-            <br><br>
-
-
-            <table id="example11" class="table table-bordered table-striped" >
-                <thead>
-                    <tr>
-                        <th>No</th>
-    					<th>Kode</th>
-    					<th>Tanggal</th>
-    					<th>Pelanggan</th>
-    					<th>Kasir</th>
-    					<th>Cara Bayar</th>
-    					<th>Total</th>
-                        <th width="70">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php
-                // $no=1;
-                // $tgl_awal = date('Y-m-d');
-                // while ($r=mysqli_fetch_array($tampil_trkasir)){
-                //     $ttl_trkasir = $r['ttl_trkasir'];
-                //     $ttl_trkasir2 = format_rupiah($ttl_trkasir);
-                //     $ttljual += $ttl_trkasir;
-                //     $ttljual1 = format_rupiah($ttljual);
-
-                //     $query2=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT                                         
-                //                             id_trkasir,
-                //                             kd_trkasir,
-                //                             SUM(ttl_trkasir)as ttlskrg1                                                              
-                //                             FROM trkasir                                         
-                //                             WHERE tgl_trkasir='$tgl_awal'");
-                //     $r2=mysqli_fetch_array($query2);
-                //     $ttlskrg = $r2['ttlskrg1'];
-
-
-
-
-                //     if($r['id_carabayar']==3){
-                //         echo"<td style='background-color:#ffbf00;'>$no</td>
-                //                                  <td style='background-color:#ffbf00;'>$r[kd_trkasir]</td>";}
-                //     else{ echo "<td>$no</td>
-                //                                     <td>$r[kd_trkasir]";
-                //     }
-
-
-                //     echo"	<td>$r[tgl_trkasir]</td>
-                //                                 <td>$r[nm_pelanggan]</td>";
-                //     $cabay = mysqli_query($GLOBALS["___mysqli_ston"],
-                //         "SELECT * FROM trkasir JOIN carabayar on trkasir.id_carabayar = carabayar.id_carabayar WHERE trkasir.kd_trkasir ='$r[kd_trkasir]'");
-                //     $cabay1 = mysqli_fetch_array($cabay);
-
-                //     echo"
-                //                                 <td align='center'>$cabay1[nm_carabayar]</td>";
-                //     echo"													
-                //                                 <td align=right>$ttl_trkasir2</td>
-                                                
-                //                                  <td>
-                //                                  <a href='?module=trkasir&act=ubah&id=$r[id_trkasir]' title='EDIT' class='glyphicon glyphicon-pencil'>&nbsp</a> 
-                //                                  ";
-                    ?>
-                           
-                    <!--<a class='glyphicon glyphicon-print' onclick="window.open('modul/mod_laporan/struk.php?kd_trkasir=<?php echo $r['kd_trkasir']?>','nama window','width=500,height=600,toolbar=no,location=no,directories=no,status=no,menubar=no, scrollbars=no,resizable=yes,copyhistory=no')">&nbsp</a>-->
-                    <?php
-                    // echo"
-                    //                              <a href=javascript:confirmdelete('$aksi?module=trkasir&act=hapus&id=$r[id_trkasir]') title='HAPUS' class='glyphicon glyphicon-remove'>&nbsp</a>
-                                                 
-                    //                             <a href='modul/mod_laporan/faktur.php?kd_trkasir=$r[kd_trkasir]' target='_blank' title='FAKTUR' class='btn btn-primary btn-xs'>FAKTUR</a>
-					
-                    //                             </td>
-                    //                         </tr>";
-                    // $no++;
-                // }
-                // echo "</tbody>
-                                
-                //             </table>";
-                ?>
-                </tbody>
-            </table>    
-        </div>
-    </div>
-    
-    <script>
-        $(document).ready(function() {
-            var table = $('#example11').DataTable({
-               "processing": true,
-                "serverSide": true,
-                "lengthChange": false,
-                "displayStart": getPageFromUrl() * 10,
-                "pageLength": 10,
-                "order": [[ 0, "desc" ]],
-                "ajax": {
-                    "url": "modul/mod_trkasir/trkasir_kemaren_serverside.php",
-                    "type": "post",
-                    "dataType": "json",
-                    "error": function (xhr, error, thrown) {
-                        console.log("XHR Response:", xhr.responseText);
-                        alert("Error: " + xhr.status + " - " + thrown);
-                    }
-                },
-                "rowCallback": function(row, data, index) {
-                    let q = data['carabayar'];
-                    
-                    if(q == 3){
-                        $(row).find('td:eq(0)').css('background-color', '#ffbf00');
-                        $(row).find('td:eq(1)').css('background-color', '#ffbf00');
-                        
-                    } 
-                    
-                },
-                "columns": [
-                    { "data": "no", "className": "text-center" },
-                    { "data": "kd_trkasir" },
-                    { "data": "tgl_trkasir" },
-                    { "data": "nm_pelanggan" },
-                    { "data": "petugas" },
-                    { "data": "nm_carabayar", "className": "text-center" },
-                    { "data": "ttl_trkasir", "className": "text-right",
-                        "render": function(data, type, row) {
-    						return formatRupiah(data);
-    					}
-                    },
-                    { "data": "aksi", "orderable": false, "searchable": false, "className":"text-center" }
-                ]
-            });
-            
-            table.on('draw', function () {
-                const info = table.page.info();
-                const currentPage = info.page + 1; // konversi ke 1-based
-                const url = new URL(window.location);
-                url.searchParams.set('page', currentPage);
-                window.history.pushState({}, '', url);
-            });
-            
-            // button edit
-            $('#example11 tbody').on('click', '#btn_edit', function(e){
-                var id = $(this).data('id');
-                var currentPage = table.page() + 1;
-                location.href = '?module=trkasir&act=ubah&id='+id+'&page='+currentPage; 
-            });
-            
-            // button print
-            $('#example11 tbody').on('click', '#btn_print', function(e){
-                var kode = $(this).data('kd_trkasir');
-                var currentPage = table.page() + 1;
-                window.open('modul/mod_laporan/struk.php?kd_trkasir='+kode,'popup','width=500,height=600') 
-            });
-            
-            // button faktur
-            $('#example11 tbody').on('click', '#btn_faktur', function(e){
-                var kode = $(this).data('kd_trkasir');
-                var currentPage = table.page() + 1;
-                window.open('modul/mod_laporan/faktur.php?kd_trkasir='+kode, '_blank') 
-            });
-            
-            // Tombol hapus
-            $('#tes tbody').on('click', '#btn_hapus', function () {
-                var id = $(this).data('id');
-            
-                if (confirm('Anda yakin ingin menghapus?') == true) {
-                    $.ajax({
-        				url: 'modul/mod_trkasir/aksi_trkasir.php?module=trkasir&act=hapus&id='+id,
-        				type: 'POST',
-        			}).success(function() {
-        			    table.ajax.reload(null, false);
-        			});
-                } 
-            });
-                
-            function getPageFromUrl() {
-                const params = new URLSearchParams(window.location.search);
-                const page = parseInt(params.get("page"));
-                return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
-            }
-        });
-    </script>
-    
-<?php
-        break;
 	}
 }
 ?>
 
 <!-- Modal itemmat -->
 <div id="ModalItem" class="modal fade" role="dialog">
-	<div class="modal-lg modal-dialog">
+	<div class="modal-lg modal-dialog" style="width:90%">
 		<div class="modal-content table-responsive">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -925,7 +1201,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 						document.getElementById('qty_dtrkasir').value = qty_default;
 						document.getElementById('sat_dtrkasir').value = data.sat_barang;
-						document.getElementById('hrgjual_dtrkasir').value = data.hrgjual_barang;
+						document.getElementById('hrgjual_dtrkasir').value = formatRupiah(data.hrgjual_barang);
 						document.getElementById('indikasi').value = data.indikasi;
 						document.getElementById('komisi_dtrkasir').value = data.komisi;
 						$('#jenisobat').val(data.jenisobat).change();
@@ -1044,7 +1320,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 		document.getElementById('qty_dtrkasir').value = qty_default;
 		document.getElementById('sat_dtrkasir').value = sat_barang;
-		document.getElementById('hrgjual_dtrkasir').value = hrgjual_barang;
+		document.getElementById('hrgjual_dtrkasir').value = formatRupiah(hrgjual_barang);
 		document.getElementById('indikasi').value = indikasi;
 		document.getElementById('komisi_dtrkasir').value = komisi_dtrkasir;
 		$('#jenisobat').val(jenisobat).change();
@@ -1081,18 +1357,19 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 	function simpan_detail() {
 
-		let kd_trkasir = document.getElementById('kd_trkasir').value;
-		let id_barang = document.getElementById('id_barang').value;
-		let kd_barang = document.getElementById('kd_barang').value;
-		let nmbrg_dtrkasir = document.getElementById('nmbrg_dtrkasir').value;
-		let stok_barang = document.getElementById('stok_barang').value;
-		let qty_dtrkasir = document.getElementById('qty_dtrkasir').value;
-		let sat_dtrkasir = document.getElementById('sat_dtrkasir').value;
-		let hrgjual_dtrkasir = document.getElementById('hrgjual_dtrkasir').value;
-		let indikasi = document.getElementById('indikasi').value;
-		let jenisobat = document.getElementById('jenisobat').value;
-        let komisi_dtrkasir = document.getElementById('komisi_dtrkasir').value;
-        let id_admin = document.getElementById('id_admin').value;
+		let kd_trkasir          = document.getElementById('kd_trkasir').value;
+		let id_barang           = document.getElementById('id_barang').value;
+		let kd_barang           = document.getElementById('kd_barang').value;
+		let nmbrg_dtrkasir      = document.getElementById('nmbrg_dtrkasir').value;
+		let stok_barang         = document.getElementById('stok_barang').value;
+		let qty_dtrkasir        = document.getElementById('qty_dtrkasir').value;
+		let sat_dtrkasir        = document.getElementById('sat_dtrkasir').value;
+		let hrgjual_dtrkasir1   = document.getElementById('hrgjual_dtrkasir').value;
+		let hrgjual_dtrkasir    = hrgjual_dtrkasir1.replace(/\./g, '');
+		let indikasi            = document.getElementById('indikasi').value;
+		let jenisobat           = document.getElementById('jenisobat').value;
+        let komisi_dtrkasir     = document.getElementById('komisi_dtrkasir').value;
+        let id_admin            = document.getElementById('id_admin').value;
 
 		if (nmbrg_dtrkasir == "") {
 			alert('Belum ada Item terpilih');
@@ -1132,7 +1409,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					document.getElementById("hrgjual_dtrkasir").value = "";
 					document.getElementById("indikasi").value = "";
 					document.getElementById("komisi_dtrkasir").value = "";
-					// $('#jenisobat').val().change();
+					document.getElementById("jenisobat").value = "";
+				// 	$('#jenisobat').val().change();
 					tabel_detail();
 
 					let displayStok = stok_barang - qty_dtrkasir;
@@ -1283,18 +1561,22 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 		var ket_trkasir = document.getElementById('ket_trkasir').value;
 		var stt_aksi = document.getElementById('stt_aksi').value;
 		var id_carabayar = document.getElementById('id_carabayar').value;
-
-
-		var ttl_trkasir1 = ttl_trkasir.replace(".", "");
-		var dp_bayar1 = dp_bayar.replace(".", "");
-		var sisa_bayar1 = sisa_bayar.replace(".", "");
-
-		var ttl_trkasir1x = ttl_trkasir1.replace(".", "");
-		var dp_bayar1x = dp_bayar1.replace(".", "");
-		var sisa_bayar1x = sisa_bayar1.replace(".", "");
-    
+        
         var ppn_trkasir = document.getElementById('ppn_trkasir').value;
         // ppn_trkasir = ppn_trkasir.split('.').join("");
+
+// 		var ttl_trkasir1 = ttl_trkasir.replace(".", "");
+// 		var dp_bayar1 = dp_bayar.replace(".", "");
+// 		var sisa_bayar1 = sisa_bayar.replace(".", "");
+
+// 		var ttl_trkasir1x = ttl_trkasir1.replace(".", "");
+// 		var dp_bayar1x = dp_bayar1.replace(".", "");
+// 		var sisa_bayar1x = sisa_bayar1.replace(".", "");
+
+		var ttl_trkasir1x = ttl_trkasir.split('.').join("");
+		var dp_bayar1x = dp_bayar.split('.').join("");
+		var sisa_bayar1x = sisa_bayar.split('.').join("");
+
 
 		if (parseInt(dp_bayar1x) < parseInt(ttl_trkasir1x)) {
 			alert('Input Nominal Bayar Lebih besar dari harga');
@@ -1306,21 +1588,21 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				url: "modul/mod_trkasir/aksi_trkasir.php",
 				dataType: 'json',
 				data: {
-					'id_trkasir'        : id_trkasir,
-					'kd_trkasir'        : kd_trkasir,
-					'tgl_trkasir'       : tgl_trkasir,
-					'petugas'           : petugas,
-					'shift'             : shift,
-					'nm_pelanggan'      : nm_pelanggan,
-					'tlp_pelanggan'     : tlp_pelanggan,
-					'alamat_pelanggan'  : alamat_pelanggan,
-					'ttl_trkasir'       : ttl_trkasir1x,
-					'dp_bayar'          : dp_bayar1x,
-					'sisa_bayar'        : sisa_bayar1x,
-					'ket_trkasir'       : ket_trkasir,
-					'stt_aksi'          : stt_aksi,
-					'id_carabayar'      : id_carabayar,
-					'ppn_trkasir'       : ppn_trkasir
+					'id_trkasir': id_trkasir,
+					'kd_trkasir': kd_trkasir,
+					'tgl_trkasir': tgl_trkasir,
+					'petugas': petugas,
+					'shift': shift,
+					'nm_pelanggan': nm_pelanggan,
+					'tlp_pelanggan': tlp_pelanggan,
+					'alamat_pelanggan': alamat_pelanggan,
+					'ttl_trkasir': ttl_trkasir1x,
+					'dp_bayar': dp_bayar1x,
+					'sisa_bayar': sisa_bayar1x,
+					'ket_trkasir': ket_trkasir,
+					'stt_aksi': stt_aksi,
+					'id_carabayar': id_carabayar,
+					'ppn_trkasir': ppn_trkasir
 				},
 				success: function(data) {
 					console.log(data);
@@ -1366,8 +1648,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 		window.open('modul/mod_laporan/strukresep.php?kd_trkasir=' + kd_trkasir, 'nama window', 'width=400,height=700,toolbar=no,location=no,directories=no,status=no,menubar=no, scrollbars=no,resizable=yes,copyhistory=no');
 
 	}
-	
-	document.addEventListener('keydown', function(event) {
+    
+    document.addEventListener('keydown', function(event) {
         if (event.key === 'F1' || event.keyCode === 112) {
             event.preventDefault(); // Mencegah help browser muncul
             simpan_detail();
@@ -1389,4 +1671,6 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
         }
     });
     
+    
 </script>
+

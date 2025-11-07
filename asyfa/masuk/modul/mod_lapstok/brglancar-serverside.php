@@ -124,7 +124,8 @@ if ($_GET['action'] == "table_data") {
             $nestedData['satuan'] = $brg['sat_barang'];
             $nestedData['harga_beli'] = $hargabeli;
             $nestedData['nilai_barang'] = $nilaibarang;
-            $nestedData['kartu_stok'] = "<a href='?module=lapstok&act=edit&id=$brg[kd_barang]' title='Riwayat' class='btn btn-warning btn-xs'>Riwayat</a>";
+            // $nestedData['kartu_stok'] = "<a href='?module=lapstok&act=edit&id=$brg[kd_barang]' title='Riwayat' class='btn btn-warning btn-xs'>Riwayat</a>";
+            $nestedData['kartu_stok'] = "<button type='button' id='btn_riwayat' data-id='$brg[kd_barang]' title='Riwayat' class='btn btn-warning btn-xs'>Riwayat</button>";
             $data[] = $nestedData;
             $no++;
         }

@@ -190,6 +190,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                         lengthChange: false,
                         displayStart: getPageFromUrl() * 10,
                         pageLength: 10,
+                        order: [[ 0, "desc" ]],
                         ajax: {
                             "url": "modul/mod_lapstok/barang-serverside.php?action=table_data&start=" + start + "&finish=" + finish,
                             "dataType": "JSON",
@@ -279,7 +280,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                             $('#totalRupiah').html(formatRupiah(json.totalStok));
                         }
                     });
-                    
+
                     table.on('draw', function () {
                         const info = table.page.info();
                         const currentPage = info.page + 1; // konversi ke 1-based
@@ -300,7 +301,6 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                         const page = parseInt(params.get("page"));
                         return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
                     }
-
                 });
             </script>
         <?php
@@ -527,6 +527,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                         lengthChange: false,
                         displayStart: getPageFromUrl() * 10,
                         pageLength: 10,
+                        order: [[ 0, "desc" ]],
                         ajax: {
                             "url": "modul/mod_lapstok/brglaku-serverside.php?action=table_data&start=" + start + "&finish=" + finish,
                             "dataType": "JSON",
@@ -866,6 +867,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                         lengthChange: false,
                         displayStart: getPageFromUrl() * 10,
                         pageLength: 10,
+                        order: [[ 0, "desc" ]],
                         ajax: {
                             "url": "modul/mod_lapstok/brglancar-serverside.php?action=table_data&start=" + start + "&finish=" + finish,
                             "dataType": "JSON",
@@ -1206,6 +1208,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                         lengthChange: false,
                         displayStart: getPageFromUrl() * 10,
                         pageLength: 10,
+                        order: [[ 0, "desc" ]],
                         ajax: {
                             "url": "modul/mod_lapstok/brgslow-serverside.php?action=table_data&start=" + start + "&finish=" + finish,
                             "dataType": "JSON",
@@ -1320,6 +1323,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                         const page = parseInt(params.get("page"));
                         return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
                     }
+                    
                 });
             </script>
         <?php
@@ -1487,6 +1491,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                         lengthChange: false,
                         displayStart: getPageFromUrl() * 10,
                         pageLength: 10,
+                        order: [[ 0, "desc" ]],
                         ajax: {
                             "url": "modul/mod_lapstok/brgmacet-serverside.php?action=table_data&start=" + start + "&finish=" + finish,
                             "dataType": "JSON",
@@ -1585,6 +1590,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                         const page = parseInt(params.get("page"));
                         return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
                     }
+                    
                 });
             </script>
         <?php

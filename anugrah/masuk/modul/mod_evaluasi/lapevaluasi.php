@@ -13,7 +13,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 			<div class="box box-primary box-solid">
 				<div class="box-header with-border">
-					<h3 class="box-title">LAPORAN KOMISI PEGAWAI</h3>
+					<h3 class="box-title">EVALUASI PRODUKSI PEGAWAI</h3>
 					<div class="box-tools pull-right">
 						<button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
 					</div><!-- /.box-tools
@@ -21,7 +21,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				</div>
 				<div class="box-body">
 
-					<form method="POST" action="?module=lapkomisi&act=tampil" target="_blank" enctype="multipart/form-data"
+					<form method="POST" action="?module=evaluasi&act=tampil" target="_blank" enctype="multipart/form-data"
 						class="form-horizontal">
 
 						</br></br>
@@ -80,7 +80,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 		?>
 			<div class="box box-primary box-solid">
 				<div class="box-header with-border">
-					<h3 class="box-title">LAPORAN KOMISI PEGAWAI DARI TANGGAL <?php echo $tgl_awal ?> S/D
+					<h3 class="box-title">EVALUASI KINERJA PEGAWAI DARI TANGGAL <?php echo $tgl_awal ?> S/D
 						<?php echo $tgl_akhir ?>
 					</h3>
 					<div class="box-tools pull-right">
@@ -94,9 +94,9 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 							<tr>
 								<th>No</th>
 								<th>Nama Petugas</th>
-								<th>Komisi Produk</th>
-								<th>Komisi Global</th>
-								<th>SubTotal</th>
+								<th>Laba Penjualan</th>
+								<th>Omzet Penjualan</th>
+								
 
 							</tr>
 						</thead>
@@ -105,37 +105,36 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 							$no = 1;
 							while ($min = $admin->fetch_array()) {
-								$kom = $db->query("select sum(komisi) as tambahan from trkasir_detail join trkasir 
+								$kom = $db->query("select sum(profit) as tambahan,qty_dtrkasir from trkasir_detail join trkasir 
 															on(trkasir_detail.kd_trkasir=trkasir.kd_trkasir) 
 															where trkasir_detail.idadmin='$min[id_admin]' and trkasir.tgl_trkasir between '$tgl_awal' and '$tgl_akhir' ");
 								$misi = $kom->fetch_array();
-								$pk = $misi['tambahan'];
-
+								$qty = $misi['qty_dtrkasir'];
+								$pk = $misi['tambahan']*$qty;
+								$pk1 = format_rupiah(round(($pk),0));
 								$petugas = $min['nama_lengkap'];
-								$global = mysqli_query($GLOBALS["___mysqli_ston"], "select * from komisiglobal where status='ON' ");
-								$global1 = mysqli_fetch_array($global);
-								$kogo = $global1['nilai'] / 100;
+								
+								
 
-								$querykomisi = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT SUM(ttl_trkasir) as total_komisi FROM trkasir
+								$queryprofit = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT SUM(ttl_trkasir) as total_profit FROM trkasir
                             		where tgl_trkasir between '$tgl_awal' and '$tgl_akhir' and petugas='$petugas' ");
-								$komisi = mysqli_fetch_array($querykomisi);
-								$komisipetugas = format_rupiah(round(($komisi['total_komisi'] * $kogo),0));
+								$profit = mysqli_fetch_array($queryprofit);
+								$profitpetugas = format_rupiah(round(($profit['total_profit']),0));
 
-								$subtotal = format_rupiah(($komisi['total_komisi'] * $kogo)+$pk);
+								$subtotal = format_rupiah(($komisi['total_komisi'])+$pk);
 
 
 								echo "
 								<tr>
 									<td width='10px'>$no</td>
 									<td>$min[nama_lengkap]</td>
-									<td style='text-align:right; font-weight: bold;'><a href='?module=lapkomisi&act=detail&id=$min[id_admin]&tgl_awal=$tgl_awal&tgl_akhir=$tgl_akhir' target='_blank' >Rp. $pk</a></td>									
-									<td style='text-align:right;'>Rp. $komisipetugas</td>
-									<td style='text-align:right;'>Rp. $subtotal</td>
+									<td style='text-align:right; font-weight: bold;'><a href='?module=evaluasi&act=detail&id=$min[id_admin]&tgl_awal=$tgl_awal&tgl_akhir=$tgl_akhir' target='_blank' >Rp.  $pk1</a></td>									
+									<td style='text-align:right;'>Rp. $profitpetugas</td>									
 									</tr>								
 								";
 								$no++;
 								$totalpk[] = $pk;
-								$totglobal[] = $komisi['total_komisi']*$kogo;
+								$totglobal[] = $profit['total_profit'];
 							}
 							?>
 						</tbody>
@@ -148,10 +147,9 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 							echo "
 							<tr>
-								<td style='text-align:center;' colspan='2'>Grand Total Komisi</td>
+								<td style='text-align:center;' colspan='2'>Grand Total </td>
 								<td style='text-align:right;'>Rp. $totalpk2</td>
-								<td style='text-align:right;'>Rp. $ttlgbl</td>
-								<td style='text-align:right;'>Rp. $grttl</td>
+								<td style='text-align:right;'>Rp. $ttlgbl</td>								
 							</tr>";
 							?>
 						</tfoot>
@@ -174,7 +172,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 		?>
 			<div class="box box-primary box-solid">
 				<div class="box-header with-border">
-					<h3 class="box-title">Detail Komisi <?php echo $petugas ?> dari tanggal <?php echo $tgl_awal ?> s/d
+					<h3 class="box-title">Detail Produksi <?php echo $petugas ?> dari tanggal <?php echo $tgl_awal ?> s/d
 						<?php echo $tgl_akhir ?>
 					</h3>
 					<div class="box-tools pull-right">
@@ -189,7 +187,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 								<th style="text-align:center;" width="30">No</th>
 								<th style="text-align:center;">Nama Produk</th>
 								<th style="text-align:center;">Jumlah</th>
-								<th style="text-align:center;">Nilai Komisi</th>
+								<th style="text-align:center;">Nilai Laba</th>
 								<th style="text-align:center;">Subtotal</th>
 							</tr>
 						</thead>
@@ -197,11 +195,11 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 							<?php
 							$person = $db->query("select * from trkasir_detail join trkasir 
 															on(trkasir_detail.kd_trkasir=trkasir.kd_trkasir) 
-															where trkasir_detail.idadmin='$admin' and trkasir_detail.komisi!=0 and trkasir.tgl_trkasir between '$tgl_awal' and '$tgl_akhir' ");
+															where trkasir_detail.idadmin='$admin' and trkasir.tgl_trkasir between '$tgl_awal' and '$tgl_akhir' ");
 							$no2 = 1;
 							while ($per = $person->fetch_array()) {
-								$satuan = format_rupiah($per['komisi'] / $per['qty_dtrkasir']);
-								$subttl = format_rupiah($per['komisi']);
+								$satuan = format_rupiah($per['profit']);
+								$subttl = format_rupiah($per['profit']*$per['qty_dtrkasir']);
 								echo "
 																<tr>
 																<td width='30'>$no2</td>
@@ -212,7 +210,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 																</tr>
 																";
 								$no2++;
-								$kumulatif[] = $per['komisi'];
+								$kumulatif[] = $per['profit'] * $per['qty_dtrkasir'];
 							}
 
 							?>
@@ -223,7 +221,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 							echo "
 							<tr>
-								<td style='text-align:right;' colspan='4'>Total Komisi Produk</td>
+								<td style='text-align:right;' colspan='4'>Total Produksi Laba</td>
 								<td style='text-align:right;'>Rp. $total</td>
 							</tr>";
 							?>

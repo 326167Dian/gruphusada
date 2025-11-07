@@ -64,7 +64,7 @@ color: white;
 							$sumprice=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT kd_trbmasuk, SUM(hrgttl_dtrbmasuk) as grandnya FROM trbmasuk_detail 
 							WHERE kd_trbmasuk='$kd_trbmasuk'");
 							$ttlprice=mysqli_fetch_array($sumprice);
-							$grandnya = format_rupiah($ttlprice['grandnya']);
+							$grandnya = (format_rupiah($ttlprice['grandnya']) == 0)?'':format_rupiah($ttlprice['grandnya']);
 						
 						       $noreq=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trbmasuk_detail 
 							   WHERE kd_trbmasuk='$kd_trbmasuk'
@@ -132,7 +132,7 @@ color: white;
 								<div class='text-right'>
 									<label class='col-sm-6 control-label'>SUB TOTAL</label>        		
 									 <div class='col-sm-6'>
-										<input type='text' name='ttl_trkasir' id='ttl_trkasir' value='$grandnya' class='form-control input-validation-error' style='font-size: 18px; color: #fff; font-weight: bold; text-align: right; background: #000000;' autocomplete='off'>
+										<input type='text' name='ttl_trkasir' id='ttl_trkasir' value='$grandnya' class='form-control input-validation-error' style='font-size: 18px; color: #fff; font-weight: bold; text-align: right; background: #000000;' autocomplete='off' readonly>
 									 </div>
 								</div>
 								
@@ -157,7 +157,7 @@ color: white;
 								<div class='text-right'>
 									<label class='col-sm-6 control-label'>Total Tagihan</label>        		
 									 <div class='col-sm-6'>
-										<input type='text' name='sisa_bayar' id='sisa_bayar' class='form-control' style='font-size: 18px; color: #fff; font-weight: bold; text-align: right; background: #000000;' autocomplete='off'>
+										<input type='text' name='sisa_bayar' id='sisa_bayar' class='form-control' style='font-size: 18px; color: #fff; font-weight: bold; text-align: right; background: #000000;' autocomplete='off' readonly>
 									 </div>
 								</div>
 								
@@ -181,19 +181,22 @@ color: white;
 
 
 $(document).ready(function () {
+        $("#dp_bayar").mask('000.000.000.000.000', {
+            reverse: true
+        });
         HitungDP();
         $("#example5").DataTable();
     });
 		
 		
 		//hitung dp
-		$('#dp_bayar').keydown(function(e) {
-		if (e.which == 13) { // e.which == 13 merupakan kode yang mendeteksi ketika anda   // menekan tombol enter di keyboard
+		$('#dp_bayar').keyup(function(e) {
+// 		if (e.which == 13) { // e.which == 13 merupakan kode yang mendeteksi ketika anda   // menekan tombol enter di keyboard
 			//letakan fungsi anda disini
    
 			HitungDP();
 				
-		}
+// 		}
 		}); 
 		
 		//rubah format rupiah
@@ -223,13 +226,14 @@ $(document).ready(function () {
 					var res1 = ttl_trkasir.replace(".", "");
 					var res2 = dp_bayar.replace(".", "");
 					
-					var res1x = res1.replace(".", "");
-					var res2x = res2.replace(".", "");
-					
+				// 	var res1x = res1.replace(".", "");
+					var res1x = ttl_trkasir.replace(/\./g, '');
+				// 	var res2x = res2.replace(".", "");
+					var res2x = dp_bayar.replace(/\./g, '');
 			var total2 = parseInt(res1x) - parseInt(res2x);
 			
-			document.getElementById("dp_bayar").value = formatRupiah(dp_bayar);
-			document.getElementById("sisa_bayar").value = formatRupiah(total2);
+			document.getElementById("dp_bayar").value = (formatRupiah(dp_bayar) != 0)?formatRupiah(dp_bayar):'';
+			document.getElementById("sisa_bayar").value = ((formatRupiah(ttl_trkasir) != 0) || (formatRupiah(dp_bayar) != 0))?formatRupiah(total2):'';
 	
 	}
         //hitung diskon2

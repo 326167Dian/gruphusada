@@ -3,7 +3,7 @@ include "../../../configurasi/koneksi.php";
 
 $key = $_POST['nm_barang'];
 
-$ubah = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM barang WHERE nm_barang = '$key' AND isactive = 'active'");
+$ubah = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM barang WHERE nm_barang = '$key'");
 
 
 $json = [];

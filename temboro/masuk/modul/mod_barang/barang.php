@@ -138,14 +138,14 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 							  <div class='form-group'>
 									<label class='col-sm-2 control-label'>Harga Beli</label>        		
 									 <div class='col-sm-3'>
-										<input type='number' min='0' name='hrgsat_barang' class='form-control' required='required' autocomplete='off'>
+										<input type='text' name='hrgsat_barang' id='hrgsat_barang' class='form-control' required='required' autocomplete='off'>
 									 </div>
 							  </div>
 							  
 							  <div class='form-group'>
 									<label class='col-sm-2 control-label'>Harga Jual</label>        		
 									 <div class='col-sm-3'>
-										<input type='number' min='0' name='hrgjual_barang' class='form-control' required='required' autocomplete='off'>
+										<input type='text' name='hrgjual_barang' id='hrgjual_barang' class='form-control' required='required' autocomplete='off'>
 									 </div>
 							  </div>
 							  
@@ -169,7 +169,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-4'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-danger' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel'>
 										</div>
 								</div>
 								
@@ -258,14 +258,14 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 							  <div class='form-group'>
 									<label class='col-sm-2 control-label'>Harga Beli</label>        		
 									 <div class='col-sm-3'>
-										<input type='number' min='0' name='hrgsat_barang' class='form-control' required='required' value='$r[hrgsat_barang]' autocomplete='off'>
+										<input type='text' name='hrgsat_barang' id='hrgsat_barang' class='form-control' required='required' value='$r[hrgsat_barang]' autocomplete='off'>
 									 </div>
 							  </div>
 							  
 							  <div class='form-group'>
 									<label class='col-sm-2 control-label'>Harga Jual</label>        		
 									 <div class='col-sm-3'>
-										<input type='number' min='0' name='hrgjual_barang' class='form-control' required='required' value='$r[hrgjual_barang]' autocomplete='off'>
+										<input type='text' name='hrgjual_barang' id='hrgjual_barang' class='form-control' required='required' value='$r[hrgjual_barang]' autocomplete='off'>
 									 </div>
 							  </div>
 							  
@@ -289,7 +289,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-4'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-danger' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel' data-page='".$_GET['page']."'>
 										</div>
 								</div>
 								
@@ -316,11 +316,19 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 	});
 </script>
 <script>
+    
 	$(document).ready(function() {
-		var table = $('#tes').DataTable({
+	    $("#hrgsat_barang").mask('000.000.000.000.000', {
+            reverse: true
+        });
+	    $("#hrgjual_barang").mask('000.000.000.000.000', {
+            reverse: true
+        });
+        
+	    var table = $('#tes').DataTable({
 			processing: true,
 			serverSide: true,
-			lengthChange: false,
+            lengthChange: false,
             displayStart: getPageFromUrl() * 10,
             pageLength: 10,
             order: [[ 0, "desc" ]],
@@ -394,15 +402,20 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					"data": "aksi",
 					"visible": <?= ($_SESSION['level'] == 'pemilik') ? 'true' : 'false'; ?>,
 					"render": function(data, type, row) {
-				// 		var btn = "<div style='text-align:center'><a href='?module=barang&act=edit&id=" + data + "' title='EDIT' class='btn btn-warning btn-xs'>EDIT</a> <a href=javascript:confirmdelete('modul/mod_barang/aksi_barang.php?module=barang&act=hapus&id=" + data + "') title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</a></div>";
-                        
-                        var btn = "<div style='text-align:center'><button type='button' id='btn_edit' class='btn btn-warning btn-xs' data-id='"+data+"'>EDIT</button> <button type='button' id='btn_hapus' class='btn btn-danger btn-xs' data-id='"+data+"'>HAPUS</button></div>";
+						var btn = "<div style='text-align:center'><button type='button' id='btn_edit' class='btn btn-warning btn-xs' data-id='"+data+"'>EDIT</button> <button type='button' id='btn_hapus' class='btn btn-danger btn-xs' data-id='"+data+"'>HAPUS</button></div>";
 						
+				// 		var btn = "<div style='text-align:center'><a href='?module=barang&act=edit&id=" + data + "' title='EDIT' class='btn btn-warning btn-xs'>EDIT</a> <a href=javascript:confirmdelete('modul/mod_barang/aksi_barang.php?module=barang&act=hapus&id=" + data + "') title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</a></div>";
+				
 						return btn;
 					}
 				},
-			]
+			],
+// 			initComplete: function () {
+// 			    table.page(vpage).draw(false);
+// 			}
 		});
+		
+// 		table.page(vpage).draw(false);
 		
 		table.on('draw', function () {
             const info = table.page.info();
@@ -466,6 +479,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
             const params = new URLSearchParams(window.location.search);
             const page = parseInt(params.get("page"));
             return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
-        }
+        }        
 	});
+	
+	
 </script>

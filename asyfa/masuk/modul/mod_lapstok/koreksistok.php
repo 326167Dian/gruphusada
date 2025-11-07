@@ -8,7 +8,7 @@ else{
 
 $aksi="modul/mod_lapstok/aksi_barang.php";
 $aksi_barang = "masuk/modul/mod_lapstok/aksi_barang.php";
-switch($_GET[act]){
+switch($_GET['act']){
   // Tampil barang
   default:
 
@@ -30,7 +30,7 @@ switch($_GET[act]){
 					<a  class ='btn  btn-success btn-flat' href='modul/mod_lapstok/sinkronisasi_stok.php'>SINKRONISASI</a>
                        <a class='btn  btn-danger btn-flat' href='?module=koreksistok&act=edit'>KOREKSI STOK AWAL</a> 
                        
-					<table id="example1" class="table table-bordered table-striped" >
+					<table id="example11" class="table table-bordered table-striped" >
 						<thead>
 							<tr>
 								<th>No</th>
@@ -45,58 +45,109 @@ switch($_GET[act]){
 						</thead>
 						<tbody>
 						<?php 
-								$no=1;
-								while ($r=mysqli_fetch_array($tampil_barang)){
+								// $no=1;
+								// while ($r=mysqli_fetch_array($tampil_barang)){
 
-                                $beli = "SELECT trbmasuk.tgl_trbmasuk,                                           
-                                       SUM(trbmasuk_detail.qty_dtrbmasuk) AS totalbeli                                            
-                                       FROM trbmasuk_detail join trbmasuk 
-                                       on (trbmasuk_detail.kd_trbmasuk=trbmasuk.kd_trbmasuk)
-                                       WHERE kd_barang =$r[kd_barang]" ;
-                                $buy = mysqli_query($GLOBALS["___mysqli_ston"],$beli);
-                                $buy2 = mysqli_fetch_array($buy);
+        //                         $beli = "SELECT trbmasuk.tgl_trbmasuk,                                           
+        //                               SUM(trbmasuk_detail.qty_dtrbmasuk) AS totalbeli                                            
+        //                               FROM trbmasuk_detail join trbmasuk 
+        //                               on (trbmasuk_detail.kd_trbmasuk=trbmasuk.kd_trbmasuk)
+        //                               WHERE kd_barang =$r[kd_barang]" ;
+        //                         $buy = mysqli_query($GLOBALS["___mysqli_ston"],$beli);
+        //                         $buy2 = mysqli_fetch_array($buy);
 
-                                $jual = "SELECT trkasir.tgl_trkasir,                                
-                                        sum(trkasir_detail.qty_dtrkasir) AS totaljual
-                                        FROM trkasir_detail join trkasir 
-                                        on (trkasir_detail.kd_trkasir=trkasir.kd_trkasir)
-                                        WHERE kd_barang =$r[kd_barang]" ;
-                                $jokul = mysqli_query($GLOBALS["___mysqli_ston"],$jual);
-                                $sell = mysqli_fetch_array($jokul);
-                                $selisih = $buy2[totalbeli]-$sell[totaljual];
-
-
-									echo "<tr class='warnabaris' >
-                                             <td>$no</td>                                    										     
-											 <td>$r[kd_barang]</td>
-											 <td>$r[nm_barang]</td>";
-									if($buy2[totalbeli]<"0")
-                                    {echo"<td align=center> 0 </td>";}
-									else{echo "<td align=center>$buy2[totalbeli]</td>";}
-
-									if($sell[totaljual]<"0")
-                                    {echo"<td align=center> 0 </td>";}
-									else{echo "<td align=center>$sell[totaljual]</td>";}
-									echo" <td align=center>$selisih</td>";
-
-									if($selisih==$r[stok_barang])
-                                        {echo "<td align=right>$r[stok_barang]</td>";}
-									else{echo"<td style='background-color:#ffbf00; text-align: right;'>$r[stok_barang]</td>";}
-									echo"	 	
-											 <td style='text-align: center;'><a href='?module=koreksistok&act=edit&id=$r[id_barang]' title='EDIT' class='btn btn-primary btn-xs'>KOREKSI</a> 	
-											</td>
-										</tr>";
-								$no++;
-								}
+        //                         $jual = "SELECT trkasir.tgl_trkasir,                                
+        //                                 sum(trkasir_detail.qty_dtrkasir) AS totaljual
+        //                                 FROM trkasir_detail join trkasir 
+        //                                 on (trkasir_detail.kd_trkasir=trkasir.kd_trkasir)
+        //                                 WHERE kd_barang =$r[kd_barang]" ;
+        //                         $jokul = mysqli_query($GLOBALS["___mysqli_ston"],$jual);
+        //                         $sell = mysqli_fetch_array($jokul);
+        //                         $selisih = $buy2['totalbeli']-$sell['totaljual'];
 
 
+								// 	echo "<tr class='warnabaris' >
+        //                                      <td>$no</td>                                    										     
+								// 			 <td>$r[kd_barang]</td>
+								// 			 <td>$r[nm_barang]</td>";
+								// 	if($buy2['totalbeli']<"0")
+        //                             {echo"<td align=center> 0 </td>";}
+								// 	else{echo "<td align=center>$buy2[totalbeli]</td>";}
 
-						echo "</tbody></table>";
+								// 	if($sell['totaljual']<"0")
+        //                             {echo"<td align=center> 0 </td>";}
+								// 	else{echo "<td align=center>$sell[totaljual]</td>";}
+								// 	echo" <td align=center>$selisih</td>";
+
+								// 	if($selisih==$r['stok_barang'])
+        //                                 {echo "<td align=right>$r[stok_barang]</td>";}
+								// 	else{echo"<td style='background-color:#ffbf00; text-align: right;'>$r[stok_barang]</td>";}
+								// 	echo"	 	
+								// 			 <td style='text-align: center;'><a href='?module=koreksistok&act=edit&id=$r[id_barang]' title='EDIT' class='btn btn-primary btn-xs'>KOREKSI</a> 	
+								// 			</td>
+								// 		</tr>";
+								// $no++;
+								// }
+
+
+
+				// 		echo "</tbody></table>";
 					    ?>
+					    </tbody>
+			        </table>
 				</div>
 			</div>	
              
-
+        <script>
+            $(document).ready(function() {
+                
+                var table = $('#example11').DataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "lengthChange": false,
+                    "displayStart": getPageFromUrl() * 10,
+                    "pageLength": 10,
+                    "ajax": {
+                          "url": 'modul/mod_lapstok/koreksi-serverside.php',
+                          "type": 'POST'
+                        },
+                    "columns": [
+                        { "data": "no" },
+                        { "data": "kd_barang" },
+                        { "data": "nm_barang" },
+                        { "data": "totalbeli", "className": "text-right" },
+                        { "data": "totaljual", "className": "text-right" },
+                        { "data": "selisih", "className": "text-center" },
+                        { "data": "stok_barang_html", "className": "text-center" },
+                        { "data": "koreksi", "orderable": false, "searchable": false }
+                    ]
+                });
+                
+                table.on('draw', function () {
+                    const info = table.page.info();
+                    const currentPage = info.page + 1; // konversi ke 1-based
+                    const url = new URL(window.location);
+                    url.searchParams.set('page', currentPage);
+                    window.history.pushState({}, '', url);
+                });
+                
+                
+                $('#example11 tbody').on('click', '#btn_koreksi', function () {
+                    var id = $(this).data('id');
+                    var currentPage = table.page() + 1;
+                    location.href = '?module=koreksistok&act=edit&id='+id+'&page='+currentPage;
+                });
+                        
+                
+                function getPageFromUrl() {
+                    const params = new URLSearchParams(window.location.search);
+                    const page = parseInt(params.get("page"));
+                    return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+                }
+            });
+            
+                 
+        </script>
 <?php
 
 	
@@ -116,9 +167,9 @@ switch($_GET[act]){
 				</div>
 				<div class="box-body">
                         <a class='btn  btn-primary btn-flat' href='modul/mod_lapstok/sinkronisasi_stok_awal.php'>SINKRONISASI STOK AWAL</a>
-                        <input class='btn btn-danger' type='button' value=KEMBALI onclick=self.history.back()>
+                        <input class='btn btn-danger' type='button' value='KEMBALI' id="btn_cancel">
                         <BR> KOREKSI STOK AWAL HANYA BISA <STRONG>SEKALI</STRONG> SETELAH SEMUA ITEM DIINPUT DENGAN LENGKAP
-					<table id="example1" class="table table-bordered table-striped">
+					<table id="example11" class="table table-bordered table-striped">
 						<thead>
 							<tr>
 								<th>No</th>
@@ -133,59 +184,114 @@ switch($_GET[act]){
 						</thead>
 						<tbody>
 							<?php
-							$no = 1;
-							while ($r = mysqli_fetch_array($tampil_barang)) {
-                                $r1=$r[kd_barang];
-                                $tampilmasuk = mysqli_query($GLOBALS["___mysqli_ston"],"select sum(qty_dtrbmasuk) as subtotal,min(waktu) as masukawal from trbmasuk_detail
-                                                where kd_barang=$r1 ");
-                                $masuk = mysqli_fetch_array($tampilmasuk);
-                                $masuk1 = $masuk[subtotal];
-                                $masuk2 = $masuk[masukawal];
+				// 			$no = 1;
+				// 			while ($r = mysqli_fetch_array($tampil_barang)) {
+    //                             $r1=$r['kd_barang'];
+    //                             $tampilmasuk = mysqli_query($GLOBALS["___mysqli_ston"],"select sum(qty_dtrbmasuk) as subtotal,min(waktu) as masukawal from trbmasuk_detail
+    //                                             where kd_barang=$r1 ");
+    //                             $masuk = mysqli_fetch_array($tampilmasuk);
+    //                             $masuk1 = $masuk['subtotal'];
+    //                             $masuk2 = $masuk['masukawal'];
 
-                                $tampilkeluar = mysqli_query($GLOBALS["___mysqli_ston"],
-                                    "select min(waktu) as keluarawal, max(waktu) as keluarakhir from trkasir_detail where kd_barang=$r1");
-                                $keluar = mysqli_fetch_array($tampilkeluar);
-                                $keluar1= $keluar[keluarawal];
-                                $keluar2= $keluar[keluarakhir];
+    //                             $tampilkeluar = mysqli_query($GLOBALS["___mysqli_ston"],
+    //                                 "select min(waktu) as keluarawal, max(waktu) as keluarakhir from trkasir_detail where kd_barang=$r1");
+    //                             $keluar = mysqli_fetch_array($tampilkeluar);
+    //                             $keluar1= $keluar['keluarawal'];
+    //                             $keluar2= $keluar['keluarakhir'];
 
-                                if ($keluar1<$masuk2)
-                                  { $patokan = $masuk2;}
-                                else
-                                  {$patokan = $keluar1;}
-                                $transaksi_atas = mysqli_query($GLOBALS["___mysqli_ston"],
-                                          "select sum(qty_dtrkasir) as qty_atas from trkasir_detail 
-                                                where kd_barang=$r1 and waktu between '$keluar1' and '$masuk2'");
-                                $qty_atas2= mysqli_fetch_array($transaksi_atas);
-                                $qty_atas3= $qty_atas2[qty_atas];
+    //                             if ($keluar1<$masuk2)
+    //                               { $patokan = $masuk2;}
+    //                             else
+    //                               {$patokan = $keluar1;}
+    //                             $transaksi_atas = mysqli_query($GLOBALS["___mysqli_ston"],
+    //                                       "select sum(qty_dtrkasir) as qty_atas from trkasir_detail 
+    //                                             where kd_barang=$r1 and waktu between '$keluar1' and '$masuk2'");
+    //                             $qty_atas2= mysqli_fetch_array($transaksi_atas);
+    //                             $qty_atas3= $qty_atas2['qty_atas'];
 
-                                $transaksi_bawah = mysqli_query($GLOBALS["___mysqli_ston"],
-                                    "select sum(qty_dtrkasir) as qty_bawah from trkasir_detail 
-                                                where kd_barang=$r1 and waktu between '$masuk2' and '$keluar2'");
-                                $qty_bawah2= mysqli_fetch_array($transaksi_bawah);
-                                $qty_bawah3= $qty_bawah2[qty_bawah];
-                                $stok_real = $qty_atas3 + $masuk1 - ($qty_atas3+$qty_bawah3);
+    //                             $transaksi_bawah = mysqli_query($GLOBALS["___mysqli_ston"],
+    //                                 "select sum(qty_dtrkasir) as qty_bawah from trkasir_detail 
+    //                                             where kd_barang=$r1 and waktu between '$masuk2' and '$keluar2'");
+    //                             $qty_bawah2= mysqli_fetch_array($transaksi_bawah);
+    //                             $qty_bawah3= $qty_bawah2['qty_bawah'];
+    //                             $stok_real = $qty_atas3 + $masuk1 - ($qty_atas3+$qty_bawah3);
 
-								echo "<tr class='warnabaris' >
-                                             <td>$no</td>                                    										     
-											 <td>$r[kd_barang]</td>
-											 <td>$r[nm_barang]</td>
-											 <td align='center'>$qty_atas3</td>
-											 <td align='center'>$masuk1</td>
-											 <td align='center'>$qty_bawah3</td>
-											 <td align='center'>$stok_real</td>
-											 <td style='text-align: center;'><a href='?module=koreksistok&act=edit&id=$r[id_barang]' title='EDIT' class='btn btn-primary btn-xs'>KOREKSI</a> 	
-											</td>
-										</tr>";
-								$no++;
-							}
+				// 				echo "<tr class='warnabaris' >
+    //                                          <td>$no</td>                                    										     
+				// 							 <td>$r[kd_barang]</td>
+				// 							 <td>$r[nm_barang]</td>
+				// 							 <td align='center'>$qty_atas3</td>
+				// 							 <td align='center'>$masuk1</td>
+				// 							 <td align='center'>$qty_bawah3</td>
+				// 							 <td align='center'>$stok_real</td>
+				// 							 <td style='text-align: center;'><a href='?module=koreksistok&act=edit&id=$r[id_barang]' title='EDIT' class='btn btn-primary btn-xs'>KOREKSI</a> 	
+				// 							</td>
+				// 						</tr>";
+				// 				$no++;
+				// 			}
 
 
 
-							echo "</tbody></table>";
 							?>
+						</tbody>
+					</table>	
 				</div>
 			</div>
+			
 
+        <script>
+            $(document).ready(function() {
+                var table = $('#example11').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    lengthChange: false,
+                    displayStart: getPageFromUrl() * 10,
+                    pageLength: 10,
+                    "ajax": {
+                          "url": 'modul/mod_lapstok/barang_stok_serverside.php',
+                          "type": 'POST'
+                        },
+                    columns: [
+                        { data: 'no' },
+                        { data: 'kd_barang' },
+                        { data: 'nm_barang' },
+                        { data: 'penjualan_cepat', className: 'text-center' },
+                        { data: 'stok_masuk', className: 'text-center' },
+                        { data: 'penjualan_setelah', className: 'text-center' },
+                        { data: 'stok_real', className: 'text-center' },
+                        { data: 'koreksi', orderable: false, searchable: false }
+                    ]
+                });
+                
+                table.on('draw', function () {
+                    const info = table.page.info();
+                    const currentPage = info.page + 1; // konversi ke 1-based
+                    const url = new URL(window.location);
+                    url.searchParams.set('page', currentPage);
+                    window.history.pushState({}, '', url);
+                });
+                
+                
+                $('#example11 tbody').on('click', '#btn_koreksi', function () {
+                    var id = $(this).data('id');
+                    var currentPage = table.page() + 1;
+                    location.href = '?module=koreksistok&act=edit&id='+id+'&page='+currentPage;
+                });
+                        
+                $('#btn_cancel').on('click', function(){
+                    // var currentPage = $(this).data('page');
+                    var currentPage = getPageFromUrl() + 1
+                    location.href = '?module=koreksistok&page='+currentPage;
+                    
+                });
+                
+                function getPageFromUrl() {
+                    const params = new URLSearchParams(window.location.search);
+                    const page = parseInt(params.get("page"));
+                    return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+                }
+            });
+        </script>
 <?php
 
     
@@ -198,19 +304,21 @@ switch($_GET[act]){
 
 
 
+<script type="text/javascript" src="..vendors/ckeditor/ckeditor.js"></script>
 <script type="text/javascript">
- $(function(){
-  $(".datepicker").datepicker({
-      format: 'yyyy-mm-dd',
-      autoclose: true,
-      todayHighlight: true,
-  });
- });
- <script type="text/javascript" src="..vendors/ckeditor/ckeditor.js"></script>
-<script type="text/javascript">
+    $(function(){
+        $(".datepicker").datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true,
+        });
+    });
+ 
     var editor = CKEDITOR.replace("content", {
         filebrowserBrowseUrl    : '',
         filebrowserWindowWidth  : 1000,
         filebrowserWindowHeight : 500
     });
-    </script>
+</script>
+        
+        

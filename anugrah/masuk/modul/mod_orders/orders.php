@@ -114,6 +114,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 			$tglharini = date('Y-m-d');
 			$tgl_akhir = date('Y-m-d');
 			$tgl_awal = date('Y-m-d', strtotime('-30 days', strtotime($tgl_awal)));
+    
             echo "<small>F1 => Simpan Detail || F2 => Simpan Transaksi</small>";
 				
 			echo "
@@ -337,7 +338,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 											<div class='buttons'>
 											  <button type='button' class='btn btn-primary right-block' onclick='simpan_transaksi();'>SIMPAN TRANSAKSI</button>
 												&nbsp&nbsp&nbsp
-												<input class='btn btn-danger' type='button' value=BATAL onclick=self.history.back()>
+												<input class='btn btn-danger' type='button' value=BATAL id='btn_cancel' page='".$_GET['page']."'>
 											</div>
 								  
 										</div>
@@ -1017,4 +1018,13 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
             simpan_transaksi();
         }
     });
+    
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'F3' || event.keyCode === 114) {
+            event.preventDefault(); // Mencegah help browser muncul
+            // simpan_detail();
+            $('#dp_bayar').focus();
+        }
+    });
+    
 </script>

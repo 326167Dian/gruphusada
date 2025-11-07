@@ -32,7 +32,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					<br><br>
 
 
-					<table id="example1" class="table table-bordered table-striped">
+					<table id="example11" class="table table-bordered table-striped">
 						<thead>
 							<tr>
 								<th>No</th>
@@ -57,45 +57,45 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 						</thead>
 						<tbody>
 							<?php
-							$no = 1;
-							while ($r = mysqli_fetch_array($tampil_waktukerja)) {
-								$rupiahawal = format_rupiah($r['saldoawal']);
-								$rupiahakhir = format_rupiah($r['saldoakhir']);
-								echo "<tr class='warnabaris' >
-											<td>$no</td>           
-											 <td>$r[petugasbuka]</td>
-											 <td>$r[petugastutup]</td>
-											 <td>$r[shift]</td>
-											 <td>$r[tanggal]</td>
-											 <td>$r[waktubuka]</td>
-											 <td>$r[waktututup]</td>
-											 <td align='center'>$rupiahawal</td>
-											 <td align='center'>$rupiahakhir</td>
-											 <td align='center'>$r[status]</td>";
-								$lupa = $_SESSION['level'];
-								if ($lupa == 'pemilik') {
-									echo "<td>
-									<a href='?module=shiftkerja&act=editkoreksi&id=$r[id_shift]' title='EDIT' class='glyphicon glyphicon-pencil'>&nbsp</a> 
+				// 			$no = 1;
+				// 			while ($r = mysqli_fetch_array($tampil_waktukerja)) {
+				// 				$rupiahawal = format_rupiah($r['saldoawal']);
+				// 				$rupiahakhir = format_rupiah($r['saldoakhir']);
+				// 				echo "<tr class='warnabaris' >
+				// 							<td>$no</td>           
+				// 							 <td>$r[petugasbuka]</td>
+				// 							 <td>$r[petugastutup]</td>
+				// 							 <td>$r[shift]</td>
+				// 							 <td>$r[tanggal]</td>
+				// 							 <td>$r[waktubuka]</td>
+				// 							 <td>$r[waktututup]</td>
+				// 							 <td align='center'>$rupiahawal</td>
+				// 							 <td align='center'>$rupiahakhir</td>
+				// 							 <td align='center'>$r[status]</td>";
+				// 				$lupa = $_SESSION['level'];
+				// 				if ($lupa == 'pemilik') {
+				// 					echo "<td>
+				// 					<a href='?module=shiftkerja&act=editkoreksi&id=$r[id_shift]' title='EDIT' class='glyphicon glyphicon-pencil'>&nbsp</a> 
 									
-									<a href=javascript:confirmdelete('$aksi?module=shiftkerja&act=hapus&id=$r[id_shift]') title='HAPUS' class='glyphicon glyphicon-remove'>&nbsp</a>
+				// 					<a href=javascript:confirmdelete('$aksi?module=shiftkerja&act=hapus&id=$r[id_shift]') title='HAPUS' class='glyphicon glyphicon-remove'>&nbsp</a>
 									
-									<a class='glyphicon glyphicon-print' onclick=\"javascript:window.open('modul/mod_shiftkerja/laporanshiftday.php?idshift=$r[id_shift]','nama window','width=500,height=600,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,copyhistory=no')\">&nbsp</a>
-											 </td> ";
-								} else {
-									echo "<td>
-									<a class='glyphicon glyphicon-print' onclick=\"javascript:window.open('modul/mod_shiftkerja/laporanshiftday.php?idshift=$r[id_shift]','nama window','width=500,height=600,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,copyhistory=no')\">&nbsp</a>
-											 </td> ";
-								}
+				// 					<a class='glyphicon glyphicon-print' onclick=\"javascript:window.open('modul/mod_shiftkerja/laporanshiftday.php?idshift=$r[id_shift]','nama window','width=500,height=600,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,copyhistory=no')\">&nbsp</a>
+				// 							 </td> ";
+				// 				} else {
+				// 					echo "<td>
+				// 					<a class='glyphicon glyphicon-print' onclick=\"javascript:window.open('modul/mod_shiftkerja/laporanshiftday.php?idshift=$r[id_shift]','nama window','width=500,height=600,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,copyhistory=no')\">&nbsp</a>
+				// 							 </td> ";
+				// 				}
 
 
-								echo " <!--	 <td><a href='?module=satuan&act=edit&id=$r[id_satuan]' title='EDIT' class='btn btn-warning btn-xs'>EDIT</a> 
-											 <a href=javascript:confirmdelete('$aksi?module=satuan&act=hapus&id=$r[id_satuan]') title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</a>
-											 </td>
-										-->	 
+				// 				echo " <!--	 <td><a href='?module=satuan&act=edit&id=$r[id_satuan]' title='EDIT' class='btn btn-warning btn-xs'>EDIT</a> 
+				// 							 <a href=javascript:confirmdelete('$aksi?module=satuan&act=hapus&id=$r[id_satuan]') title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</a>
+				// 							 </td>
+				// 						-->	 
 											
-										</tr>";
-								$no++;
-							}
+				// 						</tr>";
+				// 				$no++;
+				// 			}
 				// 			echo "</tbody></table>";
 							?>
 						</tbody>
@@ -103,7 +103,80 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				</div>
 			</div>
 
-
+            <script>
+                $(document).ready(function() {
+                    var table = $('#example11').DataTable({
+                       "processing": true,
+                        "serverSide": true,
+                        "lengthChange": false,
+                        "displayStart": getPageFromUrl() * 10,
+                        "pageLength": 10,
+                        "order": [[ 0, "desc" ]],
+                        "ajax": {
+                            "url": "modul/mod_shiftkerja/shift_serverside.php",
+                            "type": "post",
+                            "dataType": "json",
+                            "error": function (xhr, error, thrown) {
+                                console.log("XHR Response:", xhr.responseText);
+                                alert("Error: " + xhr.status + " - " + thrown);
+                            }
+                        },
+                        "columns": [
+                            { "data": "no","className": "text-center" },
+                            { "data": "petugasbuka" },
+                            { "data": "petugastutup" },
+                            { "data": "shift","className": "text-center" },
+                            { "data": "tanggal" },
+                            { "data": "waktubuka" },
+                            { "data": "waktututup" },
+                            { 
+                                "data": "saldoawal", 
+                                "className": "text-right",
+            					"render": function(data, type, row) {
+            						return formatRupiah(data);
+            					}
+                            },
+                            { 
+                                "data": "saldoakhir",
+                                "className": "text-right",
+            					"render": function(data, type, row) {
+            						return formatRupiah(data);
+            					}
+                            },
+                            { "data": "status" },
+                            { "data": "koreksi", "orderable": false, "searchable": false, "className":"text-center" }
+                        ]
+                    });
+                    
+                    table.on('draw', function () {
+                        const info = table.page.info();
+                        const currentPage = info.page + 1; // konversi ke 1-based
+                        const url = new URL(window.location);
+                        url.searchParams.set('page', currentPage);
+                        window.history.pushState({}, '', url);
+                    });
+                    
+                    // Tombol hapus
+                    $('#example11 tbody').on('click', '#btn_hapus', function () {
+                        var id = $(this).data('id');
+                    
+                        if (confirm('Anda yakin ingin menghapus?') == true) {
+                            $.ajax({
+                				url: 'modul/mod_shiftkerja/aksi_shiftkerja.php?module=shiftkerja&act=hapus&id='+id,
+                				type: 'POST',
+                			}).success(function() {
+                			    table.ajax.reload(null, false);
+                			});
+                        } 
+                    });
+        
+                    function getPageFromUrl() {
+                        const params = new URLSearchParams(window.location.search);
+                        const page = parseInt(params.get("page"));
+                        return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+                    }
+                });
+            </script>
 <?php
 
 			break;

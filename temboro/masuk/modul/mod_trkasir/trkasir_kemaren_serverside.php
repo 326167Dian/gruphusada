@@ -24,7 +24,7 @@ $orderColIx = $_POST['order'][0]['column'] ?? 0;
 $orderDir   = strtolower($_POST['order'][0]['dir'] ?? 'desc');
 
 // Validasi input order
-$order_column = $columns[$orderColIx] ?? 'b.id_barang';
+$order_column = $columns[$orderColIx] ?? 'trkasir.id_trkasir';
 $order_dir = in_array($orderDir, ['asc', 'desc']) ? $orderDir : 'desc';
 
 $tgl_awal = date('Y-m-d');

@@ -116,7 +116,7 @@ $pdf->SetFont('Arial', '', 10);
 $no = 1;
 $query1 = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT *
 FROM ordersdetail
-WHERE kd_trbmasuk = '$kdorders'");
+WHERE kd_trbmasuk = '$kdorders' ORDER BY id_dtrbmasuk ASC");
 
 while ($lihat = mysqli_fetch_array($query1)) {
     $qty = ($lihat['qtygrosir_dtrbmasuk'] == "") ? $lihat['qty_dtrbmasuk'] : $lihat['qtygrosir_dtrbmasuk'];

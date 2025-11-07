@@ -155,9 +155,9 @@ switch($_GET['act']){
 
                     <hr>
 
-                    <CENTER><strong>REKAP STOK OPNAME</strong></CENTER>
-
-                    <hr>
+                    <CENTER><strong>REKAP STOK OPNAME</strong><br>
+                    <a  class ='btn  btn-success btn-flat' href='modul/mod_laporan/cetak_rekap_stokopname_harian.php?shift=<?=$_GET['shift']?>&tgl=<?=$_GET['start']?>' target="_blank"><i class="fa fa-print"></i>&nbsp; Cetak</a></CENTER>
+					<hr>
                     <div id="tabel_stokopname_rekap"></div>
                 </div>
 
@@ -231,7 +231,7 @@ switch($_GET['act']){
                         },
                         success: function(data) {
                             $('#tabel_stokopname').html(data);
-                            console.log(data)
+                            // console.log(data)
                         }
 
                     });

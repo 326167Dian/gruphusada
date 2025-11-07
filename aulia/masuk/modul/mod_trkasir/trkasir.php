@@ -1049,7 +1049,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 <!-- Modal itemmat -->
 <div id="ModalItem" class="modal fade" role="dialog">
-	<div class="modal-lg modal-dialog">
+	<div class="modal-lg modal-dialog" style="width:90%">
 		<div class="modal-content table-responsive">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>

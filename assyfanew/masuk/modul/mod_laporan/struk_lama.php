@@ -104,7 +104,7 @@ $pdf->Cell(1, 0.5, 'Hrg', 0, 0, 'R');
 $pdf->Cell(1, 0.5, 'Jml', 0, 1, 'R');
 
 $pdf->SetX(0.2);
-$pdf->SetFont('Arial', 'B', 8);
+$pdf->SetFont('Arial', 'B', 6);
 
 $no = 1;
 $query = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir_detail WHERE kd_trkasir='$_GET[kd_trkasir]'
@@ -118,8 +118,10 @@ while ($r2 = mysqli_fetch_array($query)) {
 	$subtotal = format_rupiah($gt);
 	$pdf->SetX(0.2);
 	$text4 = substr($r2['kd_barang'],0,8);
+// 	$text4 = substr($r2['nmbrg_dtrkasir'],0,8);
 
 	$pdf->Cell(1.5, 0.4, $text4, 0, 0, 'L');
+// 	$pdf->Cell(1.5, 0.4, $r2['nmbrg_dtrkasir'], 0, 0, 'L');
 	$pdf->Cell(0.5, 0.4, $r2['qty_dtrkasir'], 0, 0, 'R');
 	$pdf->Cell(0.5, 0.4, $r2['sat_dtrkasir'], 0, 0, 'C');
 	$pdf->Cell(1, 0.4, format_rupiah($r2['hrgjual_dtrkasir']), 0, 0, 'R');

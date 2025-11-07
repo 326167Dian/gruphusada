@@ -100,11 +100,15 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
             <script>
                 $(document).ready(function() {
-                    $("#tes").DataTable({
+                    var table = $("#tes").DataTable({
                         processing: true,
                         serverSide: true,
+                        lengthChange: false,
+                        displayStart: getPageFromUrl() * 10,
+                        pageLength: 10,
+                        order: [[ 0, "desc" ]],
                         ajax: {
-                            "url": "modul/mod_trbmasukpbf/trbmasuk-serverside.php?action=table_data",
+                            "url": "modul/mod_trbmasukpbf/trbmasukpbf-serverside.php?action=table_data",
                             "dataType": "JSON",
                             "type": "POST"
                         },
@@ -161,6 +165,27 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                             },
                         ]
                     });
+                    
+                    table.on('draw', function () {
+                        const info = table.page.info();
+                        const currentPage = info.page + 1; // konversi ke 1-based
+                        const url = new URL(window.location);
+                        url.searchParams.set('page', currentPage);
+                        window.history.pushState({}, '', url);
+                    });
+        
+					function getPageFromUrl() {
+                        const params = new URLSearchParams(window.location.search);
+                        const page = parseInt(params.get("page"));
+                        return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+                    }
+                    
+                    // Button Tampil
+                    $('#tes tbody').on('click', '#btn_tampil', function () {
+                        var id = $(this).data('id');
+                        var currentPage = table.page() + 1;
+                        location.href = '?module=trbmasukpbf&act=ubah&id='+id+'&lastpage=trbmasukpbf&page='+currentPage; 
+                    });
                 });
             </script>
         <?php
@@ -180,17 +205,17 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                 $kdunik = date('dmyHis');
                 $kdtransaksi = "BMP-" . $kdunik;
                 $cekkd2 = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM kdbm WHERE kd_trbmasuk='$kdtransaksi'");
-			    $ketemucekkd2 = mysqli_num_rows($cekkd2);
-			    if ($ketemucekkd2 > 0) {
-			        $kdunik2 = date('dmyHis') + 1;
-				    $kdtransaksi = "BMP-" . $kdunik2;
-				       
-			    }
+				$ketemucekkd2 = mysqli_num_rows($cekkd2);
+				if($ketemucekkd2 > 0){
+				    $kdunik2 = date('dmyHis') + 1;
+                    $kdtransaksi = "BMP-" . $kdunik2;
+				} 
                 mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kdbm(kd_trbmasuk,id_resto,id_admin) VALUES('$kdtransaksi','pusat','$_SESSION[idadmin]')");
             }
 
             $tglharini = date('Y-m-d');
-
+            echo "<small>F1 => Simpan Detail || F2 => Simpan Transaksi || F3 => Input Jumlah Bayar</small>";
+				
             echo "
 		  <div class='box box-primary box-solid table-responsive'>
 				<div class='box-header with-border'>
@@ -263,7 +288,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 													<input type='date' class='datepicker' name='jatuhtempo' id='jatuhtempo' required='required'  autocomplete='off'>
 											</div>	
 											<div class='buttons'>
-												<button type='button' class='btn btn-primary right-block' onclick='simpan_transaksi();'>SIMPAN TRANSAKSI</button>
+												<button type='button' class='btn btn-primary right-block' onclick='simpan_transaksi();'>SIMPAN TRANSAKSI [F2]</button>
 												&nbsp&nbsp&nbsp
 												<input class='btn btn-danger' type='button' value=KEMBALI onclick=self.history.back()>
 												</div>
@@ -344,7 +369,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 											<input type='date' class='datepicker' name='exp_date' id='exp_date' required='required' autocomplete='off'>
 											</p>
 												<div class='buttons'>
-													<button type='button' class='btn btn-success right-block' onclick='simpan_detail();'>SIMPAN DETAIL</button>
+													<button type='button' class='btn btn-success right-block' onclick='simpan_detail();'>SIMPAN DETAIL [F1]</button>
 												</div>
 										</div>
 										
@@ -451,10 +476,10 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 													<input type='text' class='datepicker' name='tgl_trbmasuk' id='tgl_trbmasuk' required='required' value='$re[jatuhtempo]' autocomplete='off'>
 											    </div>	
 											<div class='buttons'>
-											  <button type='button' class='btn btn-primary right-block' onclick='simpan_transaksi();'>SIMPAN TRANSAKSI</button>
+											  <button type='button' class='btn btn-primary right-block' onclick='simpan_transaksi();'>SIMPAN TRANSAKSI [F2]</button>
 												&nbsp&nbsp&nbsp
 											</div>    
-											<input class='btn btn-primary' type='button' value=TUTUP onclick=self.history.back()>
+											<input class='btn btn-primary' type='button' value=TUTUP id='btn_tutup' data-page='".$_GET['page']."' data-lastpage='".$_GET['lastpage']."'>
 										</div>
 											
 									
@@ -533,7 +558,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 											<input type='text' class='datepicker' name='exp_date' id='exp_date' required='required' autocomplete='off'>
 											</p>
 												<div class='buttons'>
-													<button type='button' class='btn btn-success right-block' onclick='simpan_detail();'>SIMPAN DETAIL</button>
+													<button type='button' class='btn btn-success right-block' onclick='simpan_detail();'>SIMPAN DETAIL [F1]</button>
 												</div>
 										</div>
 										
@@ -868,6 +893,13 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 <script>
     $(document).ready(function() {
         tabel_detail();
+        $("#hrgjual_dtrbmasuk").mask('000.000.000.000.000', {
+            reverse: true
+        });
+        $("#hnasat_dtrbmasuk").mask('000.000.000.000.000', {
+            reverse: true
+        });
+        
         $(".datepicker").datepicker({
             format: 'yyyy-mm-dd',
             autoclose: true,
@@ -915,8 +947,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 						document.getElementById('qty_dtrbmasuk').value = qty_default;
 						document.getElementById('sat_dtrbmasuk').value = data.sat_barang;
-						document.getElementById('hnasat_dtrbmasuk').value = data.hna;
-						document.getElementById('hrgjual_dtrbmasuk').value = data.hrgjual_barang;
+						document.getElementById('hnasat_dtrbmasuk').value = formatRupiah(Math.ceil(data.hna));
+						document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(data.hrgjual_barang);
 						document.getElementById('diskon').value = diskon_default;
 					}
 
@@ -948,8 +980,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 				document.getElementById('qty_dtrbmasuk').value = qty_default;
 				document.getElementById('sat_dtrbmasuk').value = data.sat_barang;
-				document.getElementById('hnasat_dtrbmasuk').value = data.hna;
-				document.getElementById('hrgjual_dtrbmasuk').value = data.hrgjual_barang;
+				document.getElementById('hnasat_dtrbmasuk').value = formatRupiah(data.hna);
+				document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(data.hrgjual_barang);
 				document.getElementById('diskon').value = diskon_default;
 			}
 
@@ -1027,8 +1059,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
         document.getElementById('stok_barang').value = stok_barang;
         document.getElementById('qty_dtrbmasuk').value = qty_default;
         document.getElementById('sat_dtrbmasuk').value = sat_barang;
-        document.getElementById('hnasat_dtrbmasuk').value = hna;
-        document.getElementById('hrgjual_dtrbmasuk').value = hrgjual_dtrbmasuk;
+        document.getElementById('hnasat_dtrbmasuk').value = formatRupiah(hna);
+        document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(hrgjual_dtrbmasuk);
         document.getElementById('diskon').value = diskon_default;
 
         //hilangkan modal
@@ -1056,16 +1088,18 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
     function simpan_detail() {
 
-        var kd_trbmasuk = document.getElementById('kd_trbmasuk').value;
-        var id_barang = document.getElementById('id_barang').value;
-        var kd_barang = document.getElementById('kd_barang').value;
-        var nmbrg_dtrbmasuk = document.getElementById('nmbrg_dtrbmasuk').value;
-        var stok_barang = document.getElementById('stok_barang').value;
-        var qty_dtrbmasuk = document.getElementById('qty_dtrbmasuk').value;
-        var sat_dtrbmasuk = document.getElementById('sat_dtrbmasuk').value;
-        var hnasat_dtrbmasuk = document.getElementById('hnasat_dtrbmasuk').value;
-        var hrgjual_dtrbmasuk = document.getElementById('hrgjual_dtrbmasuk').value;
-        var diskon = document.getElementById('diskon').value;
+        var kd_trbmasuk         = document.getElementById('kd_trbmasuk').value;
+        var id_barang           = document.getElementById('id_barang').value;
+        var kd_barang           = document.getElementById('kd_barang').value;
+        var nmbrg_dtrbmasuk     = document.getElementById('nmbrg_dtrbmasuk').value;
+        var stok_barang         = document.getElementById('stok_barang').value;
+        var qty_dtrbmasuk       = document.getElementById('qty_dtrbmasuk').value;
+        var sat_dtrbmasuk       = document.getElementById('sat_dtrbmasuk').value;
+        var hnasat_dtrbmasuk1   = document.getElementById('hnasat_dtrbmasuk').value;
+        var hnasat_dtrbmasuk    = hnasat_dtrbmasuk1.replace(/\./g, '');
+        var hrgjual_dtrbmasuk1  = document.getElementById('hrgjual_dtrbmasuk').value;
+        var hrgjual_dtrbmasuk   = hrgjual_dtrbmasuk1.replace(/\./g, '');
+        var diskon              = document.getElementById('diskon').value;
 
         var no_batch = document.getElementById('no_batch').value;
         var exp_date = document.getElementById('exp_date').value;
@@ -1201,30 +1235,33 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
     function simpan_transaksi() {
 
-        var stt_aksi = document.getElementById('stt_aksi').value;
-        var id_trbmasuk = document.getElementById('id_trbmasuk').value;
-        var kd_trbmasuk = document.getElementById('kd_trbmasuk').value;
-        var tgl_trbmasuk = document.getElementById('tgl_trbmasuk').value;
-        var nm_supplier = document.getElementById('nm_supplier').value;
-        var id_supplier = document.getElementById('id_supplier').value;
-        var petugas = document.getElementById('petugas').value;
-        var tlp_supplier = document.getElementById('tlp_supplier').value;
+        var stt_aksi        = document.getElementById('stt_aksi').value;
+        var id_trbmasuk     = document.getElementById('id_trbmasuk').value;
+        var kd_trbmasuk     = document.getElementById('kd_trbmasuk').value;
+        var tgl_trbmasuk    = document.getElementById('tgl_trbmasuk').value;
+        var nm_supplier     = document.getElementById('nm_supplier').value;
+        var id_supplier     = document.getElementById('id_supplier').value;
+        var petugas         = document.getElementById('petugas').value;
+        var tlp_supplier    = document.getElementById('tlp_supplier').value;
         var alamat_trbmasuk = document.getElementById('alamat_supplier').value;
-        var ket_trbmasuk = document.getElementById('ket_trbmasuk').value;
-        var jatuhtempo = document.getElementById('jatuhtempo').value;
-        var ttl_trkasir = document.getElementById('ttl_trkasir').value;
-        var dp_bayar = document.getElementById('dp_bayar').value;
-        var sisa_bayar = document.getElementById('sisa_bayar').value;
-        var carabayar = document.getElementById('carabayar').value;
+        var ket_trbmasuk    = document.getElementById('ket_trbmasuk').value;
+        var jatuhtempo      = document.getElementById('jatuhtempo').value;
+        var ttl_trkasir     = document.getElementById('ttl_trkasir').value;
+        var dp_bayar        = document.getElementById('dp_bayar').value;
+        var sisa_bayar      = document.getElementById('sisa_bayar').value;
+        var carabayar       = document.getElementById('carabayar').value;
 
-        var ttl_trkasir1 = ttl_trkasir.replace(".", "");
-        var dp_bayar1 = dp_bayar.replace(".", "");
-        var sisa_bayar1 = sisa_bayar.replace(".", "");
+        // var ttl_trkasir1 = ttl_trkasir.replace(".", "");
+        // var dp_bayar1 = dp_bayar.replace(".", "");
+        // var sisa_bayar1 = sisa_bayar.replace(".", "");
 
-        var ttl_trkasir1x = ttl_trkasir1.replace(".", "");
-        var dp_bayar1x = dp_bayar1.replace(".", "");
-        var sisa_bayar1x = sisa_bayar1.replace(".", "");
-
+        // var ttl_trkasir1x = ttl_trkasir1.replace(".", "");
+        // var dp_bayar1x = dp_bayar1.replace(".", "");
+        // var sisa_bayar1x = sisa_bayar1.replace(".", "");
+        var ttl_trkasir1x   = ttl_trkasir.replace(/\./g, '');
+		var dp_bayar1x      = dp_bayar.replace(/\./g, '');
+		var sisa_bayar1x    = sisa_bayar.replace(/\./g, '');
+		
         if (nm_supplier == "") {
             alert('Belum ada data supplier');
         } else {
@@ -1258,4 +1295,25 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
             });
         }
     }
+    
+    // Button Tutup Form
+    $('#btn_tutup').on('click', function(){
+        var currentPage = $(this).data('page');
+        var lastpage = $(this).data('lastpage');
+        location.href = '?module='+lastpage+'&page='+currentPage;
+    });
+    
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'F1' || event.keyCode === 112) {
+            event.preventDefault(); // Mencegah help browser muncul
+            simpan_detail();
+        }
+    });
+	
+	document.addEventListener('keydown', function(event) {
+        if (event.key === 'F2' || event.keyCode === 113) {
+            event.preventDefault(); // Mencegah help browser muncul
+            simpan_transaksi();
+        }
+    });
 </script>

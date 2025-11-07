@@ -16,7 +16,7 @@ if ($_GET['action'] == "table_data") {
         9 => 'id_barang'
     );
 
-    $querycount = $db->query("SELECT count(id_barang) as jumlah FROM barang WHERE isactive = 'active'");
+    $querycount = $db->query("SELECT count(id_barang) as jumlah FROM barang");
     $datacount = $querycount->fetch_array();
 
     $totalData = $datacount['jumlah'];
@@ -38,9 +38,7 @@ if ($_GET['action'] == "table_data") {
                                     hrgsat_barang,
                                     hrgjual_barang,
                                     indikasi
-            FROM barang 
-            WHERE isactive = 'active'
-            ORDER BY $order $dir LIMIT $limit OFFSET $start");
+            FROM barang ORDER BY $order $dir LIMIT $limit OFFSET $start");
     } else {
         $search = $_POST['search']['value'];
         $query = $db->query("SELECT id_barang,
@@ -52,18 +50,18 @@ if ($_GET['action'] == "table_data") {
                                     hrgsat_barang,
                                     hrgjual_barang,
                                     indikasi 
-            FROM barang WHERE isactive = 'active' AND ( kd_barang LIKE '%$search%' 
+            FROM barang WHERE kd_barang LIKE '%$search%' 
                         OR nm_barang LIKE '%$search%'
                         OR stok_barang LIKE '%$search%'
                         OR sat_barang LIKE '%$search%'
                         OR jenisobat LIKE '%$search%'
                         OR hrgsat_barang LIKE '%$search%'
                         OR hrgjual_barang LIKE '%$search%'
-                        OR indikasi LIKE '%$search%' ) 
+                        OR indikasi LIKE '%$search%' 
             ORDER BY $order $dir LIMIT $limit OFFSET $start");
 
         $querycount = $db->query("SELECT count(id_barang) as jumlah 
-            FROM barang WHERE isactive = 'active' AND kd_barang LIKE '%$search%' 
+            FROM barang WHERE kd_barang LIKE '%$search%' 
                         OR nm_barang LIKE '%$search%'
                         OR stok_barang LIKE '%$search%'
                         OR sat_barang LIKE '%$search%'
@@ -89,7 +87,7 @@ if ($_GET['action'] == "table_data") {
             $nestedData['hrgsat_barang'] = $value['hrgsat_barang'];
             $nestedData['hrgjual_barang'] = $value['hrgjual_barang'];
             $nestedData['indikasi'] = $value['indikasi'];
-            $nestedData['aksi'] = $value['id_barang'];
+            $nestedData['aksi'] = $value['id_barang'];;
             $data[] = $nestedData;
             $no++;
         }

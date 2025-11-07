@@ -6,11 +6,15 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 } else {
 
 	$aksi = "modul/mod_admin/aksi_admin.php";
+	$page = isset($_GET['page']) ? intval($_GET['page']) : 0;
+	
 	switch ($_GET['act']) {
 			// Tampil User
 		default:
+		    
 			if ($_SESSION['leveluser'] == 'admin') {
-				$tampil_admin = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM admin where id_admin !=3 ORDER BY id_admin DESC");
+				// $tampil_admin = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM admin where id_admin !=3 ORDER BY username");
+				$tampil_admin = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM admin where id_admin !=2 ORDER BY id_admin DESC");
 ?>
 				<div class="box box-primary box-solid">
 					<div class="box-header with-border">
@@ -21,6 +25,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					</div>
 					<div class="box-body table-responsive">
 						<a class='btn  btn-success btn-flat' href='?module=admin&act=tambahadmin'>Tambah</a>
+						<input type="hidden" id="page" value="<?=$page?>">
 						<br><br>
 						<table id="example11" class="table table-bordered table-striped">
 							<thead>
@@ -47,18 +52,20 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									 <td>";
 									if ($_SESSION['level'] == 'pemilik') :
 										if ($r['id_admin'] == "1") {
-											echo "<a href='?module=admin&act=editadmin&id=$r[id_admin]' title='Edit' class='btn btn-warning btn-xs'>EDIT</a>
-									 ";
-										} else {
-								// 			echo "
-								// 	 <a href='?module=admin&act=editadmin&id=$r[id_admin]' title='Edit' class='btn btn-warning btn-xs'>EDIT</a>
-								// 	 <a href=javascript:confirmdelete('$aksi?module=admin&act=hapus&id=$r[id_admin]') title='Hapus' class='btn btn-danger btn-xs'>HAPUS</a>
-								// 	 ";
-								
+								// 			echo "<a href='?module=admin&act=editadmin&id=$r[id_admin]' title='Edit' class='btn btn-warning btn-xs'>EDIT</a>";
 								            echo "
         									 <button type='button' class='btn btn-warning btn-xs' id='btn_edit' data-id='$r[id_admin]'>EDIT</button>
-        									 <button type='button' class='btn btn-danger btn-xs' id='btn_hapus' data-id='$r[id_admin]'>HAPUS</button>
         									 ";
+										} else {
+								// 			echo "
+        // 									 <a href='?module=admin&act=editadmin&id=$r[id_admin]' title='Edit' class='btn btn-warning btn-xs'>EDIT</a>
+        // 									 <a href=javascript:confirmdelete('$aksi?module=admin&act=hapus&id=$r[id_admin]') title='Hapus' class='btn btn-danger btn-xs'>HAPUS</a>
+        // 									 ";
+        									 
+        									 	echo "
+            									 <button type='button' class='btn btn-warning btn-xs' id='btn_edit' data-id='$r[id_admin]'>EDIT</button>
+            									 <button type='button' class='btn btn-danger btn-xs' id='btn_hapus' data-id='$r[id_admin]'>HAPUS</button>
+            									 ";
 										}
 									endif;
 									echo "
@@ -71,14 +78,14 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					</div>
 				</div>
 
-
+                
 <?php
 			} else {
 				echo "<link href=../css/style.css rel=stylesheet type=text/css>";
 				echo "<div class='error msg'>Anda tidak berhak mengakses halaman ini.</div>";
 			}
 			break;
-
+       
 		case "tambahadmin":
 			if ($_SESSION['leveluser'] == 'admin') {
 				echo "
@@ -90,7 +97,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                     </div><!-- /.box-tools -->
 				</div>
 				<div class='box-body'>
-						<form method=POST action='$aksi?module=admin&act=input_admin' class='form-horizontal'>
+						<form method=POST action='$aksi?module=admin&act=input_admin' class='form-horizontal' id='frmAddAdmin'>
 							  <div class='form-group'>
 									<label class='col-sm-2 control-label'>Username</label>        		
 									 <div class='col-sm-3'>
@@ -196,7 +203,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-5'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-danger' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel'>
 										</div>
 								</div>
 								
@@ -419,7 +426,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-5'>
 											<input class='btn btn-primary' type=submit value='SIMPAN'>
-											<input class='btn btn-danger' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel' data-page='".$_GET['page']."'>
 										</div>
 								</div>
 								
@@ -433,8 +440,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 	}
 	
 	?>
-	
-	<script>
+	    <script>
             $(document).ready(function() {
                 
                 var table = $('#example11').DataTable({
@@ -510,7 +516,6 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                  
         </script>
 
-	
 	<?php
 }
 ?>

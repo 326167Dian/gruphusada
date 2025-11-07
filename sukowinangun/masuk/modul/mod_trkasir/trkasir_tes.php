@@ -28,7 +28,7 @@ if (empty($_SESSION['username']) AND empty($_SESSION['passuser'])){
 			<table id="example11" class="table table-bordered table-striped" >
 				<thead>
 					<tr>
-						<th>No</th>
+						<th width="5%">No</th>
 						<th>Kode</th>
 						<th>Tanggal</th>
 						<th>Pelanggan</th>
@@ -164,7 +164,7 @@ if (empty($_SESSION['username']) AND empty($_SESSION['passuser'])){
         			});
                 } 
             });
-                
+            
             function getPageFromUrl() {
                 const params = new URLSearchParams(window.location.search);
                 const page = parseInt(params.get("page"));

@@ -43,8 +43,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 	$sisa = $stok_fisik - $selisih;
 	$total_sisa = $sisa * $hrgsat_barang;
 	$tgl_stok = $_POST['tgl_awal'];
-    $tgl_current = date('Y-m-d H:i:s', time());
-    
+	$tgl_current = date('Y-m-d H:i:s', time());
+
 	mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO stok_opname(id_barang,
 										 kd_barang,
 										 stok_sistem,

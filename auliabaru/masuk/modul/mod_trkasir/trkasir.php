@@ -19,8 +19,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 			} else {
 			    $tampil_trkasir = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir  
                                     where tgl_trkasir = '$tgl_awal' order by id_trkasir desc limit 1");
-			}                        
-
+			}       
 
 			/*$tgl_awal = date('Y-m-d');
       $tgl_akhir = date('Y-m-d', strtotime('-7 days', strtotime( $tgl_awal)));
@@ -346,12 +345,11 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					$kdunik = date('dmyHis');
 					$kdtransaksi = "TKP-" . $kdunik;
 					$cekkd2 = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM kdtk WHERE kd_trkasir='$kdtransaksi'");
-					$ketemucekkd2 = mysqli_num_rows($cekkd2);
-					if($ketemucekkd2 > 0){
-					    $kdunik2 = date('dmyHis') + 1;
+				    $ketemucekkd2 = mysqli_num_rows($cekkd2);
+				    if ($ketemucekkd2 > 0) {
+				        $kdunik2 = date('dmyHis') + 1;
 					    $kdtransaksi = "TKP-" . $kdunik2;
-					
-					} 
+				    }
 					mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kdtk(kd_trkasir,id_admin) VALUES('$kdtransaksi','$_SESSION[idadmin]')");
 				}
 
@@ -365,7 +363,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				} else {
 				    $disabled = "disabled";
 				}
-                
+				
                 echo "<small>F1 => Simpan Detail || F2 => Simpan Transaksi || F3 => Input Jumlah Bayar</small>";
 				echo "
 		  <div class='box box-primary box-solid table-responsive'>
@@ -1051,7 +1049,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 <!-- Modal itemmat -->
 <div id="ModalItem" class="modal fade" role="dialog">
-	<div class="modal-lg modal-dialog">
+	<div class="modal-lg modal-dialog" style="width:90%">
 		<div class="modal-content table-responsive">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -1082,8 +1080,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 							<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Pilih</th>
 							<!--<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Harga Grosir</th>-->
 							<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Harga Jual</th>
+							<!--<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Komisi</th>-->
 							<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Komposisi</th>
-							<!--<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Pilih</th>-->
 						</tr>
 					</thead>
 					<tbody>
@@ -1267,7 +1265,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				},
 				{
 					"data": "pilih",
-					"className": 'text-center',
+					"className": 'text-center'
 				},
 				// {
 				// 	"data": "ket_barang",
@@ -1282,14 +1280,18 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 						return formatRupiah(data);
 					}
 				},
+				// {
+				// 	"data": "komisi",
+				// 	"className": 'text-right',
+				// 	"render": function(data, type, row) {
+				// 		return formatRupiah(data);
+				// 	}
+				// },
 				{
 					"data": "indikasi",
 					"className": 'text-center'
 				},
-				// {
-				// 	"data": "pilih",
-				// 	"className": 'text-center'
-				// },
+				
 			],
 			"footerCallback": function(row, data, start, end, display) {
 				// console.log(row);
@@ -1385,17 +1387,17 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				type: 'post',
 				url: "modul/mod_trkasir/simpandetail_trkasir.php",
 				data: {
-					'kd_trkasir'        : kd_trkasir,
-					'id_barang'         : id_barang,
-					'kd_barang'         : kd_barang,
-					'nmbrg_dtrkasir'    : nmbrg_dtrkasir,
-					'qty_dtrkasir'      : qty_dtrkasir,
-					'sat_dtrkasir'      : sat_dtrkasir,
-					'hrgjual_dtrkasir'  : hrgjual_dtrkasir,
-					'indikasi'          : indikasi,
-					'jenisobat'         : jenisobat,
-					'komisi_dtrkasir'   : komisi_dtrkasir,
-					'id_admin'          : id_admin,
+					'kd_trkasir': kd_trkasir,
+					'id_barang': id_barang,
+					'kd_barang': kd_barang,
+					'nmbrg_dtrkasir': nmbrg_dtrkasir,
+					'qty_dtrkasir': qty_dtrkasir,
+					'sat_dtrkasir': sat_dtrkasir,
+					'hrgjual_dtrkasir': hrgjual_dtrkasir,
+					'indikasi': indikasi,
+					'jenisobat': jenisobat,
+					'komisi_dtrkasir': komisi_dtrkasir,
+					'id_admin': id_admin,
 				},
 				success: function(data) {
 					//alert('Tambah data detail berhasil');
@@ -1411,8 +1413,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				// 	$('#jenisobat').val().change();
 					tabel_detail();
 
-				// 	let displayStok = stok_barang - qty_dtrkasir;
-				// 	$('#stok_' + id_barang).html(displayStok);
+					let displayStok = stok_barang - qty_dtrkasir;
+					$('#stok_' + id_barang).html(displayStok);
 				}
 			});
 		}

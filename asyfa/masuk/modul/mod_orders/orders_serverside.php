@@ -86,7 +86,6 @@ if ($_GET['action'] == "table_data") {
             // <BR>
             // <a href='modul/mod_orders/tampil_orders.php?id=$value[kd_trbmasuk]' target='_blank' title='EDIT' class='btn btn-primary btn-xs'>REGULER&nbsp;<i class='glyphicon glyphicon-print'></i>&nbsp;</a><BR>
             // ";
-            
             $nestedData['aksi'] = "<button type='button' id='btn_edit' data-id='$value[id_trbmasuk]' title='EDIT' class='btn btn-warning btn-xs'>EDIT</button> 
             <button type='button' id='btn_hapus' data-id='$value[id_trbmasuk]' title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</button>
             <BR>

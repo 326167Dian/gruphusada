@@ -28,6 +28,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				<div class="box-body table-responsive">
 					<a class='btn  btn-success btn-flat' href='?module=trbmasuk&act=tambah'>TAMBAH</a>
 					<a class='btn  btn-info btn-flat' href='?module=trbmasuk&act=cari'>CARI NOMOR BATCH</a>
+					<!--<a class='btn  btn-info btn-flat' href='modul/mod_trbmasuk/aksi_trbmasuk.php?module=trbmasuk&act=dataawal' target="_blank">Update Barang Masuk</a>-->
 					<div></div>
 					<p>
 					<p>
@@ -201,7 +202,6 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				if($ketemucekkd2 > 0){
 				    $kdunik2 = date('dmyHis') + 1;
 				    $kdtransaksi = "BMP-" . $kdunik2;
-				
 				} 
 				mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kdbm(kd_trbmasuk,id_resto,id_admin) VALUES('$kdtransaksi','pusat','$_SESSION[idadmin]')");
 			}
@@ -730,8 +730,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 							<th style="vertical-align: middle; background-color: #008000; text-align: left; ">Kode</th>
 							<th style="vertical-align: middle; background-color: #008000; text-align: left; ">Nama Barang</th>
 							<th style="vertical-align: middle; background-color: #008000; text-align: right; ">Qty</th>
-							<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Pilih</th>
 							<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Satuan</th>
+							<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Pilih</th>
 							<th style="vertical-align: middle; background-color: #008000; text-align: right; ">Harga Beli</th>
 							<th style="vertical-align: middle; background-color: #008000; text-align: right; ">Harga Jual</th>
 						</tr>
@@ -963,12 +963,12 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					"visible": <?= ($_SESSION['level'] == 'pemilik') ? 'true' : 'false'; ?>
 				},
 				{
-					"data": "pilih",
-					"className": 'text-center'
-				},
-				{
 					"data": "sat_barang",
 					"className": 'text-center',
+				},
+				{
+					"data": "pilih",
+					"className": 'text-center'
 				},
 				{
 					"data": "hrgsat_barang",

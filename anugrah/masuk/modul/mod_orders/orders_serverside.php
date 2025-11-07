@@ -3,15 +3,15 @@ include_once '../../../configurasi/koneksi.php';
 $aksi = "modul/mod_orders/aksi_orders.php";
 if ($_GET['action'] == "table_data") {
     $columns = array(
-        0 => 'orders.id_trbmasuk',
-        1 => 'orders.kd_trbmasuk',
-        2 => 'orders.tgl_trbmasuk',
-        3 => 'orders.nm_supplier',
-        4 => 'orders.ket_trbmasuk',
-        5 => 'orders.ttl_trbmasuk',
-        6 => 'orders.orders.dp_bayar',
-        7 => 'orders.sisa_bayar',
-        8 => 'orders.id_trbmasuk'
+        0 => 'id_trbmasuk',
+        1 => 'kd_trbmasuk',
+        2 => 'tgl_trbmasuk',
+        3 => 'nm_supplier',
+        4 => 'ket_trbmasuk',
+        5 => 'ttl_trbmasuk',
+        6 => 'dp_bayar',
+        7 => 'sisa_bayar',
+        8 => 'id_trbmasuk'
     );
 
     $querycount = $db->query("SELECT count(id_trbmasuk) as jumlah FROM orders WHERE id_resto = 'pesan'");

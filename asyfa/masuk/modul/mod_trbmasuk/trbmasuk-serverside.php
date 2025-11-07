@@ -31,7 +31,8 @@ if ($_GET['action'] == "table_data") {
         $query = $db->query("SELECT *
             FROM trbmasuk
             WHERE trbmasuk.id_resto = 'pusat' AND trbmasuk.jenis = 'nonpbf'
-            ORDER BY $order $dir LIMIT $limit OFFSET $start");
+            ORDER BY id_trbmasuk DESC LIMIT $limit OFFSET $start");
+            // ORDER BY $order DESC LIMIT $limit OFFSET $start");
     } else {
         $search = $_POST['search']['value'];
         $query = $db->query("SELECT * 
@@ -44,7 +45,8 @@ if ($_GET['action'] == "table_data") {
                         OR ket_trbmasuk LIKE '%$search%'
                         OR sisa_bayar LIKE '%$search%'
                         OR carabayar LIKE '%$search%'
-            ORDER BY $order $dir LIMIT $limit OFFSET $start");
+            ORDER BY id_trbmasuk DESC LIMIT $limit OFFSET $start");
+            // ORDER BY $order DESC LIMIT $limit OFFSET $start");
 
         $querycount = $db->query("SELECT count(id_trbmasuk) as jumlah 
             FROM trbmasuk
@@ -75,7 +77,8 @@ if ($_GET['action'] == "table_data") {
             $nestedData['ket_trbmasuk'] = $value['ket_trbmasuk'];
             $nestedData['sisa_bayar'] = $value['sisa_bayar'];
             $nestedData['carabayar'] = $value['carabayar'];
-            $nestedData['aksi'] = "<a href='?module=trbmasuk&act=ubah&id=$value[id_trbmasuk]' title='EDIT' class='btn btn-warning btn-xs'>TAMPIL</a>";
+            // $nestedData['aksi'] = "<a href='?module=trbmasuk&act=ubah&id=$value[id_trbmasuk]' title='EDIT' class='btn btn-warning btn-xs'>TAMPIL</a>";
+            $nestedData['aksi'] = "<button type='button' id='btn_tampil' data-id='$value[id_trbmasuk]' title='EDIT' class='btn btn-warning btn-xs'>TAMPIL</button>";
             $data[] = $nestedData;
             $no++;
         }

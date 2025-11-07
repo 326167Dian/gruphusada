@@ -217,7 +217,7 @@ $bayar = mysqli_fetch_array($carabayar);
         
         <table width="100%" class="item">
             <tr>
-                <td width="50%">Tunai</td>
+                <td width="50%"><?=$bayar['nm_carabayar']?></td>
                 <td class="txt-right" width="25%" style="padding-right:5px">PPN(%)</td>
                 <td class="txt-right" width="25%" style="padding-right:5px"><?=$r1['ppn_trkasir']?></td>
             </tr>

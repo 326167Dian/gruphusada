@@ -12,7 +12,9 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 	$module = $_GET['module'];
 	$act = $_GET['act'];
-
+    $hrgsat_barang = str_replace(".","",$_POST['hrgsat_barang']);
+    $hrgjual_barang = str_replace(".","",$_POST['hrgjual_barang']);
+    
 	// Input admin
 	if ($module == 'barang' and $act == 'input_barang') {
 
@@ -49,8 +51,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 										'$_POST[stok_buffer]',
 										'$_POST[sat_barang]',
 										'$_POST[jenisobat]',
-										'$_POST[hrgsat_barang]',
-										'$_POST[hrgjual_barang]',
+										'$hrgsat_barang',
+										'$hrgjual_barang',
 										'$_POST[indikasi]',
 										'$_POST[ket_barang]')");
 
@@ -68,8 +70,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									stok_buffer = '$_POST[stok_buffer]',
 									sat_barang = '$_POST[sat_barang]',
 									jenisobat = '$_POST[jenisobat]',
-									hrgsat_barang = '$_POST[hrgsat_barang]',
-									hrgjual_barang = '$_POST[hrgjual_barang]',
+									hrgsat_barang = '$hrgsat_barang',
+									hrgjual_barang = '$hrgjual_barang',
 									indikasi = '$_POST[indikasi]',
 									ket_barang = '$_POST[ket_barang]'
 									WHERE id_barang = '$_POST[id]'");

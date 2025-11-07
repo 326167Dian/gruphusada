@@ -54,9 +54,9 @@ if ($module=='trbmasuk' AND $act=='input_trbmasuk'){
 										'nonpbf'
 										)");
 										
-	$tgl_sekarang = date('Y-m-d H:i:s', time());
-    mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kartu_stok(kode_transaksi, tgl_sekarang) VALUES('$_POST[kd_trbmasuk]','$tgl_sekarang')");
 // 	mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kartu_stok(kode_transaksi) VALUES('$_POST[kd_trbmasuk]')");
+    $tgl_sekarang = date('Y-m-d H:i:s', time());
+    mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kartu_stok(kode_transaksi, tgl_sekarang) VALUES('$_POST[kd_trbmasuk]','$tgl_sekarang')");
 	
 	mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE kdbm SET stt_kdbm = 'OFF' WHERE id_admin = '$_SESSION[idadmin]' AND id_resto = 'pusat' AND kd_trbmasuk = '$_POST[kd_trbmasuk]'");
 										
@@ -123,6 +123,89 @@ elseif ($module=='trbmasuk' AND $act=='hapus'){
   
   echo "<script type='text/javascript'>alert('Data berhasil dihapus !');window.location='../../media_admin.php?module=".$module."'</script>";
 }
-
+elseif ($module=='trbmasuk' AND $act=='dataawal'){
+    $kdunik = date('dmyHis');
+	$kdtransaksi = "BMP-" . $kdunik;
+	$cekkd2 = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM kdbm WHERE kd_trbmasuk='$kdtransaksi'");
+	$ketemucekkd2 = mysqli_num_rows($cekkd2);
+	if($ketemucekkd2 > 0){
+	    $kdunik2 = date('dmyHis') + 1;
+	    $kdtransaksi = "BMP-" . $kdunik2;
+	} 
+	mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kdbm(kd_trbmasuk,id_resto,id_admin) VALUES('$kdtransaksi','pusat','$_SESSION[idadmin]')");			
+    $tgl_sekarang = date('Y-m-d',time());
+    $tgl_datetime = date('Y-m-d H:i:s', time());
+    
+    $petugas = $_SESSION['namalengkap'];
+    
+    $getbarang = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM barang ORDER BY nm_barang ASC");
+    $grandtotal = 0;
+    while($brg = mysqli_fetch_array($getbarang)){
+        $ttlharga   = $brg['hrgsat_barang'] * $brg['stok_barang'];
+        $grandtotal = $grandtotal + $ttlharga;
+        
+        mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO trbmasuk_detail(kd_trbmasuk,
+										id_barang,
+										kd_barang,
+										nmbrg_dtrbmasuk,
+										qty_dtrbmasuk,
+										sat_dtrbmasuk,
+										hrgsat_dtrbmasuk,
+										hrgjual_dtrbmasuk,
+										hrgttl_dtrbmasuk,
+										no_batch,
+										exp_date)
+								  VALUES('$kdtransaksi',
+										'$brg[id_barang]',
+										'$brg[kd_barang]',
+										'$brg[nm_barang]',
+										'$brg[stok_barang]',
+										'$brg[sat_barang]',
+										'$brg[hrgsat_barang]',
+										'$brg[hrgjual_barang]',
+										'$ttlharga',
+										'',
+										'$exp_date')");    
+    }
+    
+    mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO 
+										trbmasuk(id_resto,
+										kd_trbmasuk,
+										tgl_trbmasuk,
+										id_supplier,
+										petugas,
+										nm_supplier,
+										tlp_supplier,
+										alamat_trbmasuk,
+										ttl_trbmasuk,
+										dp_bayar,
+										sisa_bayar,
+										ket_trbmasuk,
+										carabayar,
+										jenis)
+								 VALUES('pusat',
+										'$kdtransaksi',
+										'$tgl_sekarang',
+										'1',
+										'$petugas',
+										'stok awal',
+										'',
+										'',
+										'$grandtotal',
+										'$grandtotal',
+										'',
+										'Data Awal pindah dari Aulia Baru',
+										'LUNAS',
+										'nonpbf'
+										)");
+										
+// 	mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kartu_stok(kode_transaksi) VALUES('$_POST[kd_trbmasuk]')");
+    $tgl_sekarang = date('Y-m-d H:i:s', time());
+    mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kartu_stok(kode_transaksi, tgl_sekarang) VALUES('$kdtransaksi','$tgl_datetime')");
+	
+	mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE kdbm SET stt_kdbm = 'OFF' WHERE id_admin = '$_SESSION[idadmin]' AND id_resto = 'pusat' AND kd_trbmasuk = '$kdtransaksi'");
+										
+	echo "<script type='text/javascript'>alert('Data berhasil masuk !');window.location='../../media_admin.php?module=".$module."'</script>";			
+}
 }
 ?>

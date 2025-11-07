@@ -66,13 +66,10 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
             									 <button type='button' class='btn btn-danger btn-xs' id='btn_hapus' data-id='$r[id_pelanggan]'>HAPUS</button>
 											</td>
 										</tr>";
-										
 								$no++;
 							}
-				// 			echo "</tbody></table>";
+							echo "</tbody></table>";
 							?>
-						</tbody>	
-					</table>		
 				</div>
 			</div>
 
@@ -188,7 +185,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-5'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-primary' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel' data-page='".$_GET['page']."'>
 										</div>
 								</div>
 								
@@ -204,8 +201,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 			break;
 	}
 	?>
-	
-	<script>
+	    <script>
             $(document).ready(function() {
                 var vpage = <?=isset($_GET['page']) ? intval($_GET['page']) : 1;?>;
                 var startIndex = (vpage - 1);
@@ -282,7 +278,6 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
             
                  
         </script>
-	
 	<?php
 }
 ?>

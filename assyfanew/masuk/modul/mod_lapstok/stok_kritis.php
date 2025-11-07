@@ -86,11 +86,11 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					</div><!-- /.box-tools -->
 				</div>
 				<div class="box-body table-responsive">
-					<!--<a  class ='btn  btn-success btn-flat' href='?module=barang&act=tambah'>TAMBAH</a>-->
+					<a  class ='btn  btn-success btn-flat' href='modul/mod_laporan/cetak_stokkritis.php' target="_blank"><i class="fa fa-print"></i>&nbsp; Cetak</a>
 					<br><br>
 
 
-					<table id="example1" class="table table-bordered table-striped">
+					<table id="tes1" class="table table-bordered table-striped">
 						<thead>
 							<tr>
 								<th>No</th>
@@ -108,128 +108,262 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 						</thead>
 						<tbody>
                         <?php
-                        $no=1;
-                        $query1 = $db->query("select * from barang left join trbmasuk_detail on(barang.id_barang=trbmasuk_detail.id_barang) 
-                                  where trbmasuk_detail.kd_trbmasuk is not null group by barang.id_barang order by barang.nm_barang asc ");
-                        while($r= $query1->fetch_array()){
-                            $t30 = $r['id_barang'];
-                            $tgl_awal = date('Y-m-d');
-                            $tgl_akhir = date('Y-m-d', strtotime('-30 days', strtotime( $tgl_awal)));
+                        // $no=1;
+                        // $query1 = $db->query("select * from barang left join trbmasuk_detail on(barang.id_barang=trbmasuk_detail.id_barang) 
+                        //           where trbmasuk_detail.kd_trbmasuk is not null group by barang.id_barang order by barang.nm_barang asc ");
+                        // while($r= $query1->fetch_array()){
+                        //     $t30 = $r['id_barang'];
+                        //     $tgl_awal = date('Y-m-d');
+                        //     $tgl_akhir = date('Y-m-d', strtotime('-30 days', strtotime( $tgl_awal)));
 
-                            $pass = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir JOIN trkasir_detail
-                                        ON (trkasir.kd_trkasir=trkasir_detail.kd_trkasir)
-                                        WHERE trkasir_detail.id_barang = '$t30' AND (tgl_trkasir BETWEEN '$tgl_akhir' and '$tgl_awal')");
-                            $pass1 = mysqli_num_rows($pass);
-                            $pass2 = mysqli_fetch_array($pass);
-                            $tot =mysqli_query($GLOBALS["___mysqli_ston"], "SELECT SUM(trkasir_detail.qty_dtrkasir) as pw from trkasir_detail
-                                  join trkasir ON (trkasir_detail.kd_trkasir=trkasir.kd_trkasir)
-                                        WHERE id_barang = '$pass2[id_barang]' AND (tgl_trkasir BETWEEN '$tgl_akhir' and '$tgl_awal')") ;
-                            $t2 = mysqli_fetch_array($tot);
-                            $q30 = $t2['pw'];
-                            $sfc = $pass1 - $r['stok_barang'];
-                            $qfc = $q30 - $r['stok_barang'];
-                        if($r['stok_barang']<=(0.25*$pass1) && $pass1!=0){
-                            echo"
-                        <tr>
-                            <td>$no</td>";
-                            if( $pass1 <= "0"){
-                                echo" <td style='background-color:#ff003f;'align='center'><strong>MACET</strong></td> ";                                                           }
-                            elseif ($pass1 > "0" && $pass1 <= "5"){
-                                echo"  <td style='background-color:#EDFF00;' align='center'><strong>SLOW</strong></td>"; }
-                            elseif ($pass1 > "5" && $pass1 <= "10"){
-                                echo"  <td style='background-color:#00ff3f;' align='center'><strong>LANCAR</strong></td>"; }
-                            elseif ($pass1 > "10" ){
-                                echo"  <td style='background-color:#00bfff;' align='center'><strong>LAKU</strong></td>"; }
-                            echo"    
-                            <td>$r[nm_barang]</td>
-                            <td align='center'>$r[stok_barang]</td>
-                            <td align='center'>$pass1</td>
-                            <td align='center'>$q30</td>                            
-                            <td style='background-color:#EDFF00;'>$sfc</td>                            
-                            <td>$qfc</td>
-                            <td>$r[sat_barang]</td>
+                        //     $pass = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir JOIN trkasir_detail
+                        //                 ON (trkasir.kd_trkasir=trkasir_detail.kd_trkasir)
+                        //                 WHERE trkasir_detail.id_barang = '$t30' AND (tgl_trkasir BETWEEN '$tgl_akhir' and '$tgl_awal')");
+                        //     $pass1 = mysqli_num_rows($pass);
+                        //     $pass2 = mysqli_fetch_array($pass);
+                        //     $tot =mysqli_query($GLOBALS["___mysqli_ston"], "SELECT SUM(trkasir_detail.qty_dtrkasir) as pw from trkasir_detail
+                        //           join trkasir ON (trkasir_detail.kd_trkasir=trkasir.kd_trkasir)
+                        //                 WHERE id_barang = '$pass2[id_barang]' AND (tgl_trkasir BETWEEN '$tgl_akhir' and '$tgl_awal')") ;
+                        //     $t2 = mysqli_fetch_array($tot);
+                        //     $q30 = $t2['pw'];
+                        //     $sfc = $pass1 - $r['stok_barang'];
+                        //     $qfc = $q30 - $r['stok_barang'];
+                        // if($r['stok_barang']<=(0.25*$pass1) && $pass1!=0){
+                        //     echo"
+                        // <tr>
+                        //     <td>$no</td>";
+                        //     if( $pass1 <= "0"){
+                        //         echo" <td style='background-color:#ff003f;'align='center'><strong>MACET</strong></td> ";                                                           }
+                        //     elseif ($pass1 > "0" && $pass1 <= "5"){
+                        //         echo"  <td style='background-color:#EDFF00;' align='center'><strong>SLOW</strong></td>"; }
+                        //     elseif ($pass1 > "5" && $pass1 <= "10"){
+                        //         echo"  <td style='background-color:#00ff3f;' align='center'><strong>LANCAR</strong></td>"; }
+                        //     elseif ($pass1 > "10" ){
+                        //         echo"  <td style='background-color:#00bfff;' align='center'><strong>LAKU</strong></td>"; }
+                        //     echo"    
+                        //     <td>$r[nm_barang]</td>
+                        //     <td align='center'>$r[stok_barang]</td>
+                        //     <td align='center'>$pass1</td>
+                        //     <td align='center'>$q30</td>                            
+                        //     <td style='background-color:#EDFF00;'>$sfc</td>                            
+                        //     <td>$qfc</td>
+                        //     <td>$r[sat_barang]</td>
                             
-                        </tr>";}
-                            $no++;
-                        }
+                        // </tr>";
+                        //     $no++;
+                        // }
+                        //     //$no++;
+                        // }
                         ?>
 						</tbody>
 					</table>
 				</div>
 			</div>
+    
+            <script>
+                
+                
+                $(document).ready(function () {
+                    var table = $('#tes1').DataTable({
+                        serverSide: true,
+                        // processing: true,
+                        lengthChange: false,
+                        displayStart: getPageFromUrl() * 10,
+                        pageLength: 10,
+                        ajax: {
+                          url: 'modul/mod_lapstok/datatable_server.php',
+                          type: 'POST'
+                        },
+                        "rowCallback": function(row, data, index) {
+                            var q = data['transaksi_30_hari'];
+                            if(q <= 0){
+                                $(row).find('td:eq(0)').css('background-color','#ff003f');
+                            } else if (q <= 5) {
+                                $(row).find('td:eq(0)').css('background-color','#EDFF00');
+                            } else if (q <= 10) {
+                                $(row).find('td:eq(0)').css('background-color','#00ff3f');
+                            } else {
+                                $(row).find('td:eq(0)').css('background-color','#00bfff');
+                            }
+                        },
+                        columns: [
+                        //   { data: 'no' },
+                            {
+                                "data": null,
+                                "orderable": false,
+                                "searchable": false,
+                                "render": function (data, type, row, meta) {
+                                    return meta.row + meta.settings._iDisplayStart + 1;
+                                }
+                            },
+                          { data: 'status' },
+                          { data: 'nm_barang' },
+                          { data: 'stok_barang' },
+                          { data: 'transaksi_30_hari' },
+                          { data: 'qty_terjual' },
+                          { data: 'selisih_stok_transaksi' },
+                          { data: 'selisih_stok_qty' },
+                          { data: 'sat_barang' }
+                        ]
+                    });
+                    
+                    table.on('draw', function () {
+                        const info = table.page.info();
+                        const currentPage = info.page + 1; // konversi ke 1-based
+                        const url = new URL(window.location);
+                        url.searchParams.set('page', currentPage);
+                        window.history.pushState({}, '', url);
+                    });
+                
+                    function getPageFromUrl() {
+                        const params = new URLSearchParams(window.location.search);
+                        const page = parseInt(params.get("page"));
+                        return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+                    }
+                });
+                
+            // $(document).ready(function() {
+                
+            //     $('#example11').DataTable();
+                
+            //     table.on('draw', function () {
+            //         const info = table.page.info();
+            //         const currentPage = info.page + 1; // konversi ke 1-based
+            //         const url = new URL(window.location);
+            //         url.searchParams.set('page', currentPage);
+            //         window.history.pushState({}, '', url);
+            //     });
+                
+            //     // Tombol hapus
+            //     $('#example11 tbody').on('click', '#btn_hapus', function () {
+            //         var id = $(this).data('id');
+            //         var row = $(this).closest('tr');
+        
+            //         if (confirm('Anda yakin ingin menghapus?') == true) {
+            //             $.ajax({
+            //         		url: 'modul/mod_admin/aksi_admin.php?module=admin&act=hapus&id='+id,
+            //         		type: 'POST',
+            //         	}).success(function() {
+            //         		// Hapus dari DataTable tanpa mengganti halaman
+            //                 table.row(row).remove().draw(false);
+            //         	});
+            //         }
+            //     });
+                
+            //     $('#example11 tbody').on('click', '#btn_edit', function () {
+            //         var id = $(this).data('id');
+            //         var currentPage = table.page() + 1;
+            //         location.href = '?module=admin&act=editadmin&id='+id+'&page='+currentPage;
+            //     });
+                        
+            //     $('#btn_cancel').on('click', function(){
+            //         // var currentPage = $(this).data('page');
+            //         var currentPage = getPageFromUrl() + 1
+            //         location.href = '?module=admin&page='+currentPage;
+                    
+            //     });
+            
+            //     $("#frmEditAdmin").submit(function(e) {
+
+            //         e.preventDefault(); // avoid to execute the actual submit of the form.
+                
+            //         var form = $(this);
+            //         var actionUrl = form.attr('action');
+            //         var vpage = getPageFromUrl() + 1;
+                    
+            //         $.ajax({
+            //             type: "POST",
+            //             url: actionUrl,
+            //             data: form.serialize(), // serializes the form's elements.
+            //             success: function(data)
+            //             {
+            //                 location.href = '?module=admin&page='+vpage;
+            //             }
+            //         });
+                    
+            //     });
+                
+            //     function getPageFromUrl() {
+            //         const params = new URLSearchParams(window.location.search);
+            //         const page = parseInt(params.get("page"));
+            //         return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+            //     }
+            // });
+            
+        </script>
 
 			<script>
-				$(document).ready(function() {
-					var start = '<?= $start_date ?>';
-					var finish = '<?= $finish_date ?>';
+				// $(document).ready(function() {
+				// 	var start = '<?= $start_date ?>';
+				// 	var finish = '<?= $finish_date ?>';
 
-					$('#tes').DataTable({
-						processing: true,
-						serverSide: true,
-						ajax: {
-							"url": "modul/mod_lapstok/stokkritis-serverside.php?action=table_data&start=" + start + "&finish=" + finish,
-							"dataType": "JSON",
-							"type": "POST"
-						},
-						"rowCallback": function(row, data, index) {
-							// warna for nomor
-							if (data['t30'] <= 0) {
-								$(row).find('td:eq(1)').css('background-color', '#dd4b39');
-								$(row).find('td:eq(1)').css('color', '#ffffff');
-							} else if (data['t30'] > 0 && data['t30'] <= 5) {
-								$(row).find('td:eq(0)').css('background-color', '#f39c12');
-								$(row).find('td:eq(0)').css('color', '#ffffff');
-							} else if (data['t30'] > 0 && data['t30'] <= 10) {
-								$(row).find('td:eq(0)').css('background-color', '#00a65a');
-								$(row).find('td:eq(0)').css('color', '#ffffff');
-							} else if (data['t30'] > 10) {
-								$(row).find('td:eq(0)').css('background-color', '#00c0ef');
-							}
+				// 	$('#tes').DataTable({
+				// 		processing: true,
+				// 		serverSide: true,
+				// 		ajax: {
+				// 			"url": "modul/mod_lapstok/stokkritis-serverside.php?action=table_data&start=" + start + "&finish=" + finish,
+				// 			"dataType": "JSON",
+				// 			"type": "POST"
+				// 		},
+				// 		"rowCallback": function(row, data, index) {
+				// 			// warna for nomor
+				// 			if (data['t30'] <= 0) {
+				// 				$(row).find('td:eq(1)').css('background-color', '#dd4b39');
+				// 				$(row).find('td:eq(1)').css('color', '#ffffff');
+				// 			} else if (data['t30'] > 0 && data['t30'] <= 5) {
+				// 				$(row).find('td:eq(0)').css('background-color', '#f39c12');
+				// 				$(row).find('td:eq(0)').css('color', '#ffffff');
+				// 			} else if (data['t30'] > 0 && data['t30'] <= 10) {
+				// 				$(row).find('td:eq(0)').css('background-color', '#00a65a');
+				// 				$(row).find('td:eq(0)').css('color', '#ffffff');
+				// 			} else if (data['t30'] > 10) {
+				// 				$(row).find('td:eq(0)').css('background-color', '#00c0ef');
+				// 			}
 
-						},
-						columns: [{
-								"data": "no",
-								"className": 'text-center',
-							},
-							{
-								"data": "kategori",
-								"className": 'text-center',
-							},
-							{
-								"data": "nm_barang"
-							},
-							{
-								"data": "stok_barang",
-								"className": 'text-center',
-							},
-							{
-								"data": "stok_buffer",
-								"className": 'text-center',
-							},
-							{
-								"data": "t30",
-								"className": 'text-center',
-							},
-							{
-								"data": "q30",
-								"className": 'text-center',
-							},
-							{
-								"data": "satuan",
-								"className": 'text-center',
-							},
-							{
-								"data": "harga_beli",
-								"className": 'text-right',
-								"render": function(data, type, row) {
-									return formatRupiah(data);
-								}
-							},
-						],
+				// 		},
+				// 		columns: [{
+				// 				"data": "no",
+				// 				"className": 'text-center',
+				// 			},
+				// 			{
+				// 				"data": "kategori",
+				// 				"className": 'text-center',
+				// 			},
+				// 			{
+				// 				"data": "nm_barang"
+				// 			},
+				// 			{
+				// 				"data": "stok_barang",
+				// 				"className": 'text-center',
+				// 			},
+				// 			{
+				// 				"data": "stok_buffer",
+				// 				"className": 'text-center',
+				// 			},
+				// 			{
+				// 				"data": "t30",
+				// 				"className": 'text-center',
+				// 			},
+				// 			{
+				// 				"data": "q30",
+				// 				"className": 'text-center',
+				// 			},
+				// 			{
+				// 				"data": "satuan",
+				// 				"className": 'text-center',
+				// 			},
+				// 			{
+				// 				"data": "harga_beli",
+				// 				"className": 'text-right',
+				// 				"render": function(data, type, row) {
+				// 					return formatRupiah(data);
+				// 				}
+				// 			},
+				// 		],
 
-					});
+				// 	});
 
-				});
+				// });
 			</script>
 <?php
 
@@ -469,7 +603,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 }
 ?>
 
-
+        
 <script type="text/javascript">
 	$(function() {
 		$(".datepicker").datepicker({

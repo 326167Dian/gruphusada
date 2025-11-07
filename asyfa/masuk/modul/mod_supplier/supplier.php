@@ -70,11 +70,12 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 											    <button type='button' class='btn btn-danger btn-xs' id='btn_hapus' data-id='$r[id_supplier]'>HAPUS</button>
 											</td>
 										</tr>";
-										
 								$no++;
 							}
-							echo "</tbody></table>";
+				// 			echo "</tbody></table>";
 							?>
+						</tbody>
+					</table>	
 				</div>
 			</div>
 
@@ -129,7 +130,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-5'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-primary' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL onclick=self.history.back()>
 										</div>
 								</div>
 								
@@ -190,7 +191,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-5'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-primary' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel' data-page='".$_GET['page']."'>
 										</div>
 								</div>
 								
@@ -280,6 +281,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									<br>
 									<div class='buttons'>
 										<button type='button' class='btn btn-success right-block' onclick='simpan_detail();'>SIMPAN DATA OBAT</button>
+										<button type='button' class='btn btn-danger right-block' id="btn_cancel" data-page='<?=$_GET['page']?>'>KEMBALI</button>
 									</div>
 								</div>
 
@@ -448,7 +450,6 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 	<?php
 			break;
 	}
-	
 	?>
 	<script>
             $(document).ready(function() {
@@ -531,7 +532,6 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                     return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
                 }
             });
-            
             
                  
         </script>

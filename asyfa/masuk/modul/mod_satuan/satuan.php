@@ -13,7 +13,7 @@ switch($_GET[act]){
   default:
 
   
-      $tampil_satuan = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM satuan ORDER BY id_satuan ");
+      $tampil_satuan = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM satuan ORDER BY id_satuan DESC");
       
 	  ?>
 			
@@ -53,7 +53,7 @@ switch($_GET[act]){
 								// 			</td>
 								// 		</tr>";
 								
-								    echo "<tr class='warnabaris' >
+									echo "<tr class='warnabaris' >
 											<td>$no</td>           
 											 <td>$r[nm_satuan]</td>
 											 <td>$r[deskripsi]</td>
@@ -62,7 +62,6 @@ switch($_GET[act]){
             									 <button type='button' class='btn btn-danger btn-xs' id='btn_hapus' data-id='$r[id_satuan]'>HAPUS</button>
 											</td>
 										</tr>";
-										
 								$no++;
 								}
 						echo "</tbody></table>";
@@ -106,7 +105,7 @@ switch($_GET[act]){
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-5'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-danger' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel'>
 										</div>
 								</div>
 								
@@ -152,7 +151,7 @@ switch($_GET[act]){
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-5'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-danger' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel'>
 										</div>
 								</div>
 								
@@ -171,7 +170,6 @@ switch($_GET[act]){
 }
 }
 ?>
-
         <script>
             $(document).ready(function() {
                 
@@ -247,7 +245,6 @@ switch($_GET[act]){
             
                  
         </script>
-        
         
 <script type="text/javascript">
  $(function(){

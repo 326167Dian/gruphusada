@@ -8,7 +8,7 @@ else{
 
 $aksi="modul/mod_trbmasuk/aksi_trbmasuk.php";
 $aksi_trbmasuk = "masuk/modul/mod_trbmasuk/aksi_trbmasuk.php";
-switch($_GET[act]){
+switch($_GET['act']){
   // Tampil barang
   default:
 
@@ -95,113 +95,113 @@ switch($_GET[act]){
 				</div>
 			</div>	
              
-            <script>
-                $(document).ready(function() {
-                        var table = $("#tes").DataTable({
-    						processing: true,
-    						serverSide: true,
-    						lengthChange: false,
-                            displayStart: getPageFromUrl() * 10,
-                            pageLength: 10,
-                            order: [[ 0, "desc" ]],
-    						ajax: {
-    							"url": "modul/mod_trbmasuk/byrkredit_serverside.php?action=table_data",
-    							"dataType": "JSON",
-    							"type": "POST"
-    						},
-    						"rowCallback": function(row, data, index) {
-    							// warna for nomor
-    							if (data['carabayar'] != "LUNAS") {
-    								$(row).find('td:eq(0)').css('background-color', '#ffbf00');
-    								$(row).find('td:eq(1)').css('background-color', '#ffbf00');
-    							}
-    
-    						},
-    						columns: [{
-    								"data": "no",
-    								"className": "text-center"
-    							},
-    							{
-    								"data": "kd_trbmasuk",
-    								"className": "text-left"
-    							},
-    							{
-    								"data": "petugas",
-    								"className": "text-left"
-    							},
-    							{
-    								"data": "tgl_trbmasuk",
-    								"className": "text-center"
-    							},
-    							{
-    								"data": "nm_supplier",
-    								"className": "text-left"
-    							},
-    							{
-    								"data": "ket_trbmasuk",
-    								"className": "text-left"
-    							},
-    							{
-    								"data": "sisa_bayar",
-    								"className": "text-right",
-    								"render": function(data, type, row) {
-    									return formatRupiah(data);
-    								}
-    							},
-    							{
-    								"data": "carabayar",
-    								"className": "text-center"
-    							},
-    							{
-    								"data": "aksi",
-    								"className": "text-center"
-    							},
-    						]
-    					});
-    					
-    					table.on('draw', function () {
-                            const info = table.page.info();
-                            const currentPage = info.page + 1; // konversi ke 1-based
-                            const url = new URL(window.location);
-                            url.searchParams.set('page', currentPage);
-                            window.history.pushState({}, '', url);
-                        });
-            
-    					function getPageFromUrl() {
-                            const params = new URLSearchParams(window.location.search);
-                            const page = parseInt(params.get("page"));
-                            return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
-                        }     
-                        
-                        // Button Edit
-                        $('#tes tbody').on('click', '#btn_edit', function () {
-                            var url = $(this).data('url');
-                            var currentPage = table.page() + 1;
-                            location.href = url+'&page='+currentPage; 
-                        });
-                        
-                        // Button Edit PBF
-                        $('#tes tbody').on('click', '#btn_pbf', function () {
-                            var id = $(this).data('id');
-                            var currentPage = table.page() + 1;
-                            location.href = '?module=trbmasukpbf&act=ubah&id='+id+'&lastpage=byrkredit&page='+currentPage; 
-                        });
-                        
-                        // Tombol hapus
-                        $('#tes tbody').on('click', '#btn_hapus', function () {
-                            var id = $(this).data('id');
-                        
-                            if (confirm('Anda yakin ingin menghapus?') == true) {
-                                $.ajax({
-                    				url: 'modul/mod_trbmasuk/aksi_trbmasuk.php?module=trbmasuk&act=hapus&id='+id,
-                    				type: 'POST',
-                    			}).success(function() {
-                    			    table.ajax.reload(null, false);
-                    			});
-                            } 
-                        });
-                });
-            </script>
+        <script>
+            $(document).ready(function() {
+                    var table = $("#tes").DataTable({
+						processing: true,
+						serverSide: true,
+						lengthChange: false,
+                        displayStart: getPageFromUrl() * 10,
+                        pageLength: 10,
+                        order: [[ 0, "desc" ]],
+						ajax: {
+							"url": "modul/mod_trbmasuk/byrkredit_serverside.php?action=table_data",
+							"dataType": "JSON",
+							"type": "POST"
+						},
+						"rowCallback": function(row, data, index) {
+							// warna for nomor
+							if (data['carabayar'] != "LUNAS") {
+								$(row).find('td:eq(0)').css('background-color', '#ffbf00');
+								$(row).find('td:eq(1)').css('background-color', '#ffbf00');
+							}
+
+						},
+						columns: [{
+								"data": "no",
+								"className": "text-center"
+							},
+							{
+								"data": "kd_trbmasuk",
+								"className": "text-left"
+							},
+							{
+								"data": "petugas",
+								"className": "text-left"
+							},
+							{
+								"data": "tgl_trbmasuk",
+								"className": "text-center"
+							},
+							{
+								"data": "nm_supplier",
+								"className": "text-left"
+							},
+							{
+								"data": "ket_trbmasuk",
+								"className": "text-left"
+							},
+							{
+								"data": "sisa_bayar",
+								"className": "text-right",
+								"render": function(data, type, row) {
+									return formatRupiah(data);
+								}
+							},
+							{
+								"data": "carabayar",
+								"className": "text-center"
+							},
+							{
+								"data": "aksi",
+								"className": "text-center"
+							},
+						]
+					});
+					
+					table.on('draw', function () {
+                        const info = table.page.info();
+                        const currentPage = info.page + 1; // konversi ke 1-based
+                        const url = new URL(window.location);
+                        url.searchParams.set('page', currentPage);
+                        window.history.pushState({}, '', url);
+                    });
+        
+					function getPageFromUrl() {
+                        const params = new URLSearchParams(window.location.search);
+                        const page = parseInt(params.get("page"));
+                        return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+                    }     
+                    
+                    // Button Edit
+                    $('#tes tbody').on('click', '#btn_edit', function () {
+                        var url = $(this).data('url');
+                        var currentPage = table.page() + 1;
+                        location.href = url+'&page='+currentPage; 
+                    });
+                    
+                    // Button Edit PBF
+                    $('#tes tbody').on('click', '#btn_pbf', function () {
+                        var id = $(this).data('id');
+                        var currentPage = table.page() + 1;
+                        location.href = '?module=trbmasukpbf&act=ubah&id='+id+'&lastpage=byrkredit&page='+currentPage; 
+                    });
+                    
+                    // Tombol hapus
+                    $('#tes tbody').on('click', '#btn_hapus', function () {
+                        var id = $(this).data('id');
+                    
+                        if (confirm('Anda yakin ingin menghapus?') == true) {
+                            $.ajax({
+                				url: 'modul/mod_trbmasuk/aksi_trbmasuk.php?module=trbmasuk&act=hapus&id='+id,
+                				type: 'POST',
+                			}).success(function() {
+                			    table.ajax.reload(null, false);
+                			});
+                        } 
+                    });
+            });
+        </script>
 <?php
     
     break;
@@ -286,7 +286,7 @@ switch($_GET[act]){
 											<textarea name='ket_trbmasuk' id='ket_trbmasuk' class='form-control' rows='2'>  </textarea>
 											</p>
 											<div class='buttons'>
-												<button type='button' class='btn btn-primary right-block' onclick='simpan_transaksi();'>SIMPAN TRANSAKSI</button>
+												<button type='button' class='btn btn-primary right-block' onclick='simpan_transaksi();'>SIMPAN TRANSAKSI [F2]</button>
 												&nbsp&nbsp&nbsp
 												<input class='btn btn-danger' type='button' value=KEMBALI onclick=self.history.back()>
 												</div>
@@ -336,7 +336,7 @@ switch($_GET[act]){
 											<input type=text name='hrgsat_dtrbmasuk' id='hrgsat_dtrbmasuk' class='form-control' autocomplete='off'>
 											</p>
 												<div class='buttons'>
-													<button type='button' class='btn btn-success right-block' onclick='simpan_detail();'>SIMPAN DETAIL</button>
+													<button type='button' class='btn btn-success right-block' onclick='simpan_detail();'>SIMPAN DETAIL [F1]</button>
 												</div>
 										</div>
 										
@@ -361,7 +361,8 @@ switch($_GET[act]){
 	$ubah=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trbmasuk 
 	WHERE trbmasuk.id_trbmasuk='$_GET[id]'");
 	$re=mysqli_fetch_array($ubah);
-       
+    $page = $_GET['page'];   
+    
         echo "
 		  <div class='box box-primary box-solid'>
 				<div class='box-header with-border'>
@@ -424,9 +425,9 @@ switch($_GET[act]){
 											<textarea name='ket_trbmasuk' id='ket_trbmasuk' class='form-control' rows='2'>$re[ket_trbmasuk]</textarea>
 											</p>
 											<div class='buttons'>
-											  <button type='button' class='btn btn-primary right-block' onclick='simpan_transaksi();'>SIMPAN TRANSAKSI</button>
+											  <button type='button' class='btn btn-primary right-block' onclick='simpan_transaksi();'>SIMPAN TRANSAKSI [F2]</button>
 												&nbsp&nbsp&nbsp
-												<input class='btn btn-danger' type='button' value=BATAL onclick=self.history.back()>
+												<input class='btn btn-danger' type='button' value=BATAL id='btn_cancel' data-page='".$page."'>
 											</div>
 								  
 										</div>
@@ -718,8 +719,8 @@ switch($_GET[act]){
 
 						document.getElementById('qty_dtrbmasuk').value = qty_default;
 						document.getElementById('sat_dtrbmasuk').value = data.sat_barang;
-						document.getElementById('hrgjual_dtrbmasuk').value = data.hrgjual_barang;
-						document.getElementById('hrgsat_dtrbmasuk').value = data.hrgsat_barang;
+						document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(data.hrgjual_barang);
+						document.getElementById('hrgsat_dtrbmasuk').value = formatRupiah(data.hrgsat_barang);
 						document.getElementById('indikasi').value = data.indikasi;
 					}
 
@@ -946,6 +947,7 @@ switch($_GET[act]){
 			var dp_bayar1x = dp_bayar1.replace(".", "");
 			var sisa_bayar1x = sisa_bayar1.replace(".", "");
 		
+		var page = getPageFromUrl() + 1;
 		if(nm_supplier == ""){
 				alert('Belum ada data supplier');
 		}else{
@@ -970,10 +972,38 @@ switch($_GET[act]){
 						   'sisa_bayar': sisa_bayar1x,
 						   'carabayar': carabayar},
 						success: function(data) {
-						alert('Proses berhasil !');window.location='media_admin.php?module=trbmasuk';
+						alert('Proses berhasil !');window.location='media_admin.php?module=byrkredit&page='+page;
+				// 		alert('Proses berhasil !');window.location='media_admin.php?module=trbmasuk&page='+page;
+						
 					}
 				});
 			}
 	}
-		
+	
+	// Tombol cancel form
+    $('#btn_cancel').on('click', function(){
+        var currentPage = $(this).data('page');
+        location.href = '?module=byrkredit&page='+currentPage;
+                    
+    });	
+    
+    function getPageFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const page = parseInt(params.get("page"));
+        return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+    }
+    
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'F1' || event.keyCode === 112) {
+            event.preventDefault(); // Mencegah help browser muncul
+            simpan_detail();
+        }
+    });
+	
+	document.addEventListener('keydown', function(event) {
+        if (event.key === 'F2' || event.keyCode === 113) {
+            event.preventDefault(); // Mencegah help browser muncul
+            simpan_transaksi();
+        }
+    });
 </script>

@@ -230,7 +230,6 @@ switch($_GET[act]){
 }
 }
 ?>
-
 <!-- Modal Pelanggan -->
 <div id="ModalPelanggan" class="modal fade" role="dialog">
 	<div class="modal-md modal-dialog">
@@ -294,6 +293,11 @@ switch($_GET[act]){
   });
  });
  
+    function tutupModal(){
+        //hilangkan modal
+    	$(".close").click();
+    }
+    
     $("#frmAddPelanggan").submit(function(e) {
     
         e.preventDefault(); // avoid to execute the actual submit of the form.

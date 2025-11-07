@@ -56,9 +56,9 @@ if ($module=='trbmasukpbf' AND $act=='input_trbmasuk'){
 										'pbf'
 										)");
 										
-	$tgl_sekarang = date('Y-m-d H:i:s', time());
-    mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kartu_stok(kode_transaksi, tgl_sekarang) VALUES('$_POST[kd_trbmasuk]','$tgl_sekarang')");									
 // 	mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kartu_stok(kode_transaksi) VALUES('$_POST[kd_trbmasuk]')");
+    $tgl_sekarang = date('Y-m-d H:i:s', time());
+    mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kartu_stok(kode_transaksi, tgl_sekarang) VALUES('$_POST[kd_trbmasuk]','$tgl_sekarang')");
 	
 	mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE kdbm SET stt_kdbm = 'OFF' WHERE id_admin = '$_SESSION[idadmin]' AND id_resto = 'pusat' AND kd_trbmasuk = '$_POST[kd_trbmasuk]'");
 										

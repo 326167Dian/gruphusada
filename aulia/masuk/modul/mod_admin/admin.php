@@ -14,7 +14,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 		    
 			if ($_SESSION['leveluser'] == 'admin') {
 				// $tampil_admin = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM admin where id_admin !=3 ORDER BY username");
-				$tampil_admin = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM admin where id_admin !=3 ORDER BY id_admin DESC");
+				$tampil_admin = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM admin where id_admin !=2 ORDER BY id_admin DESC");
 ?>
 				<div class="box box-primary box-solid">
 					<div class="box-header with-border">

@@ -67,18 +67,57 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
                         <div class="form-group">
                             <label class="col-sm-2 control-label"></label>
-                            <div class="buttons col-sm-6">
-                                <input class="btn btn-primary" type="submit" name="btn"
-                                    value="TAMPIL">&nbsp
-                                    <a  class ='btn  btn-success' onclick='javascript:exportExcel()' target='_blank'><i class='fa fa-fw fa-file-excel-o'></i>EXPORT EXCEL</a>&nbsp
-                                <a class='btn  btn-danger' href='?module=home'>KEMBALI</a>
-                                
-                            </div>
+                                <div class="buttons col-sm-6">
+                                    <input class="btn btn-primary" type="submit" name="btn" value="TAMPIL">&nbsp
+                                    <a class='btn btn-success' onclick='javascript:exportExcel()' target='_blank'>
+                                        <i class='fa fa-fw fa-file-excel-o'></i> EXPORT EXCEL
+                                    </a>&nbsp
+                                    <a class='btn btn-danger' onclick='javascript:exportPDF()' target='_blank'>
+                                        <i class='fa fa-fw fa-file-pdf-o'></i> CETAK PDF
+                                    </a>&nbsp
+                                    <a class='btn btn-warning' href='?module=home'>KEMBALI</a>
+                                </div>
                         </div>
+
 
                     </form>
                 </div>
-
+                <div>
+                    <table id="example1" class="table table-bordered table-striped">
+                        <thead>
+							<tr>
+                                <td>No.</td>
+                                <td>Tanggal SO</td>
+                                <td>Jenis SO</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $no = 1;
+                            $so = $db->query("SELECT DISTINCT tgl_stokopname,shift FROM stok_opname ORDER BY tgl_stokopname DESC");
+                            while ($r = $so->fetch_array()) {
+                                if($r['shift']==0){
+                                    $jenis="SO BULANAN";
+                                }elseif($r['shift']==1){
+                                    $jenis="PAGI";
+                                }elseif($r['shift']==2){
+                                    $jenis="SORE";
+                                }elseif($r['shift']==3){
+                                    $jenis="MALAM";
+                                }
+                                echo "
+                                <tr>
+                                    <td>$no</td>
+                                    <td>$r[tgl_stokopname]</td>
+                                    <td>$jenis</td>
+                                </tr>
+                                ";
+                                $no++;
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <script>
                 function exportExcel() {
@@ -88,6 +127,13 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
                     window.open('modul/mod_laporan/cetak_stokopname_excel.php?tgl_awal=' + tgl_awal + '&tgl_akhir=' + tgl_akhir +'&shift='+shift, '_blank');
                 }
+                function exportPDF() {
+                let tgl_awal = $('#tgl_awal').val()
+                let tgl_akhir = $('#tgl_akhir').val()
+                let shift = $('#shift').val()
+                let jenisobat = $('#jenisobat').val(); // ambil nilai dari select/input jenisobat
+                window.open('modul/mod_laporan/tampil_lap_stokopname.php?tgl_awal=' + tgl_awal + '&tgl_akhir=' + tgl_akhir + '&shift=' + shift, '_blank');
+    }
             </script>
 
             <?php

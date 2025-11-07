@@ -83,10 +83,10 @@ if ($_SESSION['login'] == 0) {
 					<a href="#" class="logo">
 
 						<!-- mini logo for sidebar mini 50x50 pixels -->
-						<span class="logo-mini"><marquee><b>Apotek Anugrah Temboro</b></marquee></span>
+						<span class="logo-mini"><marquee><b>Apotek Aulia Husada Taufiqurrohman</b></marquee></span>
 
 						<!-- logo for regular state and mobile devices -->
-						<span class="logo-lg"><marquee><b>Apotek Anugrah Temboro</b></marquee></span>
+						<span class="logo-lg"><marquee><b>Apotek Aulia Husada Taufiqurrohman</b></marquee></span>
 					</a>
 
 					<!-- Header Navbar: style can be found in header.less -->
@@ -229,6 +229,7 @@ if ($_SESSION['login'] == 0) {
 									<?php if ($_SESSION['lppelanggan'] == "Y") { ?><li><a href="modul/mod_laporan/cetak_pelanggan.php" target="_blank"><i class='glyphicon glyphicon-print'></i> Data Pelanggan</a></li><?php } ?>
 									<?php if ($_SESSION['neraca'] == "Y") { ?><li><a href="?module=neraca"><i class='glyphicon glyphicon-print'></i> Neraca Laba Rugi</a></li><?php } ?>
 									<?php if ($_SESSION['level'] == "pemilik" and $_SESSION['komisi'] == "Y") { ?><li><a href="?module=lapkomisi"><i class='glyphicon glyphicon-print'></i> Komisi Pegawai</a></li><?php } ?>
+									<?php if ($_SESSION['level'] == "pemilik") { ?><li><a href="?module=evaluasi"><i class='glyphicon glyphicon-print'></i> Evaluasi Pegawai</a></li><?php } ?>
 									<?php if ($_SESSION['level'] == "pemilik" || "petugas") { ?><li><a href="?module=lapstokopname"><i class='glyphicon glyphicon-print'></i> Stok Opname</a></li><?php } ?>
 								</ul>
 							</li>

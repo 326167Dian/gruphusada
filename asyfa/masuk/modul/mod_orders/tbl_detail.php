@@ -90,7 +90,7 @@
 								<div class='text-right'>
 									<label class='col-sm-6 control-label'>SUB TOTAL</label>        		
 									 <div class='col-sm-6'>
-										<input type='text' name='ttl_trkasir' id='ttl_trkasir' value='$grandnya' class='form-control input-validation-error' style='font-size: 18px; color: #fff; font-weight: bold; text-align: right; background: #000000;' autocomplete='off'>
+										<input type='text' name='ttl_trkasir' id='ttl_trkasir' value='$grandnya' class='form-control input-validation-error' style='font-size: 18px; color: #fff; font-weight: bold; text-align: right; background: #000000;' autocomplete='off' readonly>
 									 </div>
 								</div>
 								
@@ -104,7 +104,7 @@
 								<div class='text-right'>
 									<label class='col-sm-6 control-label'>GRAND TOTAL</label>        		
 									 <div class='col-sm-6'>
-										<input type='text' name='sisa_bayar' id='sisa_bayar' class='form-control' style='font-size: 18px; color: #fff; font-weight: bold; text-align: right; background: #000000;' autocomplete='off'>
+										<input type='text' name='sisa_bayar' id='sisa_bayar' class='form-control' style='font-size: 18px; color: #fff; font-weight: bold; text-align: right; background: #000000;' autocomplete='off' readonly>
 									 </div>
 								</div>
 								

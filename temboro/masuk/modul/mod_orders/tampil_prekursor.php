@@ -186,7 +186,7 @@ $no = 1;
 $query1 = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT *
 FROM ordersdetail join barang
 on (ordersdetail.kd_barang=barang.kd_barang)
-WHERE kd_trbmasuk = '$kdorders'");
+WHERE kd_trbmasuk = '$kdorders' ORDER BY ordersdetail.id_dtrbmasuk ASC");
 
 
 
@@ -298,7 +298,7 @@ $pdf->Cell(9, 0, 'Apoteker Pemesan,', 0, 0, 'C');
 $pdf->ln(1.5);
 $pdf->SetFont('Arial', 'BU', 10);
 $pdf->Cell(10, 0, '', 0, 0, 'R');
-$pdf->Cell(9, 0,'apt. Heru Khoerudin, S.Si.',0, 0, 'C');
+$pdf->Cell(9, 0,$rh['lima'],0, 0, 'C');
 
 $pdf->ln(0.4);
 $pdf->SetFont('Arial', '', 7);

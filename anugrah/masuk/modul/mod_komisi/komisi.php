@@ -1,41 +1,42 @@
 <?php
 session_start();
- if (empty($_SESSION['username']) AND empty($_SESSION['passuser'])){
-  echo "<link href=../css/style.css rel=stylesheet type=text/css>";
-  echo "<div class='error msg'>Untuk mengakses Modul anda harus login.</div>";
-}
-else{
+if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
+	echo "<link href=../css/style.css rel=stylesheet type=text/css>";
+	echo "<div class='error msg'>Untuk mengakses Modul anda harus login.</div>";
+} else {
 
-$aksi="modul/mod_komisi/aksi_komisi.php";
+	$aksi = "modul/mod_komisi/aksi_komisi.php";
+	
+	switch ($_GET['act']) {
+		// tampil satuan
+		default:
 
-switch($_GET['act']){
-  // tampil satuan
-  default:
 
-  
-      $tampil_komisi = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM barang WHERE komisi != 0");
-      
-	  ?>
-			
-			
+			$tampil_komisi = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM barang WHERE komisi != 0 ");
+
+			?>
+
+
 			<div class="box box-primary box-solid">
 				<div class="box-header with-border">
 					<h3 class="box-title">TAMBAH DAN TUTUP KOMISI</h3>
 					<div class="box-tools pull-right">
 						<button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                    </div><!-- /.box-tools -->
+					</div><!-- /.box-tools -->
 				</div>
 				<div class="box-body table-responsive">
-				    <?php if($_SESSION['level'] == 'pemilik'):?>
-					<a  class ='btn  btn-success btn-flat' href='?module=komisi&act=tambah'>TAMBAH KOMISI</a>
-					<a  class ='btn  btn-warning btn-flat' href='<?=$aksi."?module=komisi&act=hapus&id=all"?>'>HAPUS SEMUA KOMISI</a>
-					<a  class ='btn  btn-danger btn-flat' href='?module=komisi&act=tutupkomisi'>TUTUP KOMISI</a>
-                    <?php endif;?>
+					<?php if ($_SESSION['level'] == 'pemilik'): ?>
+						<a class='btn  btn-success btn-flat' href='?module=komisi&act=tambah'>ATUR KOMISI</a>
+						<a class='btn  btn-primary btn-flat' href='?module=komisi&act=global'>KOMISI GLOBAL</a>
+						<a class='btn  btn-warning btn-flat' href='<?= $aksi . "?module=komisi&act=hapus&id=all" ?>'>HAPUS SEMUA
+							KOMISI</a>
+						<!--<a class='btn  btn-danger btn-flat' href='?module=komisi&act=tutupkomisi'>TUTUP KOMISI</a>-->
+					<?php endif; ?>
 
 					<br><br>
-					
-					
-					<table id="example11" class="table table-bordered table-striped">
+
+
+					<table id="example1" class="table table-bordered table-striped">
 						<thead>
 							<tr>
 								<th>No</th>
@@ -43,365 +44,267 @@ switch($_GET['act']){
 								<th>Nama Barang</th>
 								<th style="text-align: right; ">Qty/Stok</th>
 								<th style="text-align: right; ">Satuan</th>
-								<th style="text-align: center; ">Jenis Obat</th>
+								<th style="text-align: center; ">Harga Beli</th>
 								<th style="text-align: right; ">Harga Jual</th>
 								<th style="text-align: right; ">Komisi Pegawai</th>
-								<th style="text-align: center; ">Aksi</th>
 								<?php
-                                // $lupa = $_SESSION['level'];
-                                // if($lupa=='pemilik')
-                                // { echo "<th>Aksi</th> "; }
-                                // else{}
-                                ?>
+								$lupa = $_SESSION['level'];
+								if ($lupa == 'pemilik') {
+									echo "<th>Aksi</th> ";
+								} else {
+								}
+								?>
 							</tr>
 						</thead>
 						<tbody>
-						    <?php
-						      //  $no=1;
-						      //  while($r = mysqli_fetch_array($tampil_komisi)):
-						      //      $hargajual = format_rupiah($r['hrgjual_barang']);
-						      //      $komisi = format_rupiah($r['komisi']);
-						    ?>
-						  <!--  <tr>-->
-								<!--<td><?=$no++?></td>-->
-								<!--<td><?=$r['kd_barang']?></td>-->
-								<!--<td><?=$r['nm_barang']?></th>-->
-								<!--<td style="text-align: center; "><?=$r['stok_barang']?></td>-->
-								<!--<td style="text-align: center; "><?=$r['sat_barang']?></td>-->
-								<!--<td style="text-align: center; "><?=$r['jenisobat']?></td>-->
-								<!--<td style="text-align: right; "><?=$hargajual?></td>-->
-								<!--<td style="text-align: right; "><?=$komisi?></td>-->
+							<?php
+							$no = 1;
+							while ($r = mysqli_fetch_array($tampil_komisi)):
+								$hargajual = format_rupiah($r['hrgjual_barang']);
+								$komisi = format_rupiah($r['komisi']);
+								$hrgbeli = format_rupiah($r['hrgsat_barang']);
+								?>
+								<tr>
+									<td><?= $no++ ?></td>
+									<td><?= $r['kd_barang'] ?></td>
+									<td><?= $r['nm_barang'] ?></th>
+									<td style="text-align: center; "><?= $r['stok_barang'] ?></td>
+									<td style="text-align: center; "><?= $r['sat_barang'] ?></td>
+									<td style="text-align: center; "><?= $hrgbeli ?></td>
+									<td style="text-align: right; "><?= $hargajual ?></td>
+									<td style="text-align: right; "><?= $komisi ?></td>
+									<?php
+									$lupa = $_SESSION['level'];
+									if ($lupa == 'pemilik'):
+										?>
+										<td style="width: 80px; text-align: center">
+											<a href="?module=komisi&act=editkomisi&id=<?= $r['id_barang'] ?>" title="EDIT"
+												class="glyphicon glyphicon-pencil">&nbsp</a>
+											<a href="javascript:confirmdelete('<?= $aksi . "?module=komisi&act=hapus&id=" . $r['id_barang'] ?>')"
+												title="HAPUS" class="glyphicon glyphicon-remove">&nbsp</a>
+										</td>
+									<?php endif; ?>
+								</tr>
 								<?php
-                                // $lupa = $_SESSION['level'];
-                                // if($lupa=='pemilik'):
-                                ?>
-        <!--                        <td style="width: 80px; text-align: center">-->
-        <!--                            <a href="?module=komisi&act=editkomisi&id=<?=$r['id_barang']?>" title="EDIT" class="glyphicon glyphicon-pencil">&nbsp</a> -->
-								<!--	<a href="javascript:confirmdelete('<?=$aksi."?module=komisi&act=hapus&id=".$r['id_barang']?>')" title="HAPUS" class="glyphicon glyphicon-remove">&nbsp</a>-->
-								<!--</td>-->
-                                <?php //endif;?>
-							<!--</tr>-->
-						    <?php
-						      //  endwhile;
-						    ?>
+							endwhile;
+							?>
 						</tbody>
 					</table>
 				</div>
-			</div>	
-             
-    
-    <script>
-    	$(document).ready(function() {
-    	    
-    		var table = $('#example11').DataTable({
-    			processing: true,
-    			serverSide: true,
-    			lengthChange: false,
-                displayStart: getPageFromUrl() * 10,
-                pageLength: 10,
-    			ajax: {
-    				"url": "modul/mod_komisi/komisi-serverside.php?action=table_data",
-    				"dataType": "JSON",
-    				"type": "POST"
-    			},
-    			"rowCallback": function(row, data, index) {
-                    let q = (data['hrgjual_barang'] - data['hrgsat_barang']) / data['hrgsat_barang'];
-                    
-                    if(q <= 0.3){
-                        $(row).find('td:eq(7)').css('background-color', '#ff003f');
-                        $(row).find('td:eq(7)').css('color', '#ffffff');
-                    } else if(q > 0.3 && q <= 1){
-                        $(row).find('td:eq(7)').css('background-color', '#f39c12');
-                        $(row).find('td:eq(7)').css('color', '#ffffff');
-                        
-                    } else if(q > 1 && q <= 2){
-                        $(row).find('td:eq(7)').css('background-color', '#00ff3f');
-                        $(row).find('td:eq(7)').css('color', '#ffffff');
-                        
-                    } else if(q > 2){
-                        $(row).find('td:eq(7)').css('background-color', '#00bfff');
-                        $(row).find('td:eq(7)').css('color', '#ffffff');
-                        
-                    }
-                },
-    			columns: [{
-    					"data": "no",
-    					"className": 'text-center'
-    				},
-    				{
-    					"data": "kd_barang"
-    				},
-    				{
-    					"data": "nm_barang"
-    				},
-    				{
-    					"data": "stok_barang",
-    					"className": 'text-center'
-    				},
-    				{
-    					"data": "sat_barang",
-    					"className": 'text-center'
-    				},
-    				{
-    					"data": "jenisobat",
-    					"className": 'text-center'
-    				},
-    				{
-    					"data": "hrgjual_barang",
-    					"className": 'text-right',
-    					"render": function(data, type, row) {
-    						return formatRupiah(data);
-    					}
-    				},
-    				{
-    					"data": "komisi",
-    					"className": 'text-right',
-    					"render": function(data, type, row) {
-    						return formatRupiah(data);
-    					}
-    				},
-    				{
-    					"data": "aksi",
-    					"visible": <?= ($_SESSION['level'] == 'pemilik') ? 'true' : 'false'; ?>,
-    					"render": function(data, type, row) {
-    				// 		var btn = "<div style='text-align:center'><a href='?module=barang&act=edit&id=" + data + "' title='EDIT' class='btn btn-warning btn-xs'>EDIT</a> <a href=javascript:confirmdelete('modul/mod_barang/aksi_barang.php?module=barang&act=hapus&id=" + data + "') title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</a></div>";
-    
-                            var btn = "<button type='button' class='btn btn-warning btn-xs' id='btn_edit' data-id='"+data+"'>EDIT</button> <button type='button' class='btn btn-danger btn-xs' id='btn_hapus' data-id='"+data+"'>HAPUS</button></div>";
-                            
-    						return btn;
-    					}
-    				},
-    			]
-    		});
-    		
-    		table.on('draw', function () {
-                const info = table.page.info();
-                const currentPage = info.page + 1; // konversi ke 1-based
-                const url = new URL(window.location);
-                url.searchParams.set('page', currentPage);
-                window.history.pushState({}, '', url);
-            });
-                    
-                    
-    		// Tombol hapus
-            $('#example11 tbody').on('click', '#btn_hapus', function () {
-                var id = $(this).data('id');
-            
-                if (confirm('Anda yakin ingin menghapus?') == true) {
-                    $.ajax({
-        				url: 'modul/mod_komisi/aksi_komisi.php?module=komisi&act=hapus&id='+id,
-        				type: 'POST',
-        			}).success(function() {
-        			    table.ajax.reload(null, false);
-        			});
-                } 
-            });
-    		
-    		// Tombol edit
-            $('#example11 tbody').on('click', '#btn_edit', function () {
-                var id = $(this).data('id');
-                var currentPage = table.page() + 1;
-                location.href = '?module=komisi&act=editkomisi&id='+id+'&page='+currentPage; 
-            });
-    		
-    		// Tombol cancel form
-            $('#btn_cancel').on('click', function(){
-                var currentPage = $(this).data('page');
-                location.href = '?module=komisi&page='+currentPage;
-                        
-            });
-            
-            // Form Edit barang
-            $("#frmEditBrg").submit(function(e) {
-    
-                e.preventDefault(); // avoid to execute the actual submit of the form.
-                    
-                var form = $(this);
-                var actionUrl = form.attr('action');
-                var vpage = <?=isset($_GET['page']) ? intval($_GET['page']) : 1;?>;
-                        
-                $.ajax({
-                    type: "POST",
-                    url: actionUrl,
-                    data: form.serialize(), // serializes the form's elements.
-                    success: function(data)
-                    {
-                        location.href = '?module=barang&page='+vpage;
-                    }
-                });
-                        
-            });
-            
-            function getPageFromUrl() {
-                const params = new URLSearchParams(window.location.search);
-                const page = parseInt(params.get("page"));
-                return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
-            }        
-    	});
-    </script>
+			</div>
 
-<?php
-    
-    break;
-	
-	case "tambah":
-        
-?>        
-		  <div class='box box-primary box-solid'>
+
+			<?php
+
+			break;
+
+		case "tambah":
+
+			?>
+			<div class='box box-primary box-solid'>
 				<div class='box-header with-border'>
 					<h3 class='box-title'>TAMBAH KOMISI</h3>
 					<div class='box-tools pull-right'>
 						<button class='btn btn-box-tool' data-widget='collapse'><i class='fa fa-minus'></i></button>
-                    </div><!-- /.box-tools -->
+					</div><!-- /.box-tools -->
 				</div>
 				<div class='box-body'>
-				
-						<form method="POST" action="<?=$aksi?>?module=komisi&act=input_komisi" enctype="multipart/form-data" class="form-horizontal">
-							   
-							  <div class='form-group'>
-									<label class="col-sm-2 control-label">NAMA BARANG</label>        		
-									 <div class="col-sm-3">
-										<!--<select name="barang" class="form-control js-example-basic-single" >-->
-										<!--	<option value="all">All</option>-->
-										    <?php
-										      //  $getbarang = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM barang ORDER BY id_barang ASC");
-										      //  while($br = mysqli_fetch_array($getbarang)):
-										    ?>
-											<!--<option value="<?=$br['id_barang']?>"><?=$br['nm_barang']?></option>-->
-										    <?php
-										      //  endwhile;
-										    ?>
-										</select>
-										<input type="text" name="barang" id="barang" class="form-control typeahead" required="required" autocomplete="off">
-									 </div>
-							  </div>
-							  
-							  <div class='form-group'>
-									<label class="col-sm-2 control-label">&nbsp</label>        		
-									 <div class="col-sm-3">
-										<select name="metode" class="form-control" >
-											<option value="nominal">Nominal</option>
-											<option value="persentase">Persentase</option>
-										</select>
-									 </div>
-							  </div>
-							  
-							  <div class='form-group'>
-									<label class='col-sm-2 control-label'>JUMLAH KOMISI</label>        		
-									 <div class='col-sm-6'>
-										<input type="number" name="komisi" class="form-control" required="required" autocomplete="off">
-									 </div>
-							  </div>
-							  
-							  <div class="form-group">
-									<label class="col-sm-2 control-label"></label>       
-										<div class="col-sm-5">
-											<input class="btn btn-primary" type="submit" value="SIMPAN">
-											<input class="btn btn-danger" type="button" value="BATAL" onclick="self.history.back()">
-										</div>
-								</div>
-								
-							  </form>
-							  
-				</div> 
-				
+
+					<form method="POST" action="<?= $aksi ?>?module=komisi&act=input_komisi" enctype="multipart/form-data"
+						class="form-horizontal">
+
+						<div class='form-group'>
+							<label class='col-sm-2 control-label'>Nama Barang</label>
+							<div class='col-sm-6'>
+								<input type="text" id="nm_barang" name="nm_barang" class="form-control" required="required" autocomplete="off">
+							</div>
+						</div>
+						<div class='form-group'>
+							<label class='col-sm-2 control-label'>Harga Jual</label>
+							<div class='col-sm-6'>
+								<input type="number" name="hrgjual_barang" id="hrgjual_barang" class="form-control" required="required" autocomplete="off">
+							</div>
+						</div>
+						<div class='form-group'>
+							<label class='col-sm-2 control-label'>Harga Beli</label>
+							<div class='col-sm-6'>
+								<input type="number" name="hrgsat_barang" id="hrgsat_barang" class="form-control" required="required" autocomplete="off">
+							</div>
+						</div>
+						<div class='form-group'>
+							<label class="col-sm-2 control-label">Metode Pemberian</label>
+							<div class="col-sm-5">
+								<select name="metode" class="form-control">
+									<option value="nominal">Nominal</option>
+									<option value="persentase">Persentase</option>
+								</select>
+							</div>
+						</div>
+
+						<div class='form-group'>
+							<label class='col-sm-2 control-label'>JUMLAH KOMISI</label>
+							<div class='col-sm-6'>
+								<input type="number" name="komisi" class="form-control" required="required" autocomplete="off">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-5">
+								<input class="btn btn-primary" type="submit" value="SIMPAN">
+								<input class="btn btn-danger" type="button" value="BATAL" onclick="self.history.back()">
+							</div>
+						</div>
+
+					</form>
+
+				</div>
+
 			</div>
-			
+
 			<script>
-		        $('#barang').typeahead({
-            		source: function(query, process) {
-            			return $.post('modul/mod_komisi/autonamabarang.php', {
-            				query: query
-            			}, function(data) {
-            
-            				data = $.parseJSON(data);
-            				return process(data);
-            
-            			});
-            		}
-            	});
+				//auto_namabarang
+				$('#nm_barang').typeahead({
+					source: function (query, process) {
+						return $.post('modul/mod_komisi/autonamabarang.php', {
+							query: query
+						}, function (data) {
 
-		    </script>		
-		    
-					
-<?php	
-    break;
-    case "editkomisi":
+							data = $.parseJSON(data);
+							return process(data);
 
-        $edit=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM barang WHERE id_barang='$_GET[id]'");
-        $r=mysqli_fetch_array($edit);
+						});
+					}
+				});
 
-?>
-        
+				//enter barang
+				$('#nm_barang').keydown(function (e) {
+					if (e.which == 13) { // e.which == 13 merupakan kode yang mendeteksi ketika anda   // menekan tombol enter di keyboard
+						//letakan fungsi anda disini
 
-            <div class='box box-primary box-solid'>
+						var nm_barang = $("#nm_barang").val();
+						$.ajax({
+							url: 'modul/mod_komisi/autonamabarang_enter.php',
+							type: 'post',
+							data: {
+								'nm_barang': nm_barang
+							},
+						}).success(function (data) {
+							var json = data;
+							//replace array [] menjadi ''
+							var res1 = json.replace("[", "");
+							var res2 = res1.replace("]", "");
+							//INI CONTOH ARRAY JASON const json = '{"result":true, "count":42}';
+							datab = JSON.parse(res2);
+							document.getElementById('nm_barang').value = datab.nm_barang;
+							document.getElementById('hrgsat_barang').value = datab.hrgsat_barang;
+							document.getElementById('hrgjual_barang').value = datab.hrgjual_barang;
+						});
+
+					}
+				});
+
+			</script>
+
+
+			<?php
+			break;
+		case "editkomisi":
+
+			$edit = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM barang WHERE id_barang='$_GET[id]'");
+			$r = mysqli_fetch_array($edit);
+
+			?>
+
+
+			<div class='box box-primary box-solid'>
 				<div class='box-header with-border'>
 					<h3 class='box-title'>EDIT KOMISI</h3>
 					<div class='box-tools pull-right'>
 						<button class='btn btn-box-tool' data-widget='collapse'><i class='fa fa-minus'></i></button>
-                    </div><!-- /.box-tools -->
+					</div><!-- /.box-tools -->
 				</div>
 				<div class='box-body'>
-				
-						<form method="POST" action="<?=$aksi?>?module=komisi&act=update_komisi" enctype="multipart/form-data" class="form-horizontal">
-							   
-							  <div class='form-group'>
-									<label class="col-sm-2 control-label">NAMA BARANG</label>        		
-									 <div class="col-sm-3">
-										<select name="barang" class="form-control js-example-basic-single" >
-											<option value="<?=$r['id_barang']?>"><?=$r['nm_barang']?></option>
-										</select>
-									 </div>
-							  </div>
-							  
-							  <div class='form-group'>
-									<label class="col-sm-2 control-label">&nbsp</label>        		
-									 <div class="col-sm-3">
-										<select name="metode" class="form-control" >
-											<option value="nominal">Nominal</option>
-											<option value="persentase">Persentase</option>
-										</select>
-									 </div>
-							  </div>
-							  
-							  <div class='form-group'>
-									<label class='col-sm-2 control-label'>Jumlah Komisi</label>        		
-									 <div class='col-sm-6'>
-										<input type="number" name="komisi" class="form-control" required="required" value="<?=$r['komisi']?>" autocomplete="off">
-									 </div>
-							  </div>
-							  
-							  <div class="form-group">
-									<label class="col-sm-2 control-label"></label>       
-										<div class="col-sm-5">
-											<input class="btn btn-primary" type="submit" value="SIMPAN">
-											<input class="btn btn-danger" type="button" value="BATAL" onclick="self.history.back()">
-										</div>
-								</div>
-								
-							  </form>
-							  
-				</div> 
-				
-			</div>
-		
-<?php
-        break;
 
-  case "tutupkomisi":
-      $staff = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM admin WHERE akses_level = 'petugas' ORDER BY id_admin ASC");
-      
-?>
-      
-      <div class="box box-primary box-solid">
+					<form method="POST" action="<?= $aksi ?>?module=komisi&act=update_komisi" enctype="multipart/form-data"
+						class="form-horizontal">
+
+						<div class='form-group'>
+							<label class="col-sm-2 control-label">NAMA BARANG</label>
+							<div class="col-sm-3">
+								<select name="barang" class="form-control js-example-basic-single">
+									<option value="<?= $r['id_barang'] ?>"><?= $r['nm_barang'] ?></option>
+								</select>
+							</div>
+						</div>
+
+						
+						<div class='form-group'>
+							<label class="col-sm-2 control-label">Harga Jual</label>
+							<div class="col-sm-3">
+								<select name="barang" class="form-control js-example-basic-single">
+									<option value="<?= $r['id_barang'] ?>"><?= format_rupiah($r['hrgjual_barang']) ?></option>
+								</select>
+							</div>
+						</div>
+                        <div class='form-group'>
+							<label class="col-sm-2 control-label">Harga Beli</label>
+							<div class="col-sm-3">
+								<select name="barang" class="form-control js-example-basic-single">
+									<option value="<?= $r['id_barang'] ?>"><?= $r['hrgsat_barang'] ?></option>
+								</select>
+							</div>
+						</div>
+
+						<div class='form-group'>
+							<label class="col-sm-2 control-label">Metode Diskon</label>
+							<div class="col-sm-3">
+								<select name="metode" class="form-control">
+									<option value="nominal">Nominal</option>
+									<option value="persentase">Persentase</option>
+								</select>
+							</div>
+						</div>
+
+						<div class='form-group'>
+							<label class='col-sm-2 control-label'>Jumlah Komisi</label>
+							<div class='col-sm-6'>
+								<input type="number" name="komisi" class="form-control" required="required"
+									value="<?= $r['komisi'] ?>" autocomplete="off">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-5">
+								<input class="btn btn-primary" type="submit" value="SIMPAN">
+								<input class="btn btn-danger" type="button" value="BATAL" onclick="self.history.back()">
+							</div>
+						</div>
+
+					</form>
+
+				</div>
+
+			</div>
+
+			<?php
+			break;
+
+		case "tutupkomisi":
+			$staff = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM admin WHERE akses_level = 'petugas' ORDER BY id_admin ASC");
+
+			?>
+
+			<div class="box box-primary box-solid">
 				<div class="box-header with-border">
 					<h3 class="box-title">TUTUP KOMISI</h3>
 					<div class="box-tools pull-right">
 						<button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                    </div><!-- /.box-tools -->
+					</div><!-- /.box-tools -->
 				</div>
 				<div class="box-body table-responsive">
-				    
+
 					<table id="example1" class="table table-bordered table-striped">
 						<thead>
 							<tr>
@@ -415,62 +318,271 @@ switch($_GET['act']){
 							</tr>
 						</thead>
 						<tbody>
-						    <?php
-						        $no=1;
-						        while($r = mysqli_fetch_array($staff)):
-						            
-						            $query = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT SUM(ttl_komisi) as total_komisi, MIN(tgl_komisi) as min_date, MAX(tgl_komisi) as max_date
+							<?php
+							$no = 1;
+							while ($r = mysqli_fetch_array($staff)):
+
+								$query = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT SUM(ttl_komisi) as total_komisi, MIN(tgl_komisi) as min_date, MAX(tgl_komisi) as max_date
 						                FROM komisi_pegawai WHERE id_admin = '$r[id_admin]' AND status_komisi = 'on'");
-						          
-						            $kms = mysqli_fetch_array($query);
-						    ?>
-						    <tr>
-								<td><?=$no++?></td>
-								<td><?=$r['nama_lengkap']?></td>
-								<td><?=$r['no_telp']?></th>
-								<td style="text-align: center; "><?=$kms['min_date']?></td>
-								<td style="text-align: center; "><?=$kms['max_date']?></td>
-								<td style="text-align: right; "><?=format_rupiah($kms['total_komisi'])?></td>
-								<td style="width: 80px; text-align: center">
-								    <?php if($kms['total_komisi'] > 0):?>
-                                        <a href="<?=$aksi?>?module=komisi&act=close&id=<?=$r['id_admin']?>" title="closed" class="btn btn-primary">CLOSED</a> 
-								    <?php else:?>
-                                        <a href="#" title="closed" class="btn btn-primary" disabled>CLOSED</a> 
-								    <?php endif;?>
-								</td>
-                                
-							</tr>
-						    <?php
-						        endwhile;
-						    ?>
+
+								$kms = mysqli_fetch_array($query);
+								?>
+								<tr>
+									<td><?= $no++ ?></td>
+									<td><?= $r['nama_lengkap'] ?></td>
+									<td><?= $r['no_telp'] ?></th>
+									<td style="text-align: center; "><?= $kms['min_date'] ?></td>
+									<td style="text-align: center; "><?= $kms['max_date'] ?></td>
+									<td style="text-align: right; "><?= format_rupiah($kms['total_komisi']) ?></td>
+									<td style="width: 80px; text-align: center">
+										<?php if ($kms['total_komisi'] > 0): ?>
+											<a href="<?= $aksi ?>?module=komisi&act=close&id=<?= $r['id_admin'] ?>" title="closed"
+												class="btn btn-primary">CLOSED</a>
+										<?php else: ?>
+											<a href="#" title="closed" class="btn btn-primary" disabled>CLOSED</a>
+										<?php endif; ?>
+									</td>
+
+								</tr>
+								<?php
+							endwhile;
+							?>
 						</tbody>
 					</table>
 				</div>
-			</div>	
-            
-<?php
-    
-    break;
+			</div>
+
+			<?php
+
+		//    break;
+//    case "bulan" :
+//    break
+		case "global":
+			?>
+			<div class="box box-primary box-solid">
+				<div class="box-header with-border">
+					<h3 class="box-title">INPUT KOMISI</h3>
+					<div class="box-tools pull-right">
+						<button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+					</div><!-- /.box-tools -->
+				</div>
+				<div class="box-body table-responsive">
+					<form method="POST" action="<?= $aksi ?>?module=komisi&act=input_komisiglobal" enctype="multipart/form-data"
+						class="form-horizontal">
+
+						<div class='col-sm-3'>
+							<label>INPUT NILAI KOMISI GLOBAL (%)</label>
+							<input type="number" name="nilai" id='nilai' class="form-control" required="required"
+								autocomplete="off">
+						</div>
+						<div class='col-sm-3'>
+							<label>STATUS PEMBERIAN KOMISI</label>
+							<select name='status' id='status' class='form-control'>
+								<?php
+								$stat = mysqli_query(
+									$GLOBALS["___mysqli_ston"],
+									"select * from komisiglobal where id_komisiglobal=1"
+								);
+								$status = mysqli_fetch_array($stat);
+								echo "<option value='$status[status]'>$status[status]</option>
+                                <option value='ON'>ON</option>
+                                <option value='OFF'>OFF</option>
+                                ";
+								?>
+							</select>
+
+							<div>
+								<input class="btn btn-primary" type="submit" value="SIMPAN">
+							</div>
+
+						</div>
+					</form>
+
+					<div>
+						<div>
+							<?php
+							$global = mysqli_query($GLOBALS["___mysqli_ston"], "select * from komisiglobal where status='ON' ");
+							$global1 = mysqli_fetch_array($global);
+							$kogo = $global1['nilai'];
+
+							echo "
+                            <div col-sm-3>
+                            Nilai komisi yang aktif saat ini = $kogo % 
+                        </div><br><br><br>";
+							?>
+						</div>
+						<table id="example1" class="table table-bordered table-striped">
+							<thead>
+								<tr>
+									<th>No</th>
+									<th>Nama Admin</th>
+									<th style="text-align: center; ">Bulan</th>
+									<th style="text-align: center; ">Komisi</th>
+
+								</tr>
+							</thead>
+							<tbody>
+								<?php
+								$admin1 = $db->query("select * from admin where akses_level='petugas' and blokir='N' ");
+
+								$no = 1;
+								$tgl_awal = (date('Y-m-d'));
+								$bulan = substr($tgl_awal, 5, 2);
+								$namabulan = getBulan($bulan);
+
+
+								while ($r = mysqli_fetch_array($admin1)) {
+									$petugas = $r['nama_lengkap'];
+									$tanpatgl = substr($tgl_awal, 0, 8);
+									$awalbulan = $tanpatgl . '01';
+									$querykomisi = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT SUM(ttl_trkasir) as total_komisi FROM trkasir
+                                where tgl_trkasir between '$awalbulan' and '$tgl_awal' and petugas='$petugas' ");
+									$komisi = mysqli_fetch_array($querykomisi);
+									$nilai = $kogo / 100;
+									$komisi1 = $komisi['total_komisi'];
+									$komisipetugas = format_rupiah($komisi1 * $nilai);
+									$totalkomisi[] = $komisi1 * $nilai;
+
+									echo "<tr class='warnabaris' >
+											<td>$no</td>           
+											 <td>$r[nama_lengkap]</td>
+											 <td style='text-align:center;'>$namabulan</td>	
+											 <td style='text-align:right'>Rp. $komisipetugas</td>
+										</tr>";
+									$no++;
+								}
+								$total_komisi = format_rupiah(array_sum($totalkomisi));
+
+
+								echo "
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan='3'>
+                                    <h3>
+                                        <center>Total</center>
+                                    </h3>
+                                </td>
+                                <td colspan='2'>
+                                    <h3><strong> Rp.  $total_komisi,- </strong></h3>
+                                </td>
+                            </tr>
+                            </tfoot>";
+								?>
+						</table>
+					</div>
+				</div>
+				<div style='text-align: center'><a class='btn  btn-success btn-flat' href='?module=komisi&act=history'>History</a>
+				</div>
+
+			</div>
+			<?php
+			break;
+		case "history":
+			?>
+			<div class="box box-primary box-solid">
+				<div class="box-header with-border">
+					<h3 class="box-title">INPUT BULAN</h3>
+					<div class="box-tools pull-right">
+						<button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+					</div><!-- /.box-tools -->
+				</div>
+				<div class="box-body table-responsive">
+					<form method="POST" action="?module=komisi&act=bulan" enctype="multipart/form-data" class="form-horizontal">
+						<label>Bulan</label>
+						<select name='bulan' id='bulan' class='form-control'>
+							<?php
+							echo "
+                                <option value='1'>Januari</option>
+                                <option value='2'>Febuari</option>
+                                <option value='3'>Maret</option>
+                                <option value='4'>April</option>
+                                <option value='5'>Mei</option>
+                                <option value='6'>Juni</option>
+                                <option value='7'>Juli</option>
+                                <option value='8'>Agustus</option>
+                                <option value='9'>September</option>
+                                <option value='10'>Oktober</option>
+                                <option value='11'>November</option>
+                                <option value='12'>Desember</option>                               
+                                ";
+							?>
+						</select>
+						<input class="btn btn-primary" type="submit" value="SIMPAN">
+						<input class="btn btn-danger" type="button" value="KEMBALI" onclick="self.history.back()">
+					</form>
+				</div>
+			</div>
+			<?php
+			break;
+		case "bulan":
+			$bulan = $_POST['bulan'];
+			$we = getBulan($bulan);
+			$tglhariini = date('Y-m-d');
+			$tahun = substr($tglhariini, 0, 4);
 
 
 
 
-}
+			$admin1 = $db->query("select * from admin where akses_level='petugas' ");
+			?>
+			<table id="example1" class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th>No</th>
+						<th>Nama Admin</th>
+						<th style="text-align: center; ">Bulan</th>
+						<th style="text-align: center; ">Komisi</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php
+					$no = 1;
+					while ($t = mysqli_fetch_array($admin1)) {
+						$querykomisi = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT SUM(ttl_trkasir) as total_komisi FROM trkasir
+                                where month (tgl_trkasir)='$bulan' and year (tgl_trkasir) ='2025' and petugas='$t[nama_lengkap]' ");
+						$komisipetugas1 = mysqli_fetch_array($querykomisi);
+						$kp = $komisipetugas1['total_komisi'];
 
+						$kg1 = $db->query("select * from komisiglobal where month (tgl)='$bulan' ");
+						$kg2 = $kg1->fetch_array();
+						$angka = $kg2['nilai'];
+
+						$ksh = format_rupiah($kp * $angka / 100);
+
+						echo "<tr class='warnabaris' >
+											<td>$no</td>           
+											 <td>$t[nama_lengkap]</td>
+											 <td style='text-align:center;'>$we</td>	
+											 <td style='text-align:right'>Rp. $ksh </td>
+										</tr>";
+						$no++;
+					}
+
+					?>
+				</tbody>
+			</table>
+			<input class="btn btn-danger" type="button" value="KEMBALI" onclick="self.history.back()">
+			<?php
+			break;
+
+
+	}
 }
 ?>
 
 <script type="text/javascript">
-    $(function(){
-        $(".datepicker").datepicker({
-            format: 'yyyy-mm-dd',
-            autoclose: true,
-            todayHighlight: true,
-        });
-    });
- 
-    $(document).ready(function() {
-        $('.js-example-basic-single').select2();
-    });
-</script>
 
+
+	$(function () {
+		$(".datepicker").datepicker({
+			format: 'yyyy-mm-dd',
+			autoclose: true,
+			todayHighlight: true,
+		});
+	});
+
+	$(document).ready(function () {
+		$('.js-example-basic-single').select2();
+	});
+</script>

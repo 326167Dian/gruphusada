@@ -53,7 +53,7 @@ switch($_GET[act]){
 								// 			</td>
 								// 		</tr>";
 								
-								    echo "<tr class='warnabaris' >
+									echo "<tr class='warnabaris' >
 											<td>$no</td>           
 											 <td>$r[nm_satuan]</td>
 											 <td>$r[deskripsi]</td>
@@ -105,7 +105,7 @@ switch($_GET[act]){
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-5'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-danger' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel'>
 										</div>
 								</div>
 								
@@ -151,7 +151,7 @@ switch($_GET[act]){
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-5'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-danger' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel'>
 										</div>
 								</div>
 								
@@ -170,8 +170,7 @@ switch($_GET[act]){
 }
 }
 ?>
-
-<script>
+        <script>
             $(document).ready(function() {
                 
                 var table = $('#example11').DataTable({
@@ -246,7 +245,6 @@ switch($_GET[act]){
             
                  
         </script>
-        
         
 <script type="text/javascript">
  $(function(){

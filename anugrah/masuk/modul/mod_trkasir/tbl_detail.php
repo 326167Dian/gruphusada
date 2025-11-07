@@ -54,7 +54,7 @@ color: white;
 							$sumprice=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT kd_trkasir, SUM(hrgttl_dtrkasir) as grandnya FROM trkasir_detail 
 							WHERE kd_trkasir='$kd_trkasir'");
 							$ttlprice=mysqli_fetch_array($sumprice);
-							$grandnya = format_rupiah($ttlprice['grandnya']);
+							$grandnya = (format_rupiah($ttlprice['grandnya']) != 0)?format_rupiah($ttlprice['grandnya']):'';
 						
 						       $noreq=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir_detail
 							   WHERE trkasir_detail.kd_trkasir='$kd_trkasir'
@@ -98,7 +98,7 @@ color: white;
 											<div class='buttons'>
 												<button type='button' class='btn btn-primary right-block' onclick='simpan_transaksi();'>SIMPAN TRANSAKSI [F2]</button>
 												&nbsp
-												<input class='btn btn-danger' type='button' value=BATAL onclick=self.history.back()>
+												<input class='btn btn-danger' type='button' value=BATAL id='btn_cancel' onclick='history.back()'>
 											</div>";
 
 											if($stt_aksi == "input_trkasir"){
@@ -136,14 +136,14 @@ color: white;
 										<input type='text' name='diskon2' id='diskon2' value='' class='form-control'  style='font-size: 18px; color: #000000; font-weight: bold; text-align: right;' autocomplete='off'>
 									 </div>
 								</div>			
-								
+													
 								<div class='text-right'>
 									<label class='col-sm-6 control-label'>PPN (%)</label>        		
 									 <div class='col-sm-6'>
 										<input type='text' name='ppn_trkasir' id='ppn_trkasir' value='' class='form-control'  style='font-size: 18px; color: #000000; font-weight: bold; text-align: right;' autocomplete='off'>
 									 </div>
 								</div>
-													
+								
 								<div class='text-right'>
 									<label class='col-sm-6 control-label'>JUMLAH BAYAR</label>        		
 									 <div class='col-sm-6'>
@@ -185,7 +185,7 @@ color: white;
 								<div class='text-right'>
 									<label class='col-sm-6 control-label'>KEMBALIAN</label>        		
 									 <div class='col-sm-6'>
-										<input type='text' name='sisa_bayar' id='sisa_bayar' class='form-control' style='font-size: 18px; color: #fff; font-weight: bold; text-align: right; background: #000000;' autocomplete='off'>
+										<input type='text' name='sisa_bayar' id='sisa_bayar' class='form-control' style='font-size: 18px; color: #fff; font-weight: bold; text-align: right; background: #000000;' autocomplete='off' readonly>
 									 </div>
 								</div>
 								
@@ -208,22 +208,18 @@ $(document).ready(function () {
     });
 
 		
-		$('#dp_bayar').keyup(function(e) {
-			HitungOngkirDanDP();
-			
-		});
 		
 		//hitung dp
-		$('#dp_bayar').keydown(function(e) {
-    		if (e.which == 13) { // e.which == 13 merupakan kode yang mendeteksi ketika anda   // menekan tombol enter di keyboard
-    			//letakan fungsi anda disini
-       
-    			HitungOngkirDanDP();
-    				
-    		}
+		$('#dp_bayar').keyup(function(e) {
+// 		if (e.which == 13) { // e.which == 13 merupakan kode yang mendeteksi ketika anda   // menekan tombol enter di keyboard
+			//letakan fungsi anda disini
+   
+			HitungOngkirDanDP();
+				
+// 		}
 		});
-
-//         $('#ppn_trkasir').keyup(function(e) {
+		
+// 		$('#ppn_trkasir').keyup(function(e) {
 //             var ttl_trkasir = document.getElementById('hid_ttl_trkasir').value ?? 0;
 //             ttl_trkasir = (ttl_trkasir == 0)?0:ttl_trkasir.split('.').join("");
             
@@ -233,7 +229,7 @@ $(document).ready(function () {
 //             var subtotal = ttl_trkasir * (1 + (ppn_trkasir/100));
 //             document.getElementById('ttl_trkasir').value = formatRupiah(Math.round(subtotal));
 // 		});
-
+    
         $('#ppn_trkasir').keydown(function(e) {
             if (e.which == 13) { // e.which == 13 merupakan kode yang mendeteksi ketika anda   // menekan tombol enter di keyboard
     			//letakan fungsi anda disini
@@ -241,32 +237,32 @@ $(document).ready(function () {
                 HitungOngkirDanDP();
             }
 		});
-		
+
 		//hitung diskon
 		$('#diskon').keydown(function(e) {
-		if (e.which == 13) { // e.which == 13 merupakan kode yang mendeteksi ketika anda   // menekan tombol enter di keyboard
-			//letakan fungsi anda disini
-
-			hitungdiskon();
-
-		}
+    		if (e.which == 13) { // e.which == 13 merupakan kode yang mendeteksi ketika anda   // menekan tombol enter di keyboard
+    			//letakan fungsi anda disini
+    
+    			hitungdiskon();
+    
+    		}
 		});
 
 		//hitung diskon
 		$('#diskon2').keydown(function(e) {
-		if (e.which == 13) { // e.which == 13 merupakan kode yang mendeteksi ketika anda   // menekan tombol enter di keyboard
-			//letakan fungsi anda disini
-
-			hitungdiskon2();
-
-		}
+    		if (e.which == 13) { // e.which == 13 merupakan kode yang mendeteksi ketika anda   // menekan tombol enter di keyboard
+    			//letakan fungsi anda disini
+    
+    			hitungdiskon2();
+    
+    		}
 		});
 		
 		//rubah format rupiah
 			function formatRupiah(angka){
 			 var reverse = angka.toString().split('').reverse().join(''),
 			 ribuan = reverse.match(/\d{1,3}/g);
-			 ribuan = ribuan.join('.').split('').reverse().join('');
+			 ribuan = (ribuan != null)?ribuan.join('.').split('').reverse().join(''):0;
 			 return ribuan;
 			}
 
@@ -295,11 +291,9 @@ $(document).ready(function () {
 					
 			var total2 = parseInt(res1x) - parseInt(res3x);
 
-// 			document.getElementById("dp_bayar").value = formatRupiah(dp_bayar);
-			document.getElementById("sisa_bayar").value = formatRupiah(total2);
-	        document.getElementById("dp_bayar").value = (formatRupiah(dp_bayar) != 0)?formatRupiah(dp_bayar):'';
+			document.getElementById("dp_bayar").value = (formatRupiah(dp_bayar) != 0)?formatRupiah(dp_bayar):'';
 // 			document.getElementById("sisa_bayar").value = ((formatRupiah(ttl_trkasir) != 0) || (formatRupiah(dp_bayar) != 0))?formatRupiah(total2):'';
-	
+	        document.getElementById("sisa_bayar").value = formatRupiah(total2);
 	}
 
 	function hitungdiskon(){
@@ -320,8 +314,6 @@ $(document).ready(function () {
 
         var total5 = parseInt(res1x) * ( 1- (parseInt(res4x)/100));
 
-        // document.getElementById("diskon").value = formatRupiah(diskon);
-        // document.getElementById("ttl_trkasir").value = formatRupiah(total5);
         document.getElementById("diskon").value = (formatRupiah(diskon)!=0)?formatRupiah(diskon):'';
         document.getElementById("ttl_trkasir").value = formatRupiah(total5);
 
@@ -346,15 +338,14 @@ $(document).ready(function () {
 
         var total6 = parseInt(res1x) - parseInt(res2x);
 
-        // document.getElementById("diskon2").value = formatRupiah(diskon2);
-        // document.getElementById("ttl_trkasir").value = formatRupiah(total6);
         document.getElementById("diskon2").value = (formatRupiah(diskon2)!=0)?formatRupiah(diskon2):'';
         document.getElementById("ttl_trkasir").value = formatRupiah(total6);
 
 
 	}
 	
-	function hitungPPN(){
+    
+    function hitungPPN(){
 	   // var ttl_trkasir = document.getElementById('hid_ttl_trkasir').value ?? 0;
 	    var ttl_trkasir = document.getElementById('ttl_trkasir').value ?? 0;
         ttl_trkasir = (ttl_trkasir == 0)?0:ttl_trkasir.split('.').join("");

@@ -217,7 +217,7 @@ elseif ($_GET['module'] == 'cekdarah') {
 }
 // evaluasi pegawai
 elseif ($_GET['module'] == 'evaluasi') {
-    include "modul/mod_evaluasi/evaluasi.php";
+    include "modul/mod_evaluasi/lapevaluasi.php";
 }
 
 

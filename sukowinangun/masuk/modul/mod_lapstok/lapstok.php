@@ -1323,6 +1323,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                         const page = parseInt(params.get("page"));
                         return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
                     }
+                    
                 });
             </script>
         <?php
@@ -1589,6 +1590,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                         const page = parseInt(params.get("page"));
                         return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
                     }
+                    
                 });
             </script>
         <?php

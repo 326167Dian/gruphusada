@@ -61,6 +61,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
     										
     										)");
     
+    // mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kartu_stok(kode_transaksi) VALUES('$_POST[kd_trkasir]')");
     $tgl_sekarang = date('Y-m-d H:i:s', time());
     mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kartu_stok(kode_transaksi, tgl_sekarang) VALUES('$_POST[kd_trkasir]','$tgl_sekarang')");
     		if ($insert) {

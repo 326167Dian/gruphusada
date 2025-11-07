@@ -101,12 +101,20 @@ switch($_GET[act]){
 									<label class='col-sm-2 control-label'>Nama Pasien</label>        		
 									 <div class='col-sm-8'>
 										<select name='id_pelanggan' class='form-control' >";
-                                        $tampil = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM pelanggan ORDER BY nm_pelanggan ASC");
+                                        $tampil_last = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM pelanggan ORDER BY id_pelanggan DESC LIMIT 1");
+                                        $tl = mysqli_fetch_array($tampil_last);
+                                        echo "<option value='$tl[id_pelanggan]'>$tl[nm_pelanggan]</option>";
+                                        
+                                        $tampil = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM pelanggan 
+                                        WHERE id_pelanggan != $tl[id_pelanggan] ORDER BY id_pelanggan DESC");
                                         while ($rk = mysqli_fetch_array($tampil)) {
-                                            echo "<option value=$rk[id_pelanggan]>$rk[nm_pelanggan]</option>";
+                                            echo "<option value='$rk[id_pelanggan]'>$rk[nm_pelanggan]</option>";
                                         }
                                         echo "</select>
 									 </div>
+									 <label class='col-sm-2 control-label'>
+									    <button type='button' data-toggle='modal' data-target='#ModalPelanggan' id='btn_add_pelanggan' class='btn btn-primary'><i class='glyphicon glyphicon-plus'></i><i class='glyphicon glyphicon-user'></i></button>
+									 </label> 
 							  </div>
 							  
 							  </div><div class='form-group'>
@@ -222,6 +230,59 @@ switch($_GET[act]){
 }
 }
 ?>
+<!-- Modal Pelanggan -->
+<div id="ModalPelanggan" class="modal fade" role="dialog">
+	<div class="modal-md modal-dialog">
+		<div class="modal-content table-responsive">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Tambah Data Pelanggan / Pasien</h4>
+			</div>
+
+			<div class="modal-body table-responsive">
+				<form method=POST action='modul/mod_pelanggan/aksi_pelanggan.php?module=pelanggan&act=input_pelanggan' enctype='multipart/form-data' class='form-horizontal' id='frmAddPelanggan'>
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Nama Pelanggan</label>        		
+						<div class='col-sm-9'>
+						    <input type=text name='nm_pelanggan' class='form-control' required='required' autocomplete='off'>
+						</div>
+					</div>
+							  
+					<div class='form-group'>
+						<label class='col-sm-3 control-label'>Telepon</label>        		
+					    <div class='col-sm-9'>
+						    <input type=text name='tlp_pelanggan' class='form-control' autocomplete='off'>
+						</div>
+					</div>
+							  
+					<div class='form-group'>
+					    <label class='col-sm-3 control-label'>Alamat</label>        		
+						<div class='col-sm-9'>
+						    <textarea name='alamat_pelanggan' class='form-control' rows='3'></textarea>
+						</div>
+					</div>
+							  
+					<div class='form-group'>
+					    <label class='col-sm-3 control-label'>Keterangan</label>        		
+						<div class='col-sm-9'>
+						    <textarea name='ket_pelanggan' class='form-control' rows='3'></textarea>
+						</div>
+					</div>
+							  
+					<div class='form-group'>
+					    <label class='col-sm-3 control-label'></label>       
+						<div class='col-sm-9'>
+						    <input class='btn btn-info' type='submit' value='SIMPAN'>
+							<input class='btn btn-danger' type='button' value='BATAL' onclick="tutupModal()">
+						</div>
+					</div>
+								
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- end modal pelanggan -->
 
 <script type="text/javascript">
  $(function(){
@@ -231,4 +292,29 @@ switch($_GET[act]){
       todayHighlight: true,
   });
  });
+ 
+    function tutupModal(){
+        //hilangkan modal
+    	$(".close").click();
+    }
+    
+    $("#frmAddPelanggan").submit(function(e) {
+    
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+                    
+        var form = $(this);
+        var actionUrl = form.attr('action');
+                        
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            data: form.serialize(), // serializes the form's elements.
+            success: function(data)
+            {
+                $(".close").click();
+                location.reload();
+            }
+        });
+        
+    });
 </script>

@@ -11,9 +11,9 @@ $pdf->SetMargins(1, 1, 1);
 $pdf->AliasNbPages();
 $pdf->AddPage();
 
-$tgl_awal = $_POST['tgl_awal'];
-$tgl_akhir = $_POST['tgl_akhir'];
-$shift = $_POST['shift'];
+$tgl_awal = $_GET['tgl_awal'];
+$tgl_akhir = $_GET['tgl_akhir'];
+$shift = $_GET['shift'];
 
 $pdf->SetFont('Arial', 'B', 10);
 $pdf->Cell(25.5, 0.7, "LAPORAN REKAP STOK OPNAME", 0, 10, 'L');
@@ -54,8 +54,8 @@ while ($r1 = mysqli_fetch_array($header)) {
 	$pdf->ln(0.5);
 	$pdf->SetFont('Arial', 'B', 8);
 	$pdf->Cell(1, 0.7, 'NO', 1, 0, 'C');
-	$pdf->Cell(3, 0.7, 'Petugas', 1, 0, 'C');
-	$pdf->Cell(3, 0.7, 'Kode Barang', 1, 0, 'L');
+	$pdf->Cell(3.5, 0.7, 'Petugas', 1, 0, 'C');
+	$pdf->Cell(2.5, 0.7, 'Kode Barang', 1, 0, 'L');
 	$pdf->Cell(6.5, 0.7, 'Nama Barang', 1, 0, 'L');
 	$pdf->Cell(1.5, 0.7, 'Satuan', 1, 0, 'C');
 	$pdf->Cell(2, 0.7, 'Exp', 1, 0, 'C');
@@ -76,7 +76,7 @@ while ($r1 = mysqli_fetch_array($header)) {
 	$total_minus = 0;
 	$total_lebih = 0;
 	while ($lihat = mysqli_fetch_array($detailbrg)) {
-        $tgl_awal = $_POST['tgl_awal'];
+        $tgl_awal = $_GET['tgl_awal'];
         $ed = $lihat['exp_date'];
         $start_date = date('Y-m-d', strtotime('-180 days', strtotime($ed)));
 
@@ -90,9 +90,9 @@ while ($r1 = mysqli_fetch_array($header)) {
 		}
 
 		$pdf->Cell(1, 0.5, $no2, 1, 0, 'C');
-		$pdf->Cell(3, 0.5, $lihat['nama_lengkap'], 1, 0, 'C');
+		$pdf->Cell(3.5, 0.5, $lihat['nama_lengkap'], 1, 0, 'C');
 // 		$pdf->Cell(1.5, 0.5, $lihat['jenisobat'], 1, 0, 'L');
-		$pdf->Cell(3, 0.5, $lihat['kd_barang'], 1, 0, 'L');
+		$pdf->Cell(2.5, 0.5, $lihat['kd_barang'], 1, 0, 'L');
 		$pdf->Cell(6.5, 0.5, $lihat['nm_barang'], 1, 0, 'L');
 		$pdf->Cell(1.5, 0.5, $lihat['sat_barang'], 1, 0, 'C');
 

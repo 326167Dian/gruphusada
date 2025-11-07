@@ -114,6 +114,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 			$tglharini = date('Y-m-d');
 			$tgl_akhir = date('Y-m-d');
 			$tgl_awal = date('Y-m-d', strtotime('-30 days', strtotime($tgl_awal)));
+    
             echo "<small>F1 => Simpan Detail || F2 => Simpan Transaksi</small>";
 				
 			echo "
@@ -273,8 +274,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 			$tgl_akhir = date('Y-m-d');
 			$tgl_awal = date('Y-m-d', strtotime('-30 days', strtotime($tgl_awal)));
-            echo "<small>F1 => Simpan Detail || F2 => Simpan Transaksi</small>";
-				
+
 			echo "
 		  <div class='box box-primary box-solid'>
 				<div class='box-header with-border'>
@@ -336,9 +336,9 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 											<textarea name='ket_trbmasuk' id='ket_trbmasuk' class='form-control' rows='2'>$re[ket_trbmasuk]</textarea>
 											</p>
 											<div class='buttons'>
-											  <button type='button' class='btn btn-primary right-block' onclick='simpan_transaksi();'>SIMPAN TRANSAKSI [F2]</button>
+											  <button type='button' class='btn btn-primary right-block' onclick='simpan_transaksi();'>SIMPAN TRANSAKSI</button>
 												&nbsp&nbsp&nbsp
-												<input class='btn btn-danger' type='button' value=BATAL onclick=self.history.back()>
+												<input class='btn btn-danger' type='button' value=BATAL id='btn_cancel' page='".$_GET['page']."'>
 											</div>
 								  
 										</div>
@@ -396,7 +396,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 											<input type=text name='hrgsat_dtrbmasuk' id='hrgsat_dtrbmasuk' class='form-control' autocomplete='off'>
 											</p>
 												<div class='buttons'>
-													<button type='button' class='btn btn-success right-block' onclick='simpan_detail();'>SIMPAN DETAIL [F1]</button>
+													<button type='button' class='btn btn-success right-block' onclick='simpan_detail();'>SIMPAN DETAIL</button>
 												</div>
 										</div>
 										
@@ -1016,6 +1016,14 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
         if (event.key === 'F2' || event.keyCode === 113) {
             event.preventDefault(); // Mencegah help browser muncul
             simpan_transaksi();
+        }
+    });
+    
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'F3' || event.keyCode === 114) {
+            event.preventDefault(); // Mencegah help browser muncul
+            // simpan_detail();
+            $('#dp_bayar').focus();
         }
     });
     

@@ -184,9 +184,13 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                 $(document).ready(function() {
                     var start = '<?= $start_date ?>';
                     var finish = '<?= $finish_date ?>';
-                    $('#tes').DataTable({
+                    var table = $('#tes').DataTable({
                         processing: true,
                         serverSide: true,
+                        lengthChange: false,
+                        displayStart: getPageFromUrl() * 10,
+                        pageLength: 10,
+                        order: [[ 0, "desc" ]],
                         ajax: {
                             "url": "modul/mod_lapstok/barang-serverside.php?action=table_data&start=" + start + "&finish=" + finish,
                             "dataType": "JSON",
@@ -277,6 +281,26 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                         }
                     });
 
+                    table.on('draw', function () {
+                        const info = table.page.info();
+                        const currentPage = info.page + 1; // konversi ke 1-based
+                        const url = new URL(window.location);
+                        url.searchParams.set('page', currentPage);
+                        window.history.pushState({}, '', url);
+                    });
+                    
+                    // Tombol riwayat
+                    $('#tes tbody').on('click', '#btn_riwayat', function () {
+                        var id = $(this).data('id');
+                        var currentPage = table.page() + 1;
+                        location.href = '?module=lapstok&act=edit&id='+id+'&page='+currentPage; 
+                    });
+                    
+                    function getPageFromUrl() {
+                        const params = new URLSearchParams(window.location.search);
+                        const page = parseInt(params.get("page"));
+                        return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+                    }
                 });
             </script>
         <?php
@@ -497,9 +521,13 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                     var start = '<?= $start_date ?>';
                     var finish = '<?= $finish_date ?>';
 
-                    $('#tes').DataTable({
+                    var table = $('#tes').DataTable({
                         processing: true,
                         serverSide: true,
+                        lengthChange: false,
+                        displayStart: getPageFromUrl() * 10,
+                        pageLength: 10,
+                        order: [[ 0, "desc" ]],
                         ajax: {
                             "url": "modul/mod_lapstok/brglaku-serverside.php?action=table_data&start=" + start + "&finish=" + finish,
                             "dataType": "JSON",
@@ -592,6 +620,27 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                             $("#nilaiLaba").text(formatRupiah(json.totalL30));
                         }
                     });
+                    
+                    table.on('draw', function () {
+                        const info = table.page.info();
+                        const currentPage = info.page + 1; // konversi ke 1-based
+                        const url = new URL(window.location);
+                        url.searchParams.set('page', currentPage);
+                        window.history.pushState({}, '', url);
+                    });
+                    
+                    // Tombol riwayat
+                    $('#tes tbody').on('click', '#btn_riwayat', function () {
+                        var id = $(this).data('id');
+                        var currentPage = table.page() + 1;
+                        location.href = '?module=lapstok&act=edit&id='+id+'&page='+currentPage; 
+                    });
+                    
+                    function getPageFromUrl() {
+                        const params = new URLSearchParams(window.location.search);
+                        const page = parseInt(params.get("page"));
+                        return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+                    }
                 });
             </script>
         <?php
@@ -812,9 +861,13 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                     var start = '<?= $start_date ?>';
                     var finish = '<?= $finish_date ?>';
 
-                    $('#tes').DataTable({
+                    var table = $('#tes').DataTable({
                         processing: true,
                         serverSide: true,
+                        lengthChange: false,
+                        displayStart: getPageFromUrl() * 10,
+                        pageLength: 10,
+                        order: [[ 0, "desc" ]],
                         ajax: {
                             "url": "modul/mod_lapstok/brglancar-serverside.php?action=table_data&start=" + start + "&finish=" + finish,
                             "dataType": "JSON",
@@ -908,6 +961,27 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                             $("#nilaiLaba").text(formatRupiah(json.totalL30));
                         }
                     });
+                    
+                    table.on('draw', function () {
+                        const info = table.page.info();
+                        const currentPage = info.page + 1; // konversi ke 1-based
+                        const url = new URL(window.location);
+                        url.searchParams.set('page', currentPage);
+                        window.history.pushState({}, '', url);
+                    });
+                    
+                    // Tombol riwayat
+                    $('#tes tbody').on('click', '#btn_riwayat', function () {
+                        var id = $(this).data('id');
+                        var currentPage = table.page() + 1;
+                        location.href = '?module=lapstok&act=edit&id='+id+'&page='+currentPage; 
+                    });
+                    
+                    function getPageFromUrl() {
+                        const params = new URLSearchParams(window.location.search);
+                        const page = parseInt(params.get("page"));
+                        return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+                    }
                 });
             </script>
         <?php
@@ -1128,9 +1202,13 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                 var start = '<?= $start_date ?>';
                 var finish = '<?= $finish_date ?>';
                 $(document).ready(function() {
-                    $('#tes').DataTable({
+                    var table = $('#tes').DataTable({
                         processing: true,
                         serverSide: true,
+                        lengthChange: false,
+                        displayStart: getPageFromUrl() * 10,
+                        pageLength: 10,
+                        order: [[ 0, "desc" ]],
                         ajax: {
                             "url": "modul/mod_lapstok/brgslow-serverside.php?action=table_data&start=" + start + "&finish=" + finish,
                             "dataType": "JSON",
@@ -1224,6 +1302,28 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                             $("#nilaiLaba").html(json.totalL30);
                         }
                     });
+                    
+                    table.on('draw', function () {
+                        const info = table.page.info();
+                        const currentPage = info.page + 1; // konversi ke 1-based
+                        const url = new URL(window.location);
+                        url.searchParams.set('page', currentPage);
+                        window.history.pushState({}, '', url);
+                    });
+                    
+                    // Tombol riwayat
+                    $('#tes tbody').on('click', '#btn_riwayat', function () {
+                        var id = $(this).data('id');
+                        var currentPage = table.page() + 1;
+                        location.href = '?module=lapstok&act=edit&id='+id+'&page='+currentPage; 
+                    });
+                    
+                    function getPageFromUrl() {
+                        const params = new URLSearchParams(window.location.search);
+                        const page = parseInt(params.get("page"));
+                        return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+                    }
+                    
                 });
             </script>
         <?php
@@ -1385,9 +1485,13 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                 var start = '<?= $start_date ?>';
                 var finish = '<?= $finish_date ?>';
                 $(document).ready(function() {
-                    $('#tes').DataTable({
+                    var table = $('#tes').DataTable({
                         processing: true,
                         serverSide: true,
+                        lengthChange: false,
+                        displayStart: getPageFromUrl() * 10,
+                        pageLength: 10,
+                        order: [[ 0, "desc" ]],
                         ajax: {
                             "url": "modul/mod_lapstok/brgmacet-serverside.php?action=table_data&start=" + start + "&finish=" + finish,
                             "dataType": "JSON",
@@ -1466,7 +1570,27 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                         }
                     });
 
-
+                    table.on('draw', function () {
+                        const info = table.page.info();
+                        const currentPage = info.page + 1; // konversi ke 1-based
+                        const url = new URL(window.location);
+                        url.searchParams.set('page', currentPage);
+                        window.history.pushState({}, '', url);
+                    });
+                    
+                    // Tombol riwayat
+                    $('#tes tbody').on('click', '#btn_riwayat', function () {
+                        var id = $(this).data('id');
+                        var currentPage = table.page() + 1;
+                        location.href = '?module=lapstok&act=edit&id='+id+'&page='+currentPage; 
+                    });
+                    
+                    function getPageFromUrl() {
+                        const params = new URLSearchParams(window.location.search);
+                        const page = parseInt(params.get("page"));
+                        return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+                    }
+                    
                 });
             </script>
         <?php

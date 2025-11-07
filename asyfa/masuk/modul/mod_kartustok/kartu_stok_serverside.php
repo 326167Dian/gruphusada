@@ -14,7 +14,7 @@ $tgl_60 = date('Y-m-d', strtotime('-60 days', strtotime($tgl_awal)));
 
 // Kolom yang dapat diurutkan
 $columns = [
-    0 =>    'b.kd_barang',
+    0 =>    'b.id_barang',
     1 =>    'b.kd_barang',
     2 =>    'b.nm_barang',
     3 =>    'b.stok_barang',
@@ -25,7 +25,7 @@ $columns = [
     8 =>    'b.sat_barang',
     9 =>    'b.hrgsat_barang',
     10 =>   'b.kd_barang',
-    11 =>   'b.kd_barang',
+    11 =>   'b.id_barang',
 ];
 
 // Ambil parameter dari DataTables
@@ -33,15 +33,15 @@ $draw       = intval($_POST['draw'] ?? 0);
 $start      = intval($_POST['start'] ?? 0);
 $length     = intval($_POST['length'] ?? 10);
 $search     = $_POST['search']['value'] ?? '';
-$orderColIx = $_POST['order'][0]['column'] ?? 0;
-$orderDir   = strtolower($_POST['order'][0]['dir'] ?? 'desc');
+$orderColIx = $_POST['order'][0]['column'] ?? 2;
+$orderDir   = strtolower($_POST['order'][0]['dir'] ?? 'asc');
 
 // Validasi input order
-$orderCol = $columns[$orderColIx] ?? 'b.kd_barang';
-$orderDir = in_array($orderDir, ['asc', 'desc']) ? $orderDir : 'desc';
+$orderCol = $columns[$orderColIx] ?? 'b.id_barang';
+$orderDir = in_array($orderDir, ['asc', 'desc']) ? $orderDir : 'asc';
 
 // Hitung total data (tanpa filter)
-$totalQuery = "SELECT COUNT(*) AS total FROM barang WHERE kd_barang != ''";
+$totalQuery = "SELECT COUNT(*) AS total FROM barang WHERE nm_barang != ''";
 $totalResult = $db->query($totalQuery);
 $totalData = $totalResult->fetch_assoc()['total'] ?? 0;
 

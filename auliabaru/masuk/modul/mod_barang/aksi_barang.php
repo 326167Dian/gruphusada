@@ -64,17 +64,16 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 	}
 	//update barang
 	elseif ($module == 'barang' and $act == 'update_barang') {
-        // echo $_POST['indikasi'];
-        // die();
+
 		mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE barang SET
-									nm_barang       = '$_POST[nm_barang]',									
-									stok_buffer     = '$_POST[stok_buffer]',
-									sat_barang      = '$_POST[sat_barang]',
-									jenisobat       = '$_POST[jenisobat]',
-									hrgsat_barang   = '$hrgsat_barang',
-									hrgjual_barang  = '$hrgjual_barang',
-									indikasi        = '$_POST[indikasi]',
-									ket_barang      = '$_POST[ket_barang]'
+									nm_barang = '$_POST[nm_barang]',									
+									stok_buffer = '$_POST[stok_buffer]',
+									sat_barang = '$_POST[sat_barang]',
+									jenisobat = '$_POST[jenisobat]',
+									hrgsat_barang = '$hrgsat_barang',
+									hrgjual_barang = '$hrgjual_barang',
+									indikasi = '$_POST[indikasi]',
+									ket_barang = '$_POST[ket_barang]'
 									WHERE id_barang = '$_POST[id]'");
 
 		//echo "<script type='text/javascript'>alert('Data berhasil diubah !');window.location='../../media_admin.php?module=".$module."'</script>";
@@ -82,12 +81,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 	}
 	//Hapus Proyek
 	elseif ($module == 'barang' and $act == 'hapus') {
-        
-		$page = $_GET['page'];
-        
-// 		mysqli_query($GLOBALS["___mysqli_ston"], "DELETE FROM barang WHERE kd_barang = '$_GET[id]'");
-		mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE barang SET isactive = 'inactive' WHERE id_barang = '$_GET[id]'");
-		
+
+		mysqli_query($GLOBALS["___mysqli_ston"], "DELETE FROM barang WHERE id_barang = '$_GET[id]'");
 		//echo "<script type='text/javascript'>alert('Data berhasil dihapus !');window.location='../../media_admin.php?module=".$module."'</script>";
 		header('location:../../media_admin.php?module=' . $module);
 	}

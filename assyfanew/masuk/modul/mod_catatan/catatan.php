@@ -31,7 +31,7 @@ switch($_GET[act]){
 					<br><br>
 					
 					
-					<table id="example1" class="table table-bordered table-striped" >
+					<table id="example11" class="table table-bordered table-striped" >
 						<thead>
 							<tr>
 								<th>No</th>
@@ -44,29 +44,31 @@ switch($_GET[act]){
 						</thead>
 						<tbody>
 						<?php 
-								$no=1;
-								while ($r=mysqli_fetch_array($tampil_catatan)){
-									echo "<tr class='warnabaris' >
-											<td>$no</td>           
-											 <td>$r[tgl]</td>
-											 <td>$r[shift]</td>
-											 <td>$r[petugas]</td>
-											 <td>$r[deskripsi]</td>
-											 <td>
-											 <a href='?module=catatan&act=edit&id=$r[id_catatan]' title='EDIT' class='btn btn-warning btn-xs'>EDIT</a> 
-											 <a href='?module=catatan&act=tampil&id=$r[id_catatan]' title='EDIT' class='btn btn-primary btn-xs'>TAMPIL</a> 
-										     <a href=javascript:confirmdelete('$aksi?module=catatan&act=hapus&id=$r[id_catatan]') title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</a>
-											</td>
-										</tr>";
-								$no++;
-								}
-						echo "</tbody></table>";
+								// $no=1;
+								// while ($r=mysqli_fetch_array($tampil_catatan)){
+								// 	echo "<tr class='warnabaris' >
+								// 			<td>$no</td>           
+								// 			 <td>$r[tgl]</td>
+								// 			 <td>$r[shift]</td>
+								// 			 <td>$r[petugas]</td>
+								// 			 <td>$r[deskripsi]</td>
+								// 			 <td>
+								// 			 <a href='?module=catatan&act=edit&id=$r[id_catatan]' title='EDIT' class='btn btn-warning btn-xs'>EDIT</a> 
+								// 			 <a href='?module=catatan&act=tampil&id=$r[id_catatan]' title='EDIT' class='btn btn-primary btn-xs'>TAMPIL</a> 
+								// 		     <a href=javascript:confirmdelete('$aksi?module=catatan&act=hapus&id=$r[id_catatan]') title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</a>
+								// 			</td>
+								// 		</tr>";
+								// $no++;
+								// }
+				// 		echo "</tbody></table>";
 					?>
+					    </tbody>
+					</table>
 				</div>
                 
 			</div>	
              
-
+            
 <?php
     
     break;
@@ -150,7 +152,7 @@ switch($_GET[act]){
                     </div><!-- /.box-tools -->
 				</div>
 				<div class='box-body'>
-						<form method=POST method=POST action=$aksi?module=catatan&act=update_catatan  enctype='multipart/form-data' class='form-horizontal'>
+						<form method=POST action=$aksi?module=catatan&act=update_catatan  enctype='multipart/form-data' class='form-horizontal' id='frmEditCatatan'>
 							<input type=hidden name=id value='$r[id_catatan]'>
 							 <div class='form-group'>
 									
@@ -166,7 +168,7 @@ switch($_GET[act]){
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-5'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-danger' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel' data-page='".$_GET['page']."'>
 										</div>
 								</div>
 							  </form>
@@ -180,7 +182,7 @@ switch($_GET[act]){
         $edit=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM catatan WHERE id_catatan='$_GET[id]'");
         $r=mysqli_fetch_array($edit);
         echo "$r[deskripsi]
-        <input class='btn btn-primary' type=button value=KEMBALI onclick=self.history.back()>";
+        <input class='btn btn-primary' type=button value=KEMBALI id='btn_cancel' data-page='".$_GET['page']."'>";
     break ;
 
 }
@@ -203,3 +205,100 @@ switch($_GET[act]){
   });
  });
 </script>
+
+<script>
+                $(document).ready(function() {
+                
+                    var table = $('#example11').DataTable({
+                        "processing": true,
+                        "serverSide": true,
+                        "lengthChange": false,
+                        "displayStart": getPageFromUrl() * 10,
+                        "pageLength": 10,
+                        "ajax": {
+                              "url": 'modul/mod_catatan/catatan_serverside.php',
+                              "type": 'POST'
+                            },
+                        "columns": [
+                            { "data": 'no' },
+                            { "data": 'tgl' },
+                            { "data": 'shift' },
+                            { "data": 'petugas' },
+                            { "data": 'deskripsi' },
+                            { "data": 'aksi', "orderable": false, "searchable": false, "className":"text-center" }
+                        ]
+                    });
+                    
+                    // Tampilkan page di URL saat pagination di klik
+                    table.on('draw', function () {
+                        const info = table.page.info();
+                        const currentPage = info.page + 1; // konversi ke 1-based
+                        const url = new URL(window.location);
+                        url.searchParams.set('page', currentPage);
+                        window.history.pushState({}, '', url);
+                    });
+                    
+                    // Tombol Untuk edit
+                    $('#example11 tbody').on('click', '#btn_edit', function () {
+                        var id = $(this).data('id');
+                        var currentPage = table.page() + 1;
+                        location.href = '?module=catatan&act=edit&id='+id+'&page='+currentPage;
+                    });
+                    
+                    // Tombol Untuk tampil
+                    $('#example11 tbody').on('click', '#btn_tampil', function () {
+                        var id = $(this).data('id');
+                        var currentPage = table.page() + 1;
+                        location.href = '?module=catatan&act=tampil&id='+id+'&page='+currentPage;
+                    });
+                    
+                    // Tombol cancel form
+                    $('#btn_cancel').on('click', function(){
+                        var currentPage = $(this).data('page');
+                        location.href = '?module=catatan&page='+currentPage;
+                                
+                    });        
+                    
+                    // Form Edit barang
+                    $("#frmEditCatatan").submit(function(e) {
+            
+                        e.preventDefault(); // avoid to execute the actual submit of the form.
+                            
+                        var form = $(this);
+                        var actionUrl = form.attr('action');
+                        var vpage = <?=isset($_GET['page']) ? intval($_GET['page']) : 1;?>;
+                        var vpage = getPageFromUrl() + 1;
+                                
+                        $.ajax({
+                            type: "POST",
+                            url: actionUrl,
+                            data: form.serialize(), // serializes the form's elements.
+                            success: function(data)
+                            {
+                                location.href = '?module=catatan&page='+vpage;
+                            }
+                        });
+                                
+                    });
+                    
+                    // Tombol hapus
+                    $('#example11 tbody').on('click', '#btn_hapus', function () {
+                        var id = $(this).data('id');
+                    
+                        if (confirm('Anda yakin ingin menghapus?') == true) {
+                            $.ajax({
+                				url: 'modul/mod_catatan/aksi_catatan.php?module=catatan&act=hapus&id='+id,
+                				type: 'POST',
+                			}).success(function() {
+                			    table.ajax.reload(null, false);
+                			});
+                        } 
+                    });
+        
+                    function getPageFromUrl() {
+                        const params = new URLSearchParams(window.location.search);
+                        const page = parseInt(params.get("page"));
+                        return isNaN(page) ? 0 : page - 1; // DataTables pakai index mulai dari 0
+                    }
+                });
+            </script>

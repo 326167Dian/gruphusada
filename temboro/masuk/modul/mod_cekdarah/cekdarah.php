@@ -114,7 +114,7 @@ switch($_GET[act]){
 									 </div>
 									 <label class='col-sm-2 control-label'>
 									    <button type='button' data-toggle='modal' data-target='#ModalPelanggan' id='btn_add_pelanggan' class='btn btn-primary'><i class='glyphicon glyphicon-plus'></i><i class='glyphicon glyphicon-user'></i></button>
-									 </label>
+									 </label> 
 							  </div>
 							  
 							  </div><div class='form-group'>
@@ -230,7 +230,6 @@ switch($_GET[act]){
 }
 }
 ?>
-
 <!-- Modal Pelanggan -->
 <div id="ModalPelanggan" class="modal fade" role="dialog">
 	<div class="modal-md modal-dialog">
@@ -285,7 +284,6 @@ switch($_GET[act]){
 </div>
 <!-- end modal pelanggan -->
 
-
 <script type="text/javascript">
  $(function(){
   $(".datepicker").datepicker({
@@ -295,7 +293,12 @@ switch($_GET[act]){
   });
  });
  
- $("#frmAddPelanggan").submit(function(e) {
+    function tutupModal(){
+        //hilangkan modal
+    	$(".close").click();
+    }
+    
+    $("#frmAddPelanggan").submit(function(e) {
     
         e.preventDefault(); // avoid to execute the actual submit of the form.
                     

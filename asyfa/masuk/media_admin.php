@@ -83,10 +83,10 @@ if ($_SESSION['login'] == 0) {
 					<a href="#" class="logo">
 
 						<!-- mini logo for sidebar mini 50x50 pixels -->
-						<span class="logo-mini"><marquee><b>Apotek Anugrah Husada Baru</b></marquee></span>
+						<span class="logo-mini"><marquee><b>Apotek Aulia Husada Taufiqurrohman</b></marquee></span>
 
 						<!-- logo for regular state and mobile devices -->
-						<span class="logo-lg"><marquee><b>Apotek Anugrah Husada Baru</b></marquee></span>
+						<span class="logo-lg"><marquee><b>Apotek Aulia Husada Taufiqurrohman</b></marquee></span>
 					</a>
 
 					<!-- Header Navbar: style can be found in header.less -->
@@ -192,7 +192,7 @@ if ($_SESSION['login'] == 0) {
 									<?php if ($_SESSION['stok_kritis'] == "Y") { ?><li><a href="?module=stok_kritis"><i class="glyphicon glyphicon-log-in"></i> Stok Kritis </a></li><?php } ?>
 									<?php if ($_SESSION['stokopname'] == "Y") { ?><li><a href="?module=stokopname"><i class="glyphicon glyphicon-share"></i> Stok Opname Bulanan </a></li><?php } ?>
 									<?php if ($_SESSION['soharian'] == "Y") { ?><li><a href="?module=soharian"><i class='glyphicon glyphicon-print'></i> Stok Opname Harian</a></li><?php } ?>
-									<?php //if ($_SESSION['koreksistok'] == "Y") { ?><!--<li><a href="?module=koreksistok"><i class='glyphicon glyphicon-pencil'></i> Koreksi Stok</a></li>--><?php //} ?>
+									<!--<?php if ($_SESSION['koreksistok'] == "Y") { ?><li><a href="?module=koreksistok"><i class='glyphicon glyphicon-pencil'></i> Koreksi Stok</a></li><?php } ?>-->
 								    <?php if ($_SESSION['kartustok'] == "Y") { ?><li><a href="?module=kartustok"><i class='glyphicon glyphicon-transfer'></i> Kartu Stok</a></li><?php } ?>
 								    <?php if ($_SESSION['catatan'] == "Y") { ?><li><a href="?module=catatan"><i class='glyphicon glyphicon-pencil'></i> Catatan</a></li><?php } ?>
 								</ul>
@@ -229,6 +229,7 @@ if ($_SESSION['login'] == 0) {
 									<?php if ($_SESSION['lppelanggan'] == "Y") { ?><li><a href="modul/mod_laporan/cetak_pelanggan.php" target="_blank"><i class='glyphicon glyphicon-print'></i> Data Pelanggan</a></li><?php } ?>
 									<?php if ($_SESSION['neraca'] == "Y") { ?><li><a href="?module=neraca"><i class='glyphicon glyphicon-print'></i> Neraca Laba Rugi</a></li><?php } ?>
 									<?php if ($_SESSION['level'] == "pemilik" and $_SESSION['komisi'] == "Y") { ?><li><a href="?module=lapkomisi"><i class='glyphicon glyphicon-print'></i> Komisi Pegawai</a></li><?php } ?>
+									<?php if ($_SESSION['level'] == "pemilik") { ?><li><a href="?module=evaluasi"><i class='glyphicon glyphicon-print'></i> Evaluasi Pegawai</a></li><?php } ?>
 									<?php if ($_SESSION['level'] == "pemilik" || "petugas") { ?><li><a href="?module=lapstokopname"><i class='glyphicon glyphicon-print'></i> Stok Opname</a></li><?php } ?>
 								</ul>
 							</li>
@@ -308,7 +309,6 @@ if ($_SESSION['login'] == 0) {
 <script src="dist/js/demo.js"></script>
 <!-- Jquery Mask -->
 <script src="vendors/jquery-mask/1.14.15/jquery.mask.min.js"></script>
-
 <!-- page script -->
 <script>
 	$(function() {
@@ -333,11 +333,11 @@ if ($_SESSION['login'] == 0) {
 		return rupiahFormat;
 	}
 
-	setTimeout(function() {
-		$.ajax({
-			type: 'post',
-			url: "modul/mod_admin/cek_session.php",
-			success: function(data) {}
-		});
-	}, 3000)
+// 	setTimeout(function() {
+// 		$.ajax({
+// 			type: 'post',
+// 			url: "modul/mod_admin/cek_session.php",
+// 			success: function(data) {}
+// 		});
+// 	}, 3000)
 </script>

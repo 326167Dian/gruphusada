@@ -45,21 +45,21 @@ switch($_GET[act]){
 						<tbody>
 						<?php 
 								// $no=1;
-				// 				while ($r=mysqli_fetch_array($tampil_catatan)){
-				// 					echo "<tr class='warnabaris' >
-				// 							<td>$no</td>           
-				// 							 <td>$r[tgl]</td>
-				// 							 <td>$r[shift]</td>
-				// 							 <td>$r[petugas]</td>
-				// 							 <td>$r[deskripsi]</td>
-				// 							 <td>
-				// 							 <a href='?module=catatan&act=edit&id=$r[id_catatan]' title='EDIT' class='btn btn-warning btn-xs'>EDIT</a> 
-				// 							 <a href='?module=catatan&act=tampil&id=$r[id_catatan]' title='EDIT' class='btn btn-primary btn-xs'>TAMPIL</a> 
-				// 						     <a href=javascript:confirmdelete('$aksi?module=catatan&act=hapus&id=$r[id_catatan]') title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</a>
-				// 							</td>
-				// 						</tr>";
-				// 				$no++;
-				// 				}
+								// while ($r=mysqli_fetch_array($tampil_catatan)){
+								// 	echo "<tr class='warnabaris' >
+								// 			<td>$no</td>           
+								// 			 <td>$r[tgl]</td>
+								// 			 <td>$r[shift]</td>
+								// 			 <td>$r[petugas]</td>
+								// 			 <td>$r[deskripsi]</td>
+								// 			 <td>
+								// 			 <a href='?module=catatan&act=edit&id=$r[id_catatan]' title='EDIT' class='btn btn-warning btn-xs'>EDIT</a> 
+								// 			 <a href='?module=catatan&act=tampil&id=$r[id_catatan]' title='EDIT' class='btn btn-primary btn-xs'>TAMPIL</a> 
+								// 		     <a href=javascript:confirmdelete('$aksi?module=catatan&act=hapus&id=$r[id_catatan]') title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</a>
+								// 			</td>
+								// 		</tr>";
+								// $no++;
+								// }
 				// 		echo "</tbody></table>";
 					?>
 					    </tbody>
@@ -68,7 +68,7 @@ switch($_GET[act]){
                 
 			</div>	
              
-
+            
 <?php
     
     break;
@@ -152,7 +152,7 @@ switch($_GET[act]){
                     </div><!-- /.box-tools -->
 				</div>
 				<div class='box-body'>
-						<form method=POST method=POST action=$aksi?module=catatan&act=update_catatan  enctype='multipart/form-data' class='form-horizontal'>
+						<form method=POST action=$aksi?module=catatan&act=update_catatan  enctype='multipart/form-data' class='form-horizontal' id='frmEditCatatan'>
 							<input type=hidden name=id value='$r[id_catatan]'>
 							 <div class='form-group'>
 									
@@ -168,7 +168,7 @@ switch($_GET[act]){
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-5'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-danger' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel' data-page='".$_GET['page']."'>
 										</div>
 								</div>
 							  </form>
@@ -182,7 +182,7 @@ switch($_GET[act]){
         $edit=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM catatan WHERE id_catatan='$_GET[id]'");
         $r=mysqli_fetch_array($edit);
         echo "$r[deskripsi]
-        <input class='btn btn-primary' type=button value=KEMBALI onclick=self.history.back()>";
+        <input class='btn btn-primary' type=button value=KEMBALI id='btn_cancel' data-page='".$_GET['page']."'>";
     break ;
 
 }

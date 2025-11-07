@@ -17,7 +17,7 @@ if ($_GET['action'] == "table_data") {
         10 => 'id_barang'
     );
 
-    $querycount = $db->query("SELECT count(id_barang) as jumlah FROM barang WHERE isactive = 'active'");
+    $querycount = $db->query("SELECT count(id_barang) as jumlah FROM barang");
     $datacount = $querycount->fetch_array();
 
     $totalData = $datacount['jumlah'];
@@ -40,9 +40,7 @@ if ($_GET['action'] == "table_data") {
                                     hrgjual_barang,
                                     komisi,
                                     indikasi
-            FROM barang 
-            WHERE isactive = 'active'
-            ORDER BY $order $dir LIMIT $limit OFFSET $start");
+            FROM barang ORDER BY $order $dir LIMIT $limit OFFSET $start");
     } else {
         $search = $_POST['search']['value'];
         $query = $db->query("SELECT id_barang,
@@ -55,7 +53,7 @@ if ($_GET['action'] == "table_data") {
                                     hrgjual_barang,
                                     komisi,
                                     indikasi 
-            FROM barang WHERE isactive = 'active' AND ( kd_barang LIKE '%$search%' 
+            FROM barang WHERE kd_barang LIKE '%$search%' 
                         OR nm_barang LIKE '%$search%'
                         OR stok_barang LIKE '%$search%'
                         OR sat_barang LIKE '%$search%'
@@ -63,11 +61,11 @@ if ($_GET['action'] == "table_data") {
                         OR ket_barang LIKE '%$search%'
                         OR hrgjual_barang LIKE '%$search%'
                         OR komisi LIKE '%$search%'
-                        OR indikasi LIKE '%$search%' ) 
+                        OR indikasi LIKE '%$search%' 
             ORDER BY $order $dir LIMIT $limit OFFSET $start");
 
         $querycount = $db->query("SELECT count(id_barang) as jumlah 
-            FROM barang WHERE isactive = 'active' AND kd_barang LIKE '%$search%' 
+            FROM barang WHERE kd_barang LIKE '%$search%' 
                         OR nm_barang LIKE '%$search%'
                         OR stok_barang LIKE '%$search%'
                         OR sat_barang LIKE '%$search%'

@@ -148,9 +148,9 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
                     <hr>
 
-                    <CENTER><strong>REKAP STOK OPNAME</strong></CENTER>
-
-                    <hr>
+                    <CENTER><strong>REKAP STOK OPNAME</strong><br>
+                    <a  class ='btn  btn-success btn-flat' href='modul/mod_laporan/cetak_rekap_stokopname.php?jenisobat=<?=$_GET['jenisobat']?>&tgl=<?=$_GET['tgl']?>' target="_blank"><i class="fa fa-print"></i>&nbsp; Cetak</a></CENTER>
+					<hr>
                     <div id="tabel_stokopname_rekap"></div>
                 </div>
 

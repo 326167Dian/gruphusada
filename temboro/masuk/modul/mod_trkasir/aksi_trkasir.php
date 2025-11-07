@@ -109,7 +109,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									dp_bayar = '$_POST[dp_bayar]',
 									sisa_bayar = '$_POST[sisa_bayar]',
 									ket_trkasir = '$_POST[ket_trkasir]',
-									id_carabayar = '$_POST[id_carabayar]'
+									id_carabayar = '$_POST[id_carabayar]',
+									ppn_trkasir = '$_POST[ppn_trkasir]'
 									WHERE id_trkasir = '$_POST[id_trkasir]'");
 
 

@@ -11,14 +11,7 @@ $hnasat_dtrbmasuk = $_POST['hnasat_dtrbmasuk'];
 $hrgjual_dtrbmasuk = $_POST['hrgjual_dtrbmasuk'];
 $diskon = $_POST['diskon'];
 // $hrgsat_dtrbmasuk = $hnasat_dtrbmasuk * 1.11 ;
-
-if ($hnasat_dtrbmasuk != 0) {
-    $hrgsat_dtrbmasuk = $hnasat_dtrbmasuk * (1-($diskon/100));
-} else {
-    $getbarang  = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM barang WHERE id_barang='$id_barang' AND kd_barang='$kd_barang'");
-    $brg        = mysqli_fetch_array($getbarang);
-    $hrgsat_dtrbmasuk = $brg['hrgsat_barang'];
-}
+$hrgsat_dtrbmasuk = $hnasat_dtrbmasuk * (1-($diskon/100)) * 1.11;
 
 $no_batch = $_POST['no_batch'];
 $exp_date = date('Y-m-d', strtotime($_POST['exp_date']));
@@ -45,14 +38,14 @@ $ttlqty = $qtylama + $qty_dtrbmasuk;
 $ttlharga = $ttlqty * $hnasat_dtrbmasuk;
 
 mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE trbmasuk_detail SET 
-                                        qty_dtrbmasuk       = '$ttlqty',
-										hnasat_dtrbmasuk    = '$hnasat_dtrbmasuk',
-										diskon              = '$diskon',
-										hrgsat_dtrbmasuk    = '$hrgsat_dtrbmasuk',										
-										hrgjual_dtrbmasuk   = '$hrgjual_dtrbmasuk',										
-										hrgttl_dtrbmasuk    = '$ttlharga',
-										no_batch            = '$no_batch',
-										exp_date            = '$exp_date'
+                                        qty_dtrbmasuk = '$ttlqty',
+										hnasat_dtrbmasuk = '$hnasat_dtrbmasuk',
+										diskon = '$diskon',
+										hrgsat_dtrbmasuk = '$hrgsat_dtrbmasuk',										
+										hrgjual_dtrbmasuk = '$hrgjual_dtrbmasuk',										
+										hrgttl_dtrbmasuk = '$ttlharga',
+										no_batch = '$no_batch',
+										exp_date = '$exp_date'
 										WHERE id_dtrbmasuk = '$id_dtrbmasuk'");
 										
 //update stok

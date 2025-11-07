@@ -11,7 +11,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 			// Tampil Siswa
 		default:
 
-			$tampil_pelanggan = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM pelanggan ORDER BY id_pelanggan ASC");
+			$tampil_pelanggan = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM pelanggan ORDER BY id_pelanggan DESC");
 
 ?>
 
@@ -31,7 +31,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					<table id="example11" class="table table-bordered table-striped">
 						<thead>
 							<tr>
-								<th width='5%'>No</th>
+								<th>No</th>
 								<th>Nama Pelanggan</th>
 								<th>Telepon</th>
 								<th>Alamat</th>
@@ -55,7 +55,6 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 											 
 								// 			</td>
 								// 		</tr>";
-								
 								echo "<tr class='warnabaris' >
 											<td>$no</td>           
 											 <td>$r[nm_pelanggan]</td>
@@ -67,7 +66,6 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
             									 <button type='button' class='btn btn-danger btn-xs' id='btn_hapus' data-id='$r[id_pelanggan]'>HAPUS</button>
 											</td>
 										</tr>";
-										
 								$no++;
 							}
 							echo "</tbody></table>";
@@ -187,7 +185,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-5'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-primary' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel' data-page='".$_GET['page']."'>
 										</div>
 								</div>
 								
@@ -202,7 +200,6 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 			break;
 	}
-	
 	?>
 	    <script>
             $(document).ready(function() {

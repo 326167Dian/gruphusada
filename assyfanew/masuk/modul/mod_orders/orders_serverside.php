@@ -81,10 +81,17 @@ if ($_GET['action'] == "table_data") {
             $nestedData['ttl_trbmasuk'] = $value['ttl_trbmasuk'];
             $nestedData['dp_bayar'] = $value['dp_bayar'];
             $nestedData['sisa_bayar'] = $value['sisa_bayar'];
-            $nestedData['aksi'] = "<a href='?module=orders&act=ubah&id=$value[id_trbmasuk]' title='EDIT' class='btn btn-warning btn-xs'>EDIT</a> 
-            <a href=javascript:confirmdelete('$aksi?module=orders&act=hapus&id=$value[id_trbmasuk]') title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</a>
+            // $nestedData['aksi'] = "<a href='?module=orders&act=ubah&id=$value[id_trbmasuk]' title='EDIT' class='btn btn-warning btn-xs'>EDIT</a> 
+            // <a href=javascript:confirmdelete('$aksi?module=orders&act=hapus&id=$value[id_trbmasuk]') title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</a>
+            // <BR>
+            // <a href='modul/mod_orders/tampil_orders.php?id=$value[kd_trbmasuk]' target='_blank' title='EDIT' class='btn btn-primary btn-xs'>REGULER&nbsp;<i class='glyphicon glyphicon-print'></i>&nbsp;</a><BR>
+            // ";
+            $nestedData['aksi'] = "<button type='button' id='btn_edit' data-id='$value[id_trbmasuk]' title='EDIT' class='btn btn-warning btn-xs'>EDIT</button> 
+            <button type='button' id='btn_hapus' data-id='$value[id_trbmasuk]' title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</button>
             <BR>
-            <a href='modul/mod_orders/tampil_orders.php?id=$value[kd_trbmasuk]' target='_blank' title='EDIT' class='btn btn-primary btn-xs'>REGULER&nbsp;<i class='glyphicon glyphicon-print'></i>&nbsp;</a><BR>
+            <button type='button' id='btn_reguler' data-id='$value[kd_trbmasuk]' target='_blank' title='EDIT' class='btn btn-primary btn-xs'>REGULER&nbsp;<i class='glyphicon glyphicon-print'></i>&nbsp;</button><BR>
+                <a href='modul/mod_orders/tampil_prekursor.php?id=$value[kd_trbmasuk]' target='_blank' title='EDIT' class='btn btn-pinterest btn-xs'>PREKURSOR&nbsp;<i class='glyphicon glyphicon-print'></i>&nbsp;</a><BR>
+                <a href='modul/mod_orders/tampil_oot.php?id=$value[kd_trbmasuk]' target='_blank' title='EDIT' class='btn btn-success btn-xs'>OOT&nbsp;<i class='glyphicon glyphicon-print'></i>&nbsp;</a>
             ";
             $data[] = $nestedData;
             $no++;

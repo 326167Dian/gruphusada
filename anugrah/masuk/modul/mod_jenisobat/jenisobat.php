@@ -52,7 +52,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 								// 			</td>
 								// 		</tr>";
 								
-								    echo "<tr class='warnabaris' >
+								echo "<tr class='warnabaris' >
 											<td>$no</td>           
 											 <td>$r[jenisobat]</td>
 											 <td>$r[ket]</td>
@@ -104,7 +104,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-5'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-danger' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel'>
 										</div>
 								</div>
 								
@@ -152,7 +152,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									<label class='col-sm-2 control-label'></label>       
 										<div class='col-sm-5'>
 											<input class='btn btn-primary' type=submit value=SIMPAN>
-											<input class='btn btn-danger' type=button value=BATAL onclick=self.history.back()>
+											<input class='btn btn-danger' type=button value=BATAL id='btn_cancel'>
 										</div>
 								</div>
 								
@@ -170,7 +170,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 }
 ?>
 
-<script>
+        <script>
             $(document).ready(function() {
                 
                 var table = $('#example11').DataTable({

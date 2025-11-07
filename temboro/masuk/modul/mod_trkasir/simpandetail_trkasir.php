@@ -5,6 +5,10 @@ include "../../../configurasi/koneksi.php";
 $kd_trkasir = $_POST['kd_trkasir'];
 $id_dtrkasir = $_POST['id_dtrkasir'];
 $id_barang = $_POST['id_barang'];
+$beli = $db->query("SELECT * FROM barang WHERE id_barang='$id_barang'");
+$rbeli = mysqli_fetch_array($beli);
+$hrgbeli = $rbeli['hrgsat_barang'];
+
 $kd_barang = $_POST['kd_barang'];
 $nmbrg_dtrkasir = $_POST['nmbrg_dtrkasir'];
 $qty_dtrkasir = $_POST['qty_dtrkasir'];
@@ -77,7 +81,7 @@ mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE trkasir_detail SET qty_dtrkasir
 }else{
 
 $ttlharga = $qty_dtrkasir * $hrgjual_dtrkasir;
-
+$profit = $hrgjual_dtrkasir - $hrgbeli;
 
 mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO trkasir_detail(kd_trkasir,
 										id_barang,
@@ -85,16 +89,20 @@ mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO trkasir_detail(kd_trkasir,
 										nmbrg_dtrkasir,
 										qty_dtrkasir,
 										sat_dtrkasir,
+                                        profit,
 										hrgjual_dtrkasir,
-										hrgttl_dtrkasir)
+										hrgttl_dtrkasir,
+                                        idadmin)
 								  VALUES('$kd_trkasir',
 										'$id_barang',
 										'$kd_barang',
 										'$nmbrg_dtrkasir',
 										'$qty_dtrkasir',
 										'$sat_dtrkasir',
+										'$profit',
 										'$hrgjual_dtrkasir',
-										'$ttlharga')");
+										'$ttlharga',
+                                        '$id_admin')");
 
 $insertid_dtrkasir = mysqli_insert_id($GLOBALS["___mysqli_ston"]);
 
