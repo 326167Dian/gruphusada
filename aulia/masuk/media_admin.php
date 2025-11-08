@@ -73,7 +73,10 @@ if ($_SESSION['login'] == 0) {
 
 			<link rel="shortcut icon" type="image/x-icon" href="images/lp3i.png">
 		</head>
-
+		<?php
+		$nama_apotek = $db->query("SELECT * from setheader ");
+        $r = $nama_apotek->fetch_array();
+		?>
 		<body onload="startclock()" class="hold-transition skin-blue-light sidebar-mini">
 
 			<div class="wrapper">
@@ -83,10 +86,10 @@ if ($_SESSION['login'] == 0) {
 					<a href="#" class="logo">
 
 						<!-- mini logo for sidebar mini 50x50 pixels -->
-						<span class="logo-mini"><marquee><b>Apotek Aulia Husada Taufiqurrohman</b></marquee></span>
+						<span class="logo-mini"><marquee><b><?= $r['satu']  ?></b></marquee></span>
 
 						<!-- logo for regular state and mobile devices -->
-						<span class="logo-lg"><marquee><b>Apotek Aulia Husada Taufiqurrohman</b></marquee></span>
+						<span class="logo-lg"><marquee><b><?= $r['satu']  ?></b></marquee></span>
 					</a>
 
 					<!-- Header Navbar: style can be found in header.less -->
