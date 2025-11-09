@@ -75,12 +75,19 @@ include "../../../configurasi/fungsi_rupiah.php";
         var tgl_awal    = document.getElementById('tgl_awal').value;
         
         var table = $('#tes2').DataTable({
-            serverSide: true,
             processing: true,
-            ordering: false,
+			serverSide: true,
             lengthChange: false,
-            // displayStart: getPageFromUrl() * 5,
+            // displayStart: getPageFromUrl() * 10,
             pageLength: 5,
+            order: [[ 0, "desc" ]],
+			
+            // serverSide: true,
+            // processing: true,
+            // ordering: false,
+            // lengthChange: false,
+            // // displayStart: getPageFromUrl() * 5,
+            // pageLength: 5,
             ajax: {
                 url: 'modul/mod_stokopname/tabel_stokopname_rekap_serverside.php',
                 type: 'POST',
@@ -125,21 +132,35 @@ include "../../../configurasi/fungsi_rupiah.php";
         // Tombol hapus
         $('#tes2 tbody').on('click', '#btn_hapus', function () {
             var id_stok = $(this).data('id_stokopname');
-        
+            var row     = $(this).closest('tr');
+            
+            // if (confirm('Anda yakin ingin menghapus?') == true) {
+            //     $.ajax({
+            //         type: 'post',
+            //         url: 'modul/mod_stokopname/hapus_stokopname.php',
+            //         data: {
+            //             'id_stok': id_stok
+            //         },
+            //         success: function(response) {
+            //             tabel_stokopname();
+            //             // tabel_stokopname_rekap();
+            //             table.ajax.reload(null, false);
+            //         }
+            //     });
+            // } 
+            
             if (confirm('Anda yakin ingin menghapus?') == true) {
                 $.ajax({
-                    type: 'post',
                     url: 'modul/mod_stokopname/hapus_stokopname.php',
+                    type: 'POST',
                     data: {
                         'id_stok': id_stok
                     },
-                    success: function(response) {
-                        tabel_stokopname();
-                        // tabel_stokopname_rekap();
-                        table.ajax.reload(null, false);
-                    }
+                }).success(function() {
+                    // Hapus dari DataTable tanpa mengganti halaman
+                    table.row(row).remove().draw(false);
                 });
-            } 
+            }
         });
     });
 </script>
