@@ -57,6 +57,7 @@ switch($_GET['act']){
                                     <select name='shift' class='form-control' id="shift" >
                                         <option value="1">Pagi</option>
                                         <option value="2">Sore</option>
+                                        <option value="3">Malam</option>
                                         
                                         <option value= "4">Semua Shift</option>
                                     </select>
