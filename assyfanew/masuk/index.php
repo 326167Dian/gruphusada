@@ -42,7 +42,7 @@ if (!empty($_SESSION['namauser']) and !empty($_SESSION['passuser'])) {
     <div class="login-box-body">
       <div class="container-fluid text-center">
         <img align="center" src="images/mysifalogo.png">
-        <h3 style="text-align:center"><marquee><b>Gudang Apotek</b></marquee></h3>
+        <h3 style="text-align:center"><marquee><b>Apotek Asyfa Husada Baru</b></marquee></h3>
       </div>
 
 
