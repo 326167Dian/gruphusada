@@ -31,6 +31,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
     		$insert = mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO trkasir(
     										kd_trkasir,	
     										petugas,
+											id_user,
     										shift,																		
     										tgl_trkasir,																			
     										nm_pelanggan,										
@@ -46,6 +47,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
     										)
     								 VALUES('$_POST[kd_trkasir]',
     								 		'$_POST[petugas]',
+											'$_POST[id_user]',
     								 		'$_POST[shift]',
     										'$_POST[tgl_trkasir]',										
     										'$_POST[nm_pelanggan]',
@@ -61,6 +63,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
     										
     										)");
     
+	mysqli_query($GLOBALS["___mysqli_ston"], "update trkasir_detail set idadmin = '$_POST[id_user]' where kd_trkasir = '$_POST[kd_trkasir]'");
+
     // mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kartu_stok(kode_transaksi) VALUES('$_POST[kd_trkasir]')");
     $tgl_sekarang = date('Y-m-d H:i:s', time());
     mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kartu_stok(kode_transaksi, tgl_sekarang) VALUES('$_POST[kd_trkasir]','$tgl_sekarang')");
@@ -101,6 +105,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 		$ubah = mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE trkasir SET tgl_trkasir = '$_POST[tgl_trkasir]',
 									petugas = '$_POST[petugas]',
+									id_user = '$_POST[id_user]',
 									nm_pelanggan = '$_POST[nm_pelanggan]',									
 									tlp_pelanggan = '$_POST[tlp_pelanggan]',
 									alamat_pelanggan = '$_POST[alamat_pelanggan]',
@@ -113,6 +118,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									ppn_trkasir = '$_POST[ppn_trkasir]'
 									WHERE id_trkasir = '$_POST[id_trkasir]'");
 
+		mysqli_query($GLOBALS["___mysqli_ston"], "update trkasir_detail set idadmin = '$_POST[id_user]' where kd_trkasir = '$_POST[kd_trkasir]'");
 
         if($ubah){
             $data['message'] = 'success';

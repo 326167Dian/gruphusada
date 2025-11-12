@@ -130,8 +130,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                 function exportPDF() {
                 let tgl_awal = $('#tgl_awal').val()
                 let tgl_akhir = $('#tgl_akhir').val()
-                let shift = $('#shift').val()
-                let jenisobat = $('#jenisobat').val(); // ambil nilai dari select/input jenisobat
+                let shift = $('#shift').val()               
                 window.open('modul/mod_laporan/tampil_lap_stokopname.php?tgl_awal=' + tgl_awal + '&tgl_akhir=' + tgl_akhir + '&shift=' + shift, '_blank');
     }
             </script>

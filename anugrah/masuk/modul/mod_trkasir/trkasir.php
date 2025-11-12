@@ -60,6 +60,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 							<tr>
 								<th>No</th>
 								<th>Kode</th>
+								<th>Kasir</th>
 								<th>Petugas</th>
 								<th align="center">Tanggal</th>
 								<th align="center">Pelanggan</th>
@@ -77,6 +78,9 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 							while ($r = mysqli_fetch_array($tampil_trkasir)) {
 							    $ttl_trkasir = $r['ttl_trkasir'];
 								$ttl_trkasir2 = format_rupiah($ttl_trkasir);
+								$pp = $db->query("SELECT nama_lengkap FROM admin WHERE id_admin='$r[id_user]'");
+								$pp1 = $pp->fetch_array();
+								$pp2 = $pp1['nama_lengkap'];
 								
                                 if ($r['shift']==1)
                                 {$shift = 'Pagi';}
@@ -94,6 +98,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 								echo "     
 										
 											<td>$r[petugas]</td>
+											<td>$pp2</td>
 											<td>$r[tgl_trkasir]</td>	
 											<td>$r[nm_pelanggan]</td>";
 								$cabay = mysqli_query(
@@ -110,19 +115,15 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 											<td align='center'>";
 								$lupa = $_SESSION['level'];
 								if ($lupa == 'pemilik') {
-								// 	echo " <a href='?module=trkasir&act=ubah&id=$r[id_trkasir]' title='EDIT' class='glyphicon glyphicon-pencil'>&nbsp</a>
-								// 	         <a href=javascript:confirmdelete('$aksi?module=trkasir&act=hapus&id=$r[id_trkasir]') title='HAPUS' class='glyphicon glyphicon-remove'>&nbsp</a>                                            
-								// 	        ";
-									echo " <a href='#' id='btn_edit' data-id='$r[id_trkasir]' title='EDIT' class='glyphicon glyphicon-pencil'>&nbsp</a>
-									         <a href=javascript:confirmdelete('$aksi?module=trkasir&act=hapus&id=$r[id_trkasir]') title='HAPUS' class='glyphicon glyphicon-remove'>&nbsp</a>                                            
+								 	echo " <a href='?module=trkasir&act=ubah&id=$r[id_trkasir]' title='EDIT' class='glyphicon glyphicon-pencil'>&nbsp</a>
+								 	         <a href=javascript:confirmdelete('$aksi?module=trkasir&act=hapus&id=$r[id_trkasir]') title='HAPUS' class='glyphicon glyphicon-remove'>&nbsp</a>                                          
 									        ";
 								}
 							?>
 								<a class='glyphicon glyphicon-print' onclick="window.open('modul/mod_laporan/struk.php?kd_trkasir=<?php echo $r['kd_trkasir'] ?>',
                                             'nama window','width=500,height=600,toolbar=no,location=no,directories=no,status=no,menubar=no, ' +
                                             'scrollbars=no,resizable=yes,copyhistory=no')">&nbsp</a>
-                                <!--<a href='modul/mod_laporan/kwitansi.php?kd_trkasir=<?php echo $r['kd_trkasir'] ?>' target='_blank' title='KWITANSI' class='btn btn-warning btn-xs'>KWITANSI</a>-->
-                                <button type='button' id='btn_kwitansi' data-kd_trkasir='<?= $r['kd_trkasir'] ?>' title='KWITANSI' class='btn btn-warning btn-xs'>KWITANSI</button>
+                                <a href='modul/mod_laporan/kwitansi.php?kd_trkasir=<?php echo $r['kd_trkasir'] ?>' target='_blank' title='KWITANSI' class='btn btn-warning btn-xs'>KWITANSI</a>                        
                                 <a href='modul/mod_laporan/faktur.php?kd_trkasir=<?php echo $r['kd_trkasir'] ?>' target='_blank' title='FAKTUR' class='btn btn-primary btn-xs'>FAKTUR</a>
 							<?php
 
@@ -402,6 +403,19 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 										<div class='col-sm-6'>
 											<input type=text name='kd_hid' id='kd_hid' class='form-control' required='required' value='$kdtransaksi' autocomplete='off' Disabled>
 										</div>
+									<label class='col-sm-4 control-label'>Petugas Pelayanan</label>        		
+										<div class='col-sm-6'>
+													<select class='form-control' name='id_user' id='id_user'>
+													    <option></option>
+													    ";
+														$pelayan = $db->query("SELECT * FROM admin WHERE akses_level='petugas' ORDER BY nama_lengkap ASC");
+									               		while($rj=$pelayan->fetch_array()){
+									                    echo "<option value='$rj[id_admin]'>$rj[nama_lengkap]</option>";
+									               }
+								
+								    		echo "
+													</select>
+											</div>
 																		
 									<label class='col-sm-4 control-label'>Pelanggan</label>        		
 										<div class='col-sm-6'>
@@ -462,7 +476,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 									                   echo "<option value='$rj[jenisobat]'>$rj[jenisobat]</option>";
 									               }
 								
-								    echo "
+								    		echo "
 													</select>
 											</div>
 											
@@ -555,7 +569,23 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 										<div class='col-sm-6'>
 											<input type=text name='kd_hid' id='kd_hid' class='form-control' required='required' value='$re[kd_trkasir]' autocomplete='off' Disabled>
 										</div>
-									
+									<label class='col-sm-4 control-label'>Petugas Pelayanan</label>        		
+										<div class='col-sm-6'>
+													<select class='form-control' name='id_user' id='id_user'>";
+														$pelayan1 = $db->query("SELECT id_user,nama_lengkap FROM trkasir join admin on trkasir.id_user = admin.id_admin
+														WHERE trkasir.kd_trkasir = '$re[kd_trkasir]'");
+														$rj1=$pelayan1->fetch_array();									               		
+													    echo "<option value='$rj1[id_admin]'>$rj1[nama_lengkap]</option>
+													    ";
+														$pelayan = $db->query("SELECT * FROM admin WHERE akses_level='petugas' ORDER BY nama_lengkap ASC");
+									               		while($rj=$pelayan->fetch_array()){
+									                    echo "<option value='$rj[id_admin]'>$rj[nama_lengkap]</option>";
+									               }
+								
+								    		echo "
+													</select>
+											</div>
+
 									<label class='col-sm-4 control-label'>Pelanggan</label>        		
 										<div class='col-sm-6'>
 											<input type=text name='nm_pelanggan' id='nm_pelanggan' class='typeahead form-control' value='$re[nm_pelanggan]' autocomplete='off'>
@@ -1549,6 +1579,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 		var id_trkasir = document.getElementById('id_trkasir').value;
 		var kd_trkasir = document.getElementById('kd_trkasir').value;
+		var id_user = document.getElementById('id_user').value;
 		var petugas = document.getElementById('petugas').value;
 		var shift = document.getElementById('shift').value;
 		var tgl_trkasir = document.getElementById('tgl_trkasir').value;
@@ -1560,8 +1591,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 		var sisa_bayar = document.getElementById('sisa_bayar').value;
 		var ket_trkasir = document.getElementById('ket_trkasir').value;
 		var stt_aksi = document.getElementById('stt_aksi').value;
-		var id_carabayar = document.getElementById('id_carabayar').value;
-        
+		var id_carabayar = document.getElementById('id_carabayar').value;        
         var ppn_trkasir = document.getElementById('ppn_trkasir').value;
         // ppn_trkasir = ppn_trkasir.split('.').join("");
 
@@ -1590,6 +1620,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				data: {
 					'id_trkasir': id_trkasir,
 					'kd_trkasir': kd_trkasir,
+					'id_user': id_user,
 					'tgl_trkasir': tgl_trkasir,
 					'petugas': petugas,
 					'shift': shift,

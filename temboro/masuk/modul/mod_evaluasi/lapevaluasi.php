@@ -105,7 +105,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 							$no = 1;
 							while ($min = $admin->fetch_array()) {
-								$kom = $db->query("select sum(profit) as tambahan,qty_dtrkasir from trkasir_detail join trkasir 
+								$kom = $db->query("select sum(profit) as tambahan,qty_dtrkasir,id_user from trkasir_detail join trkasir 
 															on(trkasir_detail.kd_trkasir=trkasir.kd_trkasir) 
 															where trkasir_detail.idadmin='$min[id_admin]' and trkasir.tgl_trkasir between '$tgl_awal' and '$tgl_akhir' ");
 								$misi = $kom->fetch_array();
@@ -117,7 +117,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 								
 
 								$queryprofit = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT SUM(ttl_trkasir) as total_profit FROM trkasir
-                            		where tgl_trkasir between '$tgl_awal' and '$tgl_akhir' and petugas='$petugas' ");
+                            		where tgl_trkasir between '$tgl_awal' and '$tgl_akhir' and id_user='$min[id_admin]' ");
 								$profit = mysqli_fetch_array($queryprofit);
 								$profitpetugas = format_rupiah(round(($profit['total_profit']),0));
 
