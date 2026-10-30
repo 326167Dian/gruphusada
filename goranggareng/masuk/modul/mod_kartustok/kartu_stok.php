@@ -316,13 +316,12 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                                             WHERE kartu_stok.kode_transaksi IN (SELECT trbmasuk_detail.kd_trbmasuk FROM trbmasuk_detail WHERE trbmasuk_detail.kd_barang = '$kdbarang')
                                             OR kartu_stok.kode_transaksi IN (SELECT trkasir_detail.kd_trkasir FROM trkasir_detail WHERE trkasir_detail.kd_barang = '$kdbarang')
                                             GROUP BY kode_transaksi
-                                            ORDER BY tgl_sekarang ASC";
-                                
+                                            ORDER BY id_kartu ASC";
+
                                 $dataResult = $db->query($dataQuery);
-                                
-                                $no = 1;
+
                                 $totalStok = 0;
-                                $sisa = 0;
+                                $rowsKartuStok = [];
                                 while ($row = $dataResult->fetch_assoc()) {
                                     $brgMasuk   = $db->query("SELECT qty_dtrbmasuk, no_batch, exp_date FROM trbmasuk_detail WHERE kd_trbmasuk = '$row[kode_transaksi]' AND kd_barang = '$kdbarang'");
                                     $masuk      = $brgMasuk->fetch_assoc();
@@ -338,22 +337,33 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                                     $expDate = $masuk['exp_date'] ?? '';
                                     $expDateDisplay = (!empty($expDate) && $expDate != '0000-00-00') ? date('d-m-Y', strtotime($expDate)) : '';
 
-                                    $sisa = $sisa + $msk;
+                                    $rowsKartuStok[] = [
+                                        'tgl_sekarang' => $row['tgl_sekarang'],
+                                        'kode_transaksi' => $row['kode_transaksi'],
+                                        'msk' => $msk,
+                                        'klr' => $klr,
+                                        'noBatch' => $noBatch,
+                                        'expDateDisplay' => $expDateDisplay,
+                                        'totalStok' => $totalStok,
+                                    ];
+                                }
+
+                                $no = 1;
+                                foreach (array_reverse($rowsKartuStok) as $r) {
                                     echo '
                                         <tr>
                                             <td style="text-align: center; ">'.$no.'</td>
-                                            <td style="text-align: center; ">'.date('Y-m-d H:i:s', strtotime($row['tgl_sekarang'])).'</td>
-                                            <td style="text-align: center; ">'.date('F', strtotime($row['tgl_sekarang'])).'</td>
-                                            <td style="text-align: center; ">'.$row['kode_transaksi'].'</td>
-                                            <td style="text-align: center; ">'.$msk.'</td>
-                                            <td style="text-align: center; ">'.$klr.'</td>
-                                            <td style="text-align: center; ">'.$noBatch.'</td>
-                                            <td style="text-align: center; ">'.$expDateDisplay.'</td>
-                                            <td style="text-align: center; ">'.$totalStok.'</td>
+                                            <td style="text-align: center; ">'.date('Y-m-d H:i:s', strtotime($r['tgl_sekarang'])).'</td>
+                                            <td style="text-align: center; ">'.date('F', strtotime($r['tgl_sekarang'])).'</td>
+                                            <td style="text-align: center; ">'.$r['kode_transaksi'].'</td>
+                                            <td style="text-align: center; ">'.$r['msk'].'</td>
+                                            <td style="text-align: center; ">'.$r['klr'].'</td>
+                                            <td style="text-align: center; ">'.$r['noBatch'].'</td>
+                                            <td style="text-align: center; ">'.$r['expDateDisplay'].'</td>
+                                            <td style="text-align: center; ">'.$r['totalStok'].'</td>
                                         </tr>
                                     ';
-                                    
-                                    $sisa = $totalStok;
+
                                     $no++;
                                 }
                             // $no = 1;
