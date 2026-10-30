@@ -498,9 +498,12 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 									<label class='col-sm-4 control-label'>No. Batch</label>
 										<div class='col-sm-7'>
-											<select name='no_batch' id='no_batch' class='form-control'>
-												<option value=''>-- Otomatis (FEFO - ED terdekat) --</option>
-											</select>
+										<div class='input-group'>
+											<input type=text name='no_batch' id='no_batch' class='form-control' autocomplete='off' placeholder='kosongkan untuk otomatis FEFO'>
+											<div class='input-group-addon'>
+												<button type=button data-toggle='modal' data-target='#ModalBatch' href='#' id='btnCariBatch'><span class='glyphicon glyphicon-search'></span></button>
+											</div>
+										</div>
 										</div>
 
 									<label class='col-sm-4 control-label'>Tgl. Kadaluarsa</label>
@@ -1216,6 +1219,34 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 </div>
 <!-- end modal item -->
 
+<!-- Modal batch -->
+<div id="ModalBatch" class="modal fade" role="dialog">
+	<div class="modal-dialog" style="width:60%">
+		<div class="modal-content table-responsive">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Pilih No. Batch</h4>
+			</div>
+			<div class="modal-body table-responsive">
+				<table id="tabel_batch" class="table table-condensed table-bordered table-striped table-hover">
+					<thead>
+						<tr class="judul-table">
+							<th style="vertical-align: middle; background-color: #008000; color: white; text-align: center; ">No</th>
+							<th style="vertical-align: middle; background-color: #008000; color: white; text-align: left; ">No. Batch</th>
+							<th style="vertical-align: middle; background-color: #008000; color: white; text-align: center; ">Tgl. Kadaluarsa</th>
+							<th style="vertical-align: middle; background-color: #008000; color: white; text-align: right; ">Sisa Stok</th>
+							<th style="vertical-align: middle; background-color: #008000; color: white; text-align: center; ">Pilih</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- end modal batch -->
+
 <script type="text/javascript">
 	$(function() {
 		$(".datepicker").datepicker({
@@ -1396,7 +1427,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 		document.getElementById('komisi_dtrkasir').value = komisi_dtrkasir;
 		$('#jenisobat').val(jenisobat).change();
 		if (document.getElementById('no_batch')) {
-			muatBatchList(kd_barang);
+			document.getElementById('no_batch').value = '';
+			document.getElementById('exp_date_display').value = '';
 		}
 
 		// $.ajax({
@@ -1493,7 +1525,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					document.getElementById("jenisobat").value = "";
 				// 	$('#jenisobat').val().change();
 					if (document.getElementById('no_batch')) {
-						muatBatchList('');
+						document.getElementById('no_batch').value = '';
+						document.getElementById('exp_date_display').value = '';
 					}
 					tabel_detail();
 
@@ -1623,7 +1656,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				document.getElementById('hrgjual_dtrkasir').value = datab.hrgjual_barang;
 				document.getElementById('indikasi').value = datab.indikasi;
 				if (document.getElementById('no_batch')) {
-					muatBatchList(kd_brg);
+					document.getElementById('no_batch').value = '';
+					document.getElementById('exp_date_display').value = '';
 				}
 
 			});
@@ -1631,17 +1665,13 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 		}
 	});
 
-	//muat pilihan No. Batch (FEFO - ED terdekat duluan) untuk barang yang sedang dipilih
-	function muatBatchList(kd_barang) {
-		var selBatch = document.getElementById('no_batch');
-		if (!selBatch) {
-			return;
-		}
-
-		selBatch.innerHTML = "<option value=''>-- Otomatis (FEFO - ED terdekat) --</option>";
-		document.getElementById('exp_date_display').value = '';
-
+	//modal pilih no batch (urut FEFO - ED terdekat duluan)
+	var tabelBatchDT = null;
+	$('#ModalBatch').on('show.bs.modal', function(e) {
+		var kd_barang = document.getElementById('kd_barang').value;
 		if (!kd_barang) {
+			e.preventDefault();
+			alert('Pilih barang terlebih dahulu');
 			return;
 		}
 
@@ -1653,21 +1683,50 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				'kd_barang': kd_barang
 			}
 		}).done(function(list) {
-			if (list && list.length > 0) {
-				$.each(list, function(i, b) {
-					var opt = document.createElement('option');
-					opt.value = b.no_batch;
-					opt.text = b.no_batch + ' (sisa ' + b.sisa + ', ED ' + b.exp_date_display + ')';
-					opt.setAttribute('data-exp_date_display', b.exp_date_display);
-					selBatch.appendChild(opt);
-				});
+			if (tabelBatchDT) {
+				tabelBatchDT.destroy();
+				$('#tabel_batch tbody').empty();
 			}
+			tabelBatchDT = $('#tabel_batch').DataTable({
+				data: list || [],
+				destroy: true,
+				language: {
+					emptyTable: 'Tidak ada batch tersedia untuk barang ini'
+				},
+				columns: [{
+						data: null,
+						className: 'text-center',
+						render: function(data, type, row, meta) {
+							return meta.row + 1;
+						}
+					},
+					{
+						data: 'no_batch'
+					},
+					{
+						data: 'exp_date_display',
+						className: 'text-center'
+					},
+					{
+						data: 'sisa',
+						className: 'text-right'
+					},
+					{
+						data: null,
+						className: 'text-center',
+						render: function(data, type, row) {
+							return "<button type='button' class='btn btn-xs btn-info btn-pilih-batch' data-no_batch='" + row.no_batch + "' data-exp_date_display='" + row.exp_date_display + "'><i class='fa fa-check'></i></button>";
+						}
+					}
+				]
+			});
 		});
-	}
+	});
 
-	$(document).on('change', '#no_batch', function() {
-		var selected = this.options[this.selectedIndex];
-		document.getElementById('exp_date_display').value = selected.getAttribute('data-exp_date_display') || '';
+	$(document).on('click', '.btn-pilih-batch', function() {
+		document.getElementById('no_batch').value = $(this).data('no_batch');
+		document.getElementById('exp_date_display').value = $(this).data('exp_date_display');
+		$('#ModalBatch').modal('hide');
 	});
 
 
