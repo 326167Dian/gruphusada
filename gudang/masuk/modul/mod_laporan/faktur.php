@@ -130,13 +130,24 @@ WHERE trkasir.kd_trkasir='$_GET[kd_trkasir]'");
     $pdf->ln(0.3);
     $pdf->SetX(0.6);
     $pdf->SetFont('Arial', 'B', 9);
-    $pdf->Cell(1, 0.4, 'No.', 0, 0, 'C');
-    $pdf->Cell(10, 0.4, 'Nama Barang', 0, 0, 'C');
-    $pdf->Cell(2, 0.4, 'Sat', 0, 0, 'C');
-    $pdf->Cell(1, 0.4, 'Qty', 0, 0, 'C');
-    $pdf->Cell(2, 0.4, 'Harga', 0, 0, 'R');
-    $pdf->Cell(2, 0.4, 'Disc', 0, 0, 'C');
-    $pdf->Cell(2, 0.4, 'Sub total', 0, 1, 'R');
+    $colNo = 0.8;
+    $colNama = 7.5;
+    $colSat = 1.2;
+    $colQty = 0.8;
+    $colBatch = 2.4;
+    $colEd = 1.8;
+    $colHarga = 2;
+    $colDisc = 1;
+    $colSubtotal = 2.1;
+    $pdf->Cell($colNo, 0.4, 'No.', 0, 0, 'C');
+    $pdf->Cell($colNama, 0.4, 'Nama Barang', 0, 0, 'C');
+    $pdf->Cell($colSat, 0.4, 'Sat', 0, 0, 'C');
+    $pdf->Cell($colQty, 0.4, 'Qty', 0, 0, 'C');
+    $pdf->Cell($colBatch, 0.4, 'Batch', 0, 0, 'C');
+    $pdf->Cell($colEd, 0.4, 'ED', 0, 0, 'C');
+    $pdf->Cell($colHarga, 0.4, 'Harga', 0, 0, 'R');
+    $pdf->Cell($colDisc, 0.4, 'Disc', 0, 0, 'C');
+    $pdf->Cell($colSubtotal, 0.4, 'Sub total', 0, 1, 'R');
 
     $pdf->ln(0.3);
     $pdf->SetX(0.6);
@@ -156,38 +167,49 @@ WHERE trkasir.kd_trkasir='$_GET[kd_trkasir]'");
         $tagihan = format_rupiah($r1['ttl_trkasir']);
         $subtotal = format_rupiah($gt);
         $pdf->SetX(0.6);
+        $noBatch = !empty($r2['no_batch']) ? $r2['no_batch'] : '-';
+        $expDate = $r2['exp_date'] ?? '';
+        $expDateDisplay = (!empty($expDate) && $expDate != '0000-00-00' && $expDate != '1970-01-01')
+            ? date('d-m-Y', strtotime($expDate))
+            : '-';
 
         $text1 = substr($r2['nmbrg_dtrkasir'], 0, 60);
         $text2 = substr($r2['nmbrg_dtrkasir'], 60, 120);
         $text3 = strlen($r2['nmbrg_dtrkasir']);
 
         if ($text3 > 60) {
-            $pdf->Cell(1, 0.4, $no . '.', 1, 0, 'C');
-            $pdf->Cell(10, 0.4, $text1, 1, 0, 'L');
-            $pdf->Cell(2, 0.4, $r2['sat_dtrkasir'], 1, 0, 'R');
-            $pdf->Cell(1, 0.4, $r2['qty_dtrkasir'], 1, 0, 'L');
-            $pdf->Cell(2, 0.4, format_rupiah($r2['hrgjual_dtrkasir']), 1, 0, 'R');
-            $pdf->Cell(2, 0.4, $disc, 1, 0, 'C');
-            $pdf->Cell(2, 0.4, format_rupiah($r2['hrgttl_dtrkasir']), 1, 1, 'R');
+            $pdf->Cell($colNo, 0.4, $no . '.', 1, 0, 'C');
+            $pdf->Cell($colNama, 0.4, $text1, 1, 0, 'L');
+            $pdf->Cell($colSat, 0.4, $r2['sat_dtrkasir'], 1, 0, 'C');
+            $pdf->Cell($colQty, 0.4, $r2['qty_dtrkasir'], 1, 0, 'C');
+            $pdf->Cell($colBatch, 0.4, $noBatch, 1, 0, 'C');
+            $pdf->Cell($colEd, 0.4, $expDateDisplay, 1, 0, 'C');
+            $pdf->Cell($colHarga, 0.4, format_rupiah($r2['hrgjual_dtrkasir']), 1, 0, 'R');
+            $pdf->Cell($colDisc, 0.4, $disc, 1, 0, 'C');
+            $pdf->Cell($colSubtotal, 0.4, format_rupiah($r2['hrgttl_dtrkasir']), 1, 1, 'R');
 
             $pdf->SetX(0.6);
-            $pdf->Cell(1, 0.4, '', 0, 0, 'C');
-            $pdf->Cell(10, 0.4, $text2, 0, 0, 'L');
-            $pdf->Cell(2, 0.4, '', 0, 0, 'R');
-            $pdf->Cell(1, 0.4, '', 0, 0, 'L');
-            $pdf->Cell(2, 0.4, '', 0, 0, 'R');
-            $pdf->Cell(2, 0.4, '', 0, 0, 'C');
-            $pdf->Cell(2, 0.4, '', 0, 1, 'R');
+            $pdf->Cell($colNo, 0.4, '', 0, 0, 'C');
+            $pdf->Cell($colNama, 0.4, $text2, 0, 0, 'L');
+            $pdf->Cell($colSat, 0.4, '', 0, 0, 'C');
+            $pdf->Cell($colQty, 0.4, '', 0, 0, 'C');
+            $pdf->Cell($colBatch, 0.4, '', 0, 0, 'C');
+            $pdf->Cell($colEd, 0.4, '', 0, 0, 'C');
+            $pdf->Cell($colHarga, 0.4, '', 0, 0, 'R');
+            $pdf->Cell($colDisc, 0.4, '', 0, 0, 'C');
+            $pdf->Cell($colSubtotal, 0.4, '', 0, 1, 'R');
 
             $garis = $garis + 1.2;
         } else {
-            $pdf->Cell(1, 0.4, $no . '.', 1, 0, 'C');
-            $pdf->Cell(10, 0.4, $r2['nmbrg_dtrkasir'], 1, 0, 'L');
-            $pdf->Cell(2, 0.4, $r2['sat_dtrkasir'], 1, 0, 'C');
-            $pdf->Cell(1, 0.4, $r2['qty_dtrkasir'], 1, 0, 'C');
-            $pdf->Cell(2, 0.4, format_rupiah($r2['hrgjual_dtrkasir']), 1, 0, 'R');
-            $pdf->Cell(2, 0.4, $disc, 1, 0, 'C');
-            $pdf->Cell(2, 0.4, format_rupiah($r2['hrgttl_dtrkasir']), 1, 1, 'R');
+            $pdf->Cell($colNo, 0.4, $no . '.', 1, 0, 'C');
+            $pdf->Cell($colNama, 0.4, $r2['nmbrg_dtrkasir'], 1, 0, 'L');
+            $pdf->Cell($colSat, 0.4, $r2['sat_dtrkasir'], 1, 0, 'C');
+            $pdf->Cell($colQty, 0.4, $r2['qty_dtrkasir'], 1, 0, 'C');
+            $pdf->Cell($colBatch, 0.4, $noBatch, 1, 0, 'C');
+            $pdf->Cell($colEd, 0.4, $expDateDisplay, 1, 0, 'C');
+            $pdf->Cell($colHarga, 0.4, format_rupiah($r2['hrgjual_dtrkasir']), 1, 0, 'R');
+            $pdf->Cell($colDisc, 0.4, $disc, 1, 0, 'C');
+            $pdf->Cell($colSubtotal, 0.4, format_rupiah($r2['hrgttl_dtrkasir']), 1, 1, 'R');
 
             $garis = $garis + 0.6;
         }
@@ -297,4 +319,3 @@ WHERE trkasir.kd_trkasir='$_GET[kd_trkasir]'");
     $pdf->Output("faktur_penjualan_" . $r1['nm_pelanggan'] . $r1['tgl_trkasir'], "I");
 }
 ?>
-
