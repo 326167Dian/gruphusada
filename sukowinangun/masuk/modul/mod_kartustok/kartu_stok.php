@@ -312,29 +312,30 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                         <tbody>
                             <?php
                                 $kdbarang = $_GET['id'];
-                                $dataQuery = "SELECT MIN(id_kartu) AS id_kartu, kode_transaksi, MIN(tgl_sekarang) AS tgl_sekarang FROM kartu_stok
-                                            WHERE kartu_stok.kode_transaksi IN (SELECT trbmasuk_detail.kd_trbmasuk FROM trbmasuk_detail WHERE trbmasuk_detail.kd_barang = '$kdbarang')
-                                            OR kartu_stok.kode_transaksi IN (SELECT trkasir_detail.kd_trkasir FROM trkasir_detail WHERE trkasir_detail.kd_barang = '$kdbarang')
-                                            GROUP BY kode_transaksi
-                                            ORDER BY id_kartu ASC";
+                                // Diambil langsung per baris trbmasuk_detail/trkasir_detail (bukan per kode
+                                // transaksi) supaya transaksi dengan beberapa batch/No.Batch sekaligus
+                                // (beberapa baris trbmasuk_detail dengan kd_trbmasuk yang sama) tetap
+                                // tampil sebagai baris terpisah, bukan cuma baris pertamanya saja.
+                                $dataQuery = "SELECT id_dtrbmasuk AS id_detail, kd_trbmasuk AS kode_transaksi, waktu AS tgl_sekarang,
+                                                    qty_dtrbmasuk AS msk, 0 AS klr, no_batch, exp_date
+                                            FROM trbmasuk_detail WHERE kd_barang = '$kdbarang'
+                                            UNION ALL
+                                            SELECT id_dtrkasir AS id_detail, kd_trkasir AS kode_transaksi, waktu AS tgl_sekarang,
+                                                    0 AS msk, qty_dtrkasir AS klr, '' AS no_batch, NULL AS exp_date
+                                            FROM trkasir_detail WHERE kd_barang = '$kdbarang'
+                                            ORDER BY tgl_sekarang ASC, id_detail ASC";
 
                                 $dataResult = $db->query($dataQuery);
 
                                 $totalStok = 0;
                                 $rowsKartuStok = [];
                                 while ($row = $dataResult->fetch_assoc()) {
-                                    $brgMasuk   = $db->query("SELECT qty_dtrbmasuk, no_batch, exp_date FROM trbmasuk_detail WHERE kd_trbmasuk = '$row[kode_transaksi]' AND kd_barang = '$kdbarang'");
-                                    $masuk      = $brgMasuk->fetch_assoc();
-
-                                    $brgKeluar  = $db->query("SELECT qty_dtrkasir FROM trkasir_detail WHERE kd_trkasir = '$row[kode_transaksi]' AND kd_barang = '$kdbarang'");
-                                    $keluar     = $brgKeluar->fetch_assoc();
-
-                                    $msk = ($masuk['qty_dtrbmasuk'] ?? 0);
-                                    $klr = ($keluar['qty_dtrkasir'] ?? 0);
+                                    $msk = $row['msk'];
+                                    $klr = $row['klr'];
                                     $totalStok += ($msk - $klr);
 
-                                    $noBatch = $masuk['no_batch'] ?? '';
-                                    $expDate = $masuk['exp_date'] ?? '';
+                                    $noBatch = $row['no_batch'] ?? '';
+                                    $expDate = $row['exp_date'] ?? '';
                                     $expDateDisplay = (!empty($expDate) && $expDate != '0000-00-00') ? date('d-m-Y', strtotime($expDate)) : '';
 
                                     $rowsKartuStok[] = [
