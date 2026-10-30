@@ -34,16 +34,45 @@ $pdf->Cell(2.5,0.5,"Satuan Barang",0,0,'L');
 $pdf->Cell(1,0.5,":",0,0,'C');
 $pdf->Cell(5.5,0.5,$brg['sat_barang'],0,1,'L');
 
+// Lebar kolom tabel (total = 27.6 cm, sesuai lebar halaman A4 landscape - margin)
+$wNo = 1.0;
+$wWaktu = 3.2;
+$wBulan = 2.2;
+$wNoTrans = 4.5;
+$wMasuk = 2.6;
+$wKeluar = 2.6;
+$wBatch = 3.0;
+$wEd = 2.0;
+$wTotal = 6.5;
+
 $pdf->ln(0.5);
-$pdf->Cell(1, 0.7, 'NO', 1, 0, 'C');
-$pdf->Cell(3, 0.7, 'Waktu', 1, 0, 'C');
-$pdf->Cell(2, 0.7, 'Bulan', 1, 0, 'C');
-$pdf->Cell(5, 0.7, 'Nomor Transaksi', 1, 0, 'C');
-$pdf->Cell(3, 0.7, 'Qty Masuk (Pembelian)', 1, 0, 'C');
-$pdf->Cell(3, 0.7, 'Qty Keluar (Penjualan)', 1, 0, 'C');
-$pdf->Cell(3, 0.7, 'Batch', 1, 0, 'C');
-$pdf->Cell(2.6, 0.7, 'ED', 1, 0, 'C');
-$pdf->Cell(4, 0.7, 'Total (Qty Masuk - Qty Keluar)', 1, 1, 'C');
+$pdf->SetFont('Arial','B',8);
+$headerLineH = 0.4;
+$headerH = $headerLineH * 2;
+
+$startX = $pdf->GetX();
+$startY = $pdf->GetY();
+
+$pdf->Cell($wNo, $headerH, 'NO', 1, 0, 'C');
+$pdf->Cell($wWaktu, $headerH, 'Waktu', 1, 0, 'C');
+$pdf->Cell($wBulan, $headerH, 'Bulan', 1, 0, 'C');
+$pdf->Cell($wNoTrans, $headerH, 'Nomor Transaksi', 1, 0, 'C');
+
+$x = $pdf->GetX();
+$pdf->MultiCell($wMasuk, $headerLineH, "Qty Masuk\n(Pembelian)", 1, 'C');
+$pdf->SetXY($x + $wMasuk, $startY);
+
+$x = $pdf->GetX();
+$pdf->MultiCell($wKeluar, $headerLineH, "Qty Keluar\n(Penjualan)", 1, 'C');
+$pdf->SetXY($x + $wKeluar, $startY);
+
+$pdf->Cell($wBatch, $headerH, 'Batch', 1, 0, 'C');
+$pdf->Cell($wEd, $headerH, 'ED', 1, 0, 'C');
+
+$x = $pdf->GetX();
+$pdf->MultiCell($wTotal, $headerLineH, "Total\n(Qty Masuk - Qty Keluar)", 1, 'C');
+
+$pdf->SetXY($startX, $startY + $headerH);
 $pdf->SetFont('Arial','',8);
 $no=1;
 
@@ -68,20 +97,20 @@ while ($row = $query2->fetch_assoc()) {
         $expDate = $row['exp_date'] ?? '';
         $expDateDisplay = (!empty($expDate) && $expDate != '0000-00-00' && $expDate != '1970-01-01') ? date('d-m-Y', strtotime($expDate)) : '';
 
-    	$pdf->Cell(1, 0.7, $no, 1, 0, 'C');
-        $pdf->Cell(3, 0.7, date('Y-m-d H:i:s', strtotime($row['tgl_sekarang'])), 1, 0, 'C');
-        $pdf->Cell(2, 0.7, date('F', strtotime($row['tgl_sekarang'])), 1, 0, 'C');
-        $pdf->Cell(5, 0.7, $row['kode_transaksi'], 1, 0, 'C');
-        $pdf->Cell(3, 0.7, $msk, 1, 0, 'C');
-        $pdf->Cell(3, 0.7, $klr, 1, 0, 'C');
-        $pdf->Cell(3, 0.7, $noBatch, 1, 0, 'C');
-        $pdf->Cell(2.6, 0.7, $expDateDisplay, 1, 0, 'C');
-        $pdf->Cell(5, 0.7, $totalStok, 1, 1, 'C');
+    	$pdf->Cell($wNo, 0.7, $no, 1, 0, 'C');
+        $pdf->Cell($wWaktu, 0.7, date('Y-m-d H:i:s', strtotime($row['tgl_sekarang'])), 1, 0, 'C');
+        $pdf->Cell($wBulan, 0.7, date('F', strtotime($row['tgl_sekarang'])), 1, 0, 'C');
+        $pdf->Cell($wNoTrans, 0.7, $row['kode_transaksi'], 1, 0, 'C');
+        $pdf->Cell($wMasuk, 0.7, $msk, 1, 0, 'C');
+        $pdf->Cell($wKeluar, 0.7, $klr, 1, 0, 'C');
+        $pdf->Cell($wBatch, 0.7, $noBatch, 1, 0, 'C');
+        $pdf->Cell($wEd, 0.7, $expDateDisplay, 1, 0, 'C');
+        $pdf->Cell($wTotal, 0.7, $totalStok, 1, 1, 'C');
 
     	$no++;
 }
 $pdf->SetFont('Arial','',12);
-$pdf->Cell(22.5, 0.7, 'Total Stok Barang', 1, 0, 'L');
-$pdf->Cell(5.1, 0.7, $totalStok, 1, 0, 'C');
+$pdf->Cell($wNo + $wWaktu + $wBulan + $wNoTrans + $wMasuk + $wKeluar + $wBatch + $wEd, 0.7, 'Total Stok Barang', 1, 0, 'L');
+$pdf->Cell($wTotal, 0.7, $totalStok, 1, 0, 'C');
 
 $pdf->Output("rekap_stokopname.pdf","I");
