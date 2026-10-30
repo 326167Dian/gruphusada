@@ -42,13 +42,11 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 								<th>No</th>
 								<th>Kode</th>
 								<th>Nama Barang</th>
-								<th style="text-align: right; ">Qty/Stok</th>
-								<th style="text-align: right; ">Satuan</th>
+								<th style="text-align: center; ">Qty (Satuan)</th>
 								<th style="text-align: center; ">Jenis Obat</th>
 								<th style="text-align: right; ">Harga Beli</th>
 								<th style="text-align: right; ">Harga Jual</th>
 								<th style="text-align: center; ">Komposisi dan Indikasi</th>
-								<th style="text-align: center; ">Kartu Stok</th>
 								<th style="text-align: center; ">Aksi</th>
 								<?php
 								// $lupa = $_SESSION['level'];
@@ -340,24 +338,24 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 			},
 			"rowCallback": function(row, data, index) {
                 let q = (data['hrgjual_barang'] - data['hrgsat_barang']) / data['hrgsat_barang'];
-                
+
                 if(q <= 0.3){
-                    $(row).find('td:eq(7)').css('background-color', '#ff003f');
-                    $(row).find('td:eq(7)').css('color', '#ffffff');
+                    $(row).find('td:eq(6)').css('background-color', '#ff003f');
+                    $(row).find('td:eq(6)').css('color', '#ffffff');
                 } else if(q > 0.3 && q <= 1){
-                    $(row).find('td:eq(7)').css('background-color', '#f39c12');
-                    $(row).find('td:eq(7)').css('color', '#ffffff');
-                    
+                    $(row).find('td:eq(6)').css('background-color', '#f39c12');
+                    $(row).find('td:eq(6)').css('color', '#ffffff');
+
                 } else if(q > 1 && q <= 2){
-                    $(row).find('td:eq(7)').css('background-color', '#00ff3f');
-                    $(row).find('td:eq(7)').css('color', '#ffffff');
-                    
+                    $(row).find('td:eq(6)').css('background-color', '#00ff3f');
+                    $(row).find('td:eq(6)').css('color', '#ffffff');
+
                 } else if(q > 2){
-                    $(row).find('td:eq(7)').css('background-color', '#00bfff');
-                    $(row).find('td:eq(7)').css('color', '#ffffff');
-                    
+                    $(row).find('td:eq(6)').css('background-color', '#00bfff');
+                    $(row).find('td:eq(6)').css('color', '#ffffff');
+
                 }
-                
+
             },
 			columns: [{
 					"data": "no",
@@ -371,11 +369,11 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				},
 				{
 					"data": "stok_barang",
-					"className": 'text-center'
-				},
-				{
-					"data": "sat_barang",
-					"className": 'text-center'
+					"className": 'text-center',
+					"orderable": false,
+					"render": function(data, type, row) {
+						return data + ' ' + row.sat_barang;
+					}
 				},
 				{
 					"data": "jenisobat",
@@ -400,22 +398,15 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					"className": 'text-justify'
 				},
 				{
-					"data": "kd_barang",
+					"data": "aksi",
 					"className": 'text-center',
 					"orderable": false,
 					"render": function(data, type, row) {
-						return "<a href='?module=kartustok&act=view&id="+data+"' class='btn btn-info btn-xs' target='_blank'>KARTU STOK</a>";
-					}
-				},
-				{
-					"data": "aksi",
-					"visible": <?= ($_SESSION['level'] == 'pemilik') ? 'true' : 'false'; ?>,
-					"orderable": false,
-					"render": function(data, type, row) {
-						var btn = "<div style='text-align:center'><button type='button' id='btn_edit' class='btn btn-warning btn-xs' data-id='"+data+"'>EDIT</button> <button type='button' id='btn_hapus' class='btn btn-danger btn-xs' data-id='"+data+"'>HAPUS</button></div>";
-						
-				// 		var btn = "<div style='text-align:center'><a href='?module=barang&act=edit&id=" + data + "' title='EDIT' class='btn btn-warning btn-xs'>EDIT</a> <a href=javascript:confirmdelete('modul/mod_barang/aksi_barang.php?module=barang&act=hapus&id=" + data + "') title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</a></div>";
-				
+						var btn = "<div style='text-align:center'><a href='?module=kartustok&act=view&id="+row.kd_barang+"' class='btn btn-info btn-xs' target='_blank'>KARTU STOK</a>";
+						<?php if ($_SESSION['level'] == 'pemilik'): ?>
+						btn += " <button type='button' id='btn_edit' class='btn btn-warning btn-xs' data-id='"+data+"'>EDIT</button> <button type='button' id='btn_hapus' class='btn btn-danger btn-xs' data-id='"+data+"'>HAPUS</button>";
+						<?php endif; ?>
+						btn += "</div>";
 						return btn;
 					}
 				},

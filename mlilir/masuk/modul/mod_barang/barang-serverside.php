@@ -8,12 +8,11 @@ if ($_GET['action'] == "table_data") {
         1 => 'kd_barang',
         2 => 'nm_barang',
         3 => 'stok_barang',
-        4 => 'sat_barang',
-        5 => 'jenisobat',
-        6 => 'hrgsat_barang',
-        7 => 'hrgjual_barang',
-        8 => 'indikasi',
-        9 => 'id_barang'
+        4 => 'jenisobat',
+        5 => 'hrgsat_barang',
+        6 => 'hrgjual_barang',
+        7 => 'indikasi',
+        8 => 'id_barang'
     );
 
     $querycount = $db->query("SELECT count(id_barang) as jumlah FROM barang");
