@@ -27,6 +27,8 @@ color: white;
 								<th style="vertical-align: middle; background-color: #008000; text-align: left; ">Nama Barang</th>
 								<th style="vertical-align: middle; background-color: #008000; text-align: right; ">Qty</th>
 								<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Satuan</th>
+								<th style="vertical-align: middle; background-color: #008000; text-align: center; ">No. Batch</th>
+								<th style="vertical-align: middle; background-color: #008000; text-align: center; ">ED</th>
 								<th style="vertical-align: middle; background-color: #008000; text-align: right; ">Harga</th>
 								<th style="vertical-align: middle; background-color: #008000; text-align: right; ">Total</th>
 								<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Aksi</th>
@@ -64,6 +66,12 @@ color: white;
 								
 								$hrgjual_dtrkasir = format_rupiah($r['hrgjual_dtrkasir']);
 								$hrgttl_dtrkasir = format_rupiah($r['hrgttl_dtrkasir']);
+								$no_batch = htmlspecialchars((string) ($r['no_batch'] ?? ''), ENT_QUOTES, 'UTF-8');
+								$exp_date = $r['exp_date'] ?? '';
+								$ed = (!empty($exp_date) && $exp_date != '0000-00-00' && $exp_date != '1970-01-01')
+									? date('d-m-Y', strtotime($exp_date))
+									: '-';
+								$no_batch = $no_batch !== '' ? $no_batch : '-';
 								
 								
 								echo "<tr style='font-size: 13px;'>
@@ -72,6 +80,8 @@ color: white;
 											<td>$r[nmbrg_dtrkasir]</td>
 											<td align=right>$r[qty_dtrkasir]</td>
 											<td align=center>$r[sat_dtrkasir]</td>
+											<td align=center>$no_batch</td>
+											<td align=center>$ed</td>
 											<td align=right>$hrgjual_dtrkasir</td>
 											<td align=right>$hrgttl_dtrkasir</td>
 											<td align=center>
@@ -357,4 +367,3 @@ $(document).ready(function () {
         document.getElementById('ttl_trkasir').value = formatRupiah(Math.round(subtotal));
 	}
 </script>
-
