@@ -29,10 +29,10 @@ if (trim($no_batch) == "") {
 
 mysqli_begin_transaction($conn);
 
-//cek apakah barang sudah ada
+//cek apakah barang dengan no_batch yang sama sudah ada (batch beda = baris baru)
 $cekdetail = mysqli_query($conn, "SELECT id_barang, kd_barang, kd_trbmasuk, id_dtrbmasuk, qty_dtrbmasuk
 FROM trbmasuk_detail
-WHERE kd_barang='$kd_barang' AND kd_trbmasuk='$kd_trbmasuk'");
+WHERE kd_barang='$kd_barang' AND kd_trbmasuk='$kd_trbmasuk' AND no_batch='$no_batch'");
 
 $ketemucekdetail = mysqli_num_rows($cekdetail);
 $rcek = mysqli_fetch_array($cekdetail);

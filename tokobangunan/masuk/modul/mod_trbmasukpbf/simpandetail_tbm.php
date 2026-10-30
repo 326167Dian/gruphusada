@@ -27,7 +27,7 @@ if($diskon == ""){
 //cek apakah barang sudah ada
 $cekdetail=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT id_barang, kd_barang, kd_trbmasuk, id_dtrbmasuk, qty_dtrbmasuk 
 FROM trbmasuk_detail 
-WHERE kd_barang='$kd_barang' AND kd_trbmasuk='$kd_trbmasuk'");
+WHERE kd_barang='$kd_barang' AND kd_trbmasuk='$kd_trbmasuk' AND no_batch='$no_batch'");
 
 $ketemucekdetail=mysqli_num_rows($cekdetail);
 $rcek=mysqli_fetch_array($cekdetail);
