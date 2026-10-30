@@ -1634,11 +1634,14 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 	});
 
 	//modal pilih no batch (urut FEFO - ED terdekat duluan)
+	//modal dibuka lewat atribut native data-toggle/data-target pada tombolnya (sama seperti
+	//tombol cari Kode Barang), isi tabelnya dimuat lewat event klik tombol yang sama supaya
+	//tidak tergantung pada event custom Bootstrap (show.bs.modal) yang ternyata tidak selalu
+	//terpicu di tema admin ini.
 	var tabelBatchDT = null;
-	$('#ModalBatch').on('show.bs.modal', function(e) {
+	$(document).on('click', '#btnCariBatch', function() {
 		var kd_barang = document.getElementById('kd_barang').value;
 		if (!kd_barang) {
-			e.preventDefault();
 			alert('Pilih barang terlebih dahulu');
 			return;
 		}
@@ -1694,7 +1697,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 	$(document).on('click', '.btn-pilih-batch', function() {
 		document.getElementById('no_batch').value = $(this).data('no_batch');
 		document.getElementById('exp_date_display').value = $(this).data('exp_date_display');
-		$('#ModalBatch').modal('hide');
+		$('#ModalBatch .close').trigger('click');
 	});
 
 
