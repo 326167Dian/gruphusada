@@ -14,64 +14,301 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 			<div class="box box-primary box-solid">
 				<div class="box-header with-border">
 					<h3 class="box-title">STOK KRITIS</h3>
-					<!--<button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>-->
-
 					<div class="box-tools pull-center">
 
 					</div><!-- /.box-tools -->
 				</div>
 				<div class="box-body table-responsive">
-					<!--<a  class ='btn  btn-success btn-flat' href='?module=barang&act=tambah'>TAMBAH</a>-->
-					<CENTER><strong>STOK KRITIS</strong></CENTER><br>
-					<hr>
-					<form method="POST" action="#" target="_blank" enctype="multipart/form-data" class="form-horizontal">
-
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Tanggal Awal</label>
-							<div class="col-sm-4">
-								<div class="input-group date">
-									<div class="input-group-addon">
-										<span class="glyphicon glyphicon-th"></span>
-									</div>
-									<input type="text" class="datepicker" name="tgl_awal" required="required" autocomplete="off" id="awal" value="<?= $_GET['start'] ?>">
-								</div>
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Tanggal Akhir</label>
-							<div class="col-sm-4">
-								<div class="input-group date">
-									<div class="input-group-addon">
-										<span class="glyphicon glyphicon-th"></span>
-									</div>
-									<input type="text" class="datepicker" name="tgl_akhir" required="required" autocomplete="off" id="akhir" value="<?= $_GET['finish'] ?>">
-								</div>
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label class="col-sm-2 control-label"></label>
-							<div class="buttons col-sm-4">
-								<input class="btn btn-primary" type="button" id="submit" name="btn" value="SUBMIT">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-								<a class='btn  btn-danger' href='?module=home'>KEMBALI</a>
-							</div>
-						</div>
-					</form>
-					<hr />
+					<CENTER><h2><strong>STOK KRITIS</strong></h2></CENTER><br>
+					<div class="col-sm-12" style="text-align:center">
+						Analisa estimasi pengadaan barang berdasarkan frekuensi transaksi 90 hari terakhir <br>
+						<a class='btn btn-primary' href='?module=stok_kritis&act=kritis30'>PROSES ANALISA DATA</a><br><br>
+						<a class='btn btn-success' href='?module=stok_kritis&act=tampil30'>TAMPILKAN ESTIMASI STOK KRITIS</a><br><br>
+						<a class='btn btn-warning' href='?module=stok_kritis&act=over30'>TAMPILKAN OVERSTOK</a>
+					</div>
 				</div>
 			</div>
+		<?php
+			break;
+
+		case "kritis30":
+		?>
+			<div class="box box-primary box-solid table-responsive">
+				<div class="box-header with-border">
+					<h3 class="box-title">STOK KRITIS</h3>
+					<div class="box-tools pull-right">
+						<button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+					</div><!-- /.box-tools -->
+				</div>
+				<div class="box-body table-responsive">
+					<br><br>
+					<?php
+					$query1 = $db->query("select * from barang left join trbmasuk_detail on(barang.id_barang=trbmasuk_detail.id_barang)
+							  where trbmasuk_detail.kd_trbmasuk is not null group by barang.id_barang order by barang.nm_barang asc ");
+					while ($r = $query1->fetch_array()) {
+						$t30 = $r['id_barang'];
+						$tgl_awal = date('Y-m-d');
+						$tgl_akhir = date('Y-m-d', strtotime('-90 days', strtotime($tgl_awal)));
+
+						$pass = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir JOIN trkasir_detail
+									ON (trkasir.kd_trkasir=trkasir_detail.kd_trkasir)
+									WHERE trkasir_detail.id_barang = '$t30' AND (tgl_trkasir BETWEEN '$tgl_akhir' and '$tgl_awal')");
+						$pass1 = mysqli_num_rows($pass);
+						$pass2 = mysqli_fetch_array($pass);
+						$tot = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT SUM(trkasir_detail.qty_dtrkasir) as pw from trkasir_detail
+							  join trkasir ON (trkasir_detail.kd_trkasir=trkasir.kd_trkasir)
+									WHERE id_barang = '$pass2[id_barang]' AND (tgl_trkasir BETWEEN '$tgl_akhir' and '$tgl_awal')");
+						$t2 = mysqli_fetch_array($tot);
+						$q30 = $t2['pw'];
+
+						mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE barang SET
+								t30 = '$pass1',
+								q30 = '$q30'
+								WHERE id_barang = '$r[id_barang]'");
+					}
+					header('location:../../media_admin.php?module=stok_kritis');
+					?>
+				</div>
+			</div>
+		<?php
+			break;
+
+		case "tampil30":
+		?>
+			<div class="box-body table-responsive">
+				<form method="post" action="modul/mod_lapstok/aksi_simpan_orders.php?module=stok_kritis&act=simpan_orders" id="frmAddOrder">
+					<span class="btn btn-primary">LAKU</span> Jumlah Transaksi > 10 per 30 hari
+					<span class="btn btn-success">LANCAR</span> Jumlah Transaksi 6 - 10 per 30 hari
+					<span class="btn btn-warning">SLOW</span> Jumlah Transaksi 1 - 5 per 30 hari
+					<hr>
+
+					<div class='form-group row'>
+						<label class='col-sm-3 control-label'>Supplier :</label>
+						<input type="hidden" id="id_supplier" name="id_supplier">
+					</div>
+					<div class='form-group row'>
+						<div class='col-sm-8'>
+							<div class='input-group'>
+								<input type='text' class='form-control' name='nm_supplier' id='nm_supplier' required='required' autocomplete='off' readonly>
+								<div class='input-group-addon'>
+									<button type='button' data-toggle='modal' data-target='#ModalSupplier' id="idmodal" href='#'><span class='glyphicon glyphicon-search'></span></button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<a class='btn  btn-danger btn-flat' href='modul/mod_laporan/cetak_stokkritis.php' target='_blank' style="margin-bottom: 10px">EXPORT TO EXCEL</a>
+					<button class='btn  btn-success btn-flat' type='submit' id="btn_order" style="margin-bottom: 10px">ADD TO ORDER</button>
+					<hr>
+
+					<table id="example1" class="table table-bordered table-striped table-responsive">
+						<thead>
+							<tr style="text-align:center;">
+								<th>No</th>
+								<th>Kategori</th>
+								<th>Nama Barang</th>
+								<th style="text-align: right; ">Qty/Stok</th>
+								<th style="text-align: right; ">T90</th>
+								<th style="text-align: right; ">x̄T90</th>
+								<th style="text-align: center; ">Q90</th>
+								<th style="text-align: center; ">x̄Q90</th>
+								<th style="text-align: center; ">SFC max30</th>
+								<th style="text-align: center; ">SFCmax/ week</th>
+								<th style="text-align: right; ">Satuan</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php
+							$hasil30 = $db->query("select id_barang,
+														kd_barang,
+														nm_barang,
+														stok_barang,
+														sat_barang,
+														t30,
+														q30
+													 from barang ");
+							$no = 1;
+							while ($tp30 = $hasil30->fetch_array()) {
+								$avgt90 = round(($tp30['t30'] / 3), 0);
+								$qfc = $tp30['q30'] - $tp30['stok_barang'];
+								$avgq90 = round(($tp30['q30'] / 3), 0);
+								$qweek = round((($tp30['q30'] - $tp30['stok_barang']) / 4), 0);
+								$idbarang = $tp30['id_barang'];
+
+								if ($tp30['t30'] > 0 && ($tp30['stok_barang'] <= (0.25 * $tp30['t30']))) {
+									echo "
+									<tr>
+										<td><input type='checkbox' name='check[]' value='$idbarang'> $no</td>";
+									if ($tp30['t30'] <= "0") {
+										echo " <td style='background-color:#ff003f;'align='center'><strong>MACET</strong></td> ";
+									} elseif ($tp30['t30'] > 0 && $tp30['t30'] <= 5) {
+										echo "  <td style='background-color:#FFA500;' align='center'><strong>SLOW</strong></td>";
+									} elseif ($tp30['t30'] > 5 && $tp30['t30'] <= 10) {
+										echo "  <td style='background-color:#00ff3f;' align='center'><strong>LANCAR</strong></td>";
+									} elseif ($tp30['t30'] > 10) {
+										echo "  <td style='background-color:#00bfff;' align='center'><strong>LAKU</strong></td>";
+									}
+									echo "
+										<td>$tp30[nm_barang]</td>
+										<td>$tp30[stok_barang]</td>
+										<td style='text-align:center;'>$tp30[t30]</td>
+										<td style='text-align:center;'> $avgt90</td>
+										<td style='text-align:center;'>$tp30[q30]</td>
+										<td style='text-align:center;'>$avgq90</td>
+										<td style='text-align:center;'>$qfc</td>
+										<td style='text-align:center;'>$qweek</td>
+										<td style='text-align:center;'>$tp30[sat_barang]</td>
+									 </tr>";
+									$no++;
+								}
+							}
+							?>
+						</tbody>
+					</table>
+				</form>
+			</div>
+			<div style="text-align:center;">
+				<a class="btn btn-success" onclick="self.history.back()">KEMBALI</a>
+			</div>
+
+			<!-- Modal supplier -->
+			<div id="ModalSupplier" class="modal fade" role="dialog">
+				<div class="modal-lg modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+							<h4 class="modal-title">PILIH SUPPLIER</h4>
+						</div>
+						<div class="modal-body table-responsive">
+							<table id="example4" class="table table-condensed table-bordered table-striped table-hover">
+								<thead>
+									<tr class="judul-table">
+										<th style="vertical-align: middle; background-color: #008000; text-align: center; ">No</th>
+										<th style="vertical-align: middle; background-color: #008000; text-align: left; ">Supplier</th>
+										<th style="vertical-align: middle; background-color: #008000; text-align: left; ">Telepon</th>
+										<th style="vertical-align: middle; background-color: #008000; text-align: left; ">Alamat</th>
+										<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Pilih</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php
+									$no_sup = 1;
+									$tampil_supplier = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM supplier ORDER BY nm_supplier ASC");
+									while ($rd = mysqli_fetch_array($tampil_supplier)) {
+										echo "<tr style='font-size: 13px;'>
+												<td align=center>$no_sup</td>
+												<td>$rd[nm_supplier]</td>
+												<td>$rd[tlp_supplier]</td>
+												<td>$rd[alamat_supplier]</td>
+												<td align=center>
+													<button class='btn btn-xs btn-info' id='pilihsupplier_kritis'
+														data-id_supplier='$rd[id_supplier]'
+														data-nm_supplier='$rd[nm_supplier]'>
+														<i class='fa fa-check'></i>
+													</button>
+												</td>
+											</tr>";
+										$no_sup++;
+									}
+									?>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- end modal supplier -->
+
 			<script>
-				$("#submit").on("click", function() {
-					var awal = $("#awal").val();
-					var akhir = $("#akhir").val();
-					location.href = "?module=stok_kritis&act=kritis&start=" + awal + "&finish=" + akhir;
+				$(document).on('click', '#pilihsupplier_kritis', function () {
+					var id_supplier = $(this).data('id_supplier');
+					var nm_supplier = $(this).data('nm_supplier');
+
+					document.getElementById('id_supplier').value = id_supplier;
+					document.getElementById('nm_supplier').value = nm_supplier;
+
+					$(".close").click();
+				});
+
+				$('#frmAddOrder').on('submit', function () {
+					if ($('#id_supplier').val() == '') {
+						alert('Pilih supplier terlebih dahulu');
+						return false;
+					}
+					if ($("input[name='check[]']:checked").length === 0) {
+						alert('Pilih minimal 1 barang');
+						return false;
+					}
 				});
 			</script>
 		<?php
 			break;
 
-		case "kritis":
+		case "over30":
+		?>
+			<div class="box-body table-responsive">
+				<table id="example1" class="table table-bordered table-striped table-responsive">
+					<thead>
+						<tr style="text-align:center;">
+							<th>No</th>
+							<th>Kategori</th>
+							<th>Nama Barang</th>
+							<th style="text-align: right; ">Qty/Stok</th>
+							<th style="text-align: right; ">T30</th>
+							<th style="text-align: center; ">Q30</th>
+							<th style="text-align: center; ">On->T</th>
+							<th style="text-align: right; ">Satuan</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+						$hasil30 = $db->query("select id_barang,
+													kd_barang,
+													nm_barang,
+													stok_barang,
+													sat_barang,
+													hrgsat_barang,
+													t30,
+													q30
+												 from barang ");
+						$no = 1;
+						while ($tp30 = $hasil30->fetch_array()) {
+							$OnT = $tp30['stok_barang'] - $tp30['t30'];
+							if ($tp30['t30'] >= 0 && ($tp30['stok_barang'] > (2 * $tp30['q30']))) {
+								echo "
+										<tr>
+											<td>$no</td>";
+								if ($tp30['t30'] <= "0") {
+									echo " <td style='background-color:#ff003f;'align='center'><strong>MACET</strong></td> ";
+								} elseif ($tp30['t30'] > 0 && $tp30['t30'] <= 5) {
+									echo "  <td style='background-color:#EDFF00;' align='center'><strong>SLOW</strong></td>";
+								} elseif ($tp30['t30'] > 5 && $tp30['t30'] <= 10) {
+									echo "  <td style='background-color:#00ff3f;' align='center'><strong>LANCAR</strong></td>";
+								} elseif ($tp30['t30'] > 10) {
+									echo "  <td style='background-color:#00bfff;' align='center'><strong>LAKU</strong></td>";
+								}
+								echo "
+											<td>$tp30[nm_barang]</td>
+											<td>$tp30[stok_barang]</td>
+											<td>$tp30[t30]</td>
+											<td>$tp30[q30]</td>
+											<td>$OnT</td>
+											<td>$tp30[sat_barang]</td>
+										 </tr>";
+								$no++;
+							}
+						}
+						?>
+					</tbody>
+				</table>
+			</div>
+			<div style="text-align:center;">
+				<a class="btn btn-success" onclick="self.history.back()">KEMBALI</a>
+			</div>
+		<?php
+			break;
+
+		case "kritisOLD":
 
 			//$tampil_barang = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM barang where stok_barang <= stok_buffer ORDER BY barang.stok_barang ");
 
