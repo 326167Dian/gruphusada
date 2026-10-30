@@ -1187,6 +1187,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				document.getElementById('qty_dtrbmasuk').value = "1";
 				document.getElementById('sat_dtrbmasuk').value = datab.sat_barang;
 				document.getElementById('hrgsat_dtrbmasuk').value = datab.hrgsat_barang;
+				document.getElementById('hrgjual_dtrbmasuk').value = datab.hrgjual_barang;
 			});
 
 		}

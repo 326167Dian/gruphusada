@@ -10,7 +10,8 @@ include "../../../configurasi/koneksi.php";
 					'nm_barang'=> $re['nm_barang'],
 					'stok_barang'=> $re['stok_barang'],
 					'sat_barang'=> $re['sat_barang'],
-					'hrgsat_barang'=> $re['hrgsat_barang']);
+					'hrgsat_barang'=> $re['hrgsat_barang'],
+					'hrgjual_barang'=> $re['hrgjual_barang']);
  
 	echo json_encode($json);
 
