@@ -303,6 +303,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                                 <th style="text-align: center; ">Nomor Transaksi</th>
                                 <th style="text-align: center; ">Qty Masuk (Pembelian)</th>
                                 <th style="text-align: center; ">Qty Keluar (Penjualan)</th>
+                                <th style="text-align: center; ">Batch</th>
+                                <th style="text-align: center; ">ED</th>
                                 <th style="text-align: center; ">Total (Qty Masuk - Qty Keluar)</th>
 
                             </tr>
@@ -322,16 +324,20 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                                 $totalStok = 0;
                                 $sisa = 0;
                                 while ($row = $dataResult->fetch_assoc()) {
-                                    $brgMasuk   = $db->query("SELECT qty_dtrbmasuk FROM trbmasuk_detail WHERE kd_trbmasuk = '$row[kode_transaksi]' AND kd_barang = '$kdbarang'");
+                                    $brgMasuk   = $db->query("SELECT qty_dtrbmasuk, no_batch, exp_date FROM trbmasuk_detail WHERE kd_trbmasuk = '$row[kode_transaksi]' AND kd_barang = '$kdbarang'");
                                     $masuk      = $brgMasuk->fetch_assoc();
-                                    
+
                                     $brgKeluar  = $db->query("SELECT qty_dtrkasir FROM trkasir_detail WHERE kd_trkasir = '$row[kode_transaksi]' AND kd_barang = '$kdbarang'");
                                     $keluar     = $brgKeluar->fetch_assoc();
-                                    
+
                                     $msk = ($masuk['qty_dtrbmasuk'] ?? 0);
                                     $klr = ($keluar['qty_dtrkasir'] ?? 0);
                                     $totalStok += ($msk - $klr);
-                                    
+
+                                    $noBatch = $masuk['no_batch'] ?? '';
+                                    $expDate = $masuk['exp_date'] ?? '';
+                                    $expDateDisplay = (!empty($expDate) && $expDate != '0000-00-00') ? date('d-m-Y', strtotime($expDate)) : '';
+
                                     $sisa = $sisa + $msk;
                                     echo '
                                         <tr>
@@ -341,6 +347,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                                             <td style="text-align: center; ">'.$row['kode_transaksi'].'</td>
                                             <td style="text-align: center; ">'.$msk.'</td>
                                             <td style="text-align: center; ">'.$klr.'</td>
+                                            <td style="text-align: center; ">'.$noBatch.'</td>
+                                            <td style="text-align: center; ">'.$expDateDisplay.'</td>
                                             <td style="text-align: center; ">'.$totalStok.'</td>
                                         </tr>
                                     ';
@@ -382,7 +390,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                                 <td colspan="4" class="text-center">
                                     <h3>Total Stok Barang</h3>
                                 </td>
-                                <td colspan="3" class="text-left">
+                                <td colspan="5" class="text-left">
                                     <h3><?= $totalStok; ?></h3>
                                     <!--<h3 id="totalStok"></h3>-->
                                 </td>
