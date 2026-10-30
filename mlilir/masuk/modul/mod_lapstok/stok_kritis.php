@@ -21,7 +21,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				<div class="box-body table-responsive">
 					<CENTER><h2><strong>STOK KRITIS</strong></h2></CENTER><br>
 					<div class="col-sm-12" style="text-align:center">
-						Analisa estimasi pengadaan barang berdasarkan frekuensi transaksi 90 hari terakhir <br>
+						Analisa estimasi pengadaan barang berdasarkan frekuensi transaksi 30 hari terakhir <br>
 						<a class='btn btn-primary' href='?module=stok_kritis&act=kritis30'>PROSES ANALISA DATA</a><br><br>
 						<a class='btn btn-success' href='?module=stok_kritis&act=tampil30'>TAMPILKAN ESTIMASI STOK KRITIS</a><br><br>
 						<a class='btn btn-warning' href='?module=stok_kritis&act=over30'>TAMPILKAN OVERSTOK</a>
@@ -48,7 +48,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					while ($r = $query1->fetch_array()) {
 						$t30 = $r['id_barang'];
 						$tgl_awal = date('Y-m-d');
-						$tgl_akhir = date('Y-m-d', strtotime('-90 days', strtotime($tgl_awal)));
+						$tgl_akhir = date('Y-m-d', strtotime('-30 days', strtotime($tgl_awal)));
 
 						$pass = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir JOIN trkasir_detail
 									ON (trkasir.kd_trkasir=trkasir_detail.kd_trkasir)
@@ -108,10 +108,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 								<th>Kategori</th>
 								<th>Nama Barang</th>
 								<th style="text-align: right; ">Qty/Stok</th>
-								<th style="text-align: right; ">T90</th>
-								<th style="text-align: right; ">x̄T90</th>
-								<th style="text-align: center; ">Q90</th>
-								<th style="text-align: center; ">x̄Q90</th>
+								<th style="text-align: right; ">T30</th>
+								<th style="text-align: center; ">Q30</th>
 								<th style="text-align: center; ">SFC max30</th>
 								<th style="text-align: center; ">SFCmax/ week</th>
 								<th style="text-align: right; ">Satuan</th>
@@ -129,9 +127,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 													 from barang ");
 							$no = 1;
 							while ($tp30 = $hasil30->fetch_array()) {
-								$avgt90 = round(($tp30['t30'] / 3), 0);
 								$qfc = $tp30['q30'] - $tp30['stok_barang'];
-								$avgq90 = round(($tp30['q30'] / 3), 0);
 								$qweek = round((($tp30['q30'] - $tp30['stok_barang']) / 4), 0);
 								$idbarang = $tp30['id_barang'];
 
@@ -152,9 +148,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 										<td>$tp30[nm_barang]</td>
 										<td>$tp30[stok_barang]</td>
 										<td style='text-align:center;'>$tp30[t30]</td>
-										<td style='text-align:center;'> $avgt90</td>
 										<td style='text-align:center;'>$tp30[q30]</td>
-										<td style='text-align:center;'>$avgq90</td>
 										<td style='text-align:center;'>$qfc</td>
 										<td style='text-align:center;'>$qweek</td>
 										<td style='text-align:center;'>$tp30[sat_barang]</td>
