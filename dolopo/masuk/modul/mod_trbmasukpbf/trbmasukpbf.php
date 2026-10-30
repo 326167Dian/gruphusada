@@ -885,15 +885,17 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 <!-- end modul supplier -->
 
 
-<!--<script type="text/javascript">-->
-    // $(function() {
-    //     $(".datepicker").datepicker({
-    //         format: 'yyyy-mm-dd',
-    //         autoclose: true,
-    //         todayHighlight: true,
-    //     });
-    // });
-<!--</script>-->
+<!--
+<script type="text/javascript">
+    $(function() {
+        $(".datepicker").datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true,
+        });
+    });
+</script>
+-->
 
 <script>
     $(document).ready(function() {
