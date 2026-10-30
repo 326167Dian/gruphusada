@@ -81,7 +81,9 @@
 											<td align=center>$no</td>           
 											 <td align=left>$r[kd_barang]</td>
 											 <td>$r[nmbrg_dtrbmasuk]</td>
-											 <td align=right>$r[qty_dtrbmasuk]</td>
+											 <td align=right>
+											 <input type='number' class='form-control input-qty-edit' style='width:90px; display:inline-block;' data-id='$r[id_dtrbmasuk]' value='$r[qty_dtrbmasuk]' min='0.01' step='any'>
+											 </td>
 											 <td align=center>$r[sat_dtrbmasuk]</td>
 											 <td align=center>$r[no_batch]</td>
 											 <td align=center>".tgl_indo($r['exp_date'])."</td>
@@ -176,6 +178,36 @@
                     });
                     HitungDP();
                     $("#example5").DataTable()
+                });
+
+                //inline edit qty
+                var timerQtyEditTbmPbf = {};
+                $(document).off('input', '.input-qty-edit').on('input', '.input-qty-edit', function() {
+                    var el = $(this);
+                    var id = el.data('id');
+                    var qty = el.val();
+
+                    clearTimeout(timerQtyEditTbmPbf[id]);
+                    el.css('border-color', '');
+
+                    timerQtyEditTbmPbf[id] = setTimeout(function() {
+                        $.ajax({
+                            url: 'modul/mod_trbmasukpbf/update_qty_detail.php',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: { id_dtrbmasuk: id, qty_dtrbmasuk: qty }
+                        }).done(function(res) {
+                            if (res && res.success) {
+                                el.css('border-color', '#00a65a');
+                                tabel_detail();
+                            } else {
+                                el.css('border-color', '#dd4b39');
+                                alert(res && res.message ? res.message : 'Gagal menyimpan qty');
+                            }
+                        }).fail(function() {
+                            el.css('border-color', '#dd4b39');
+                        });
+                    }, 600);
                 });
 
 
