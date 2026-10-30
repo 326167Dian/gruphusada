@@ -19,11 +19,14 @@ $act=$stt_aksi;
 $act=$_GET['act'];
 }
 
+$conn = $GLOBALS["___mysqli_ston"];
 
 // Input admin
 if ($module=='trbmasukpbf' AND $act=='input_trbmasuk'){
 
-    mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO 
+	mysqli_begin_transaction($conn);
+
+    $success = (bool) mysqli_query($conn, "INSERT INTO
 										trbmasuk(id_resto,
 										kd_trbmasuk,
 										tgl_trbmasuk,
@@ -55,23 +58,31 @@ if ($module=='trbmasukpbf' AND $act=='input_trbmasuk'){
 										'$_POST[carabayar]',
 										'pbf'
 										)");
-										
-// 	mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kartu_stok(kode_transaksi) VALUES('$_POST[kd_trbmasuk]')");
-    $tgl_sekarang = date('Y-m-d H:i:s', time());
-    mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kartu_stok(kode_transaksi, tgl_sekarang) VALUES('$_POST[kd_trbmasuk]','$tgl_sekarang')");
-	
-	mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE kdbm SET stt_kdbm = 'OFF' WHERE id_admin = '$_SESSION[idadmin]' AND id_resto = 'pusat' AND kd_trbmasuk = '$_POST[kd_trbmasuk]'");
-										
-										
+
+	if ($success) {
+		$tgl_sekarang = date('Y-m-d H:i:s', time());
+		$success = (bool) mysqli_query($conn, "INSERT IGNORE INTO kartu_stok(kode_transaksi, tgl_sekarang) VALUES('$_POST[kd_trbmasuk]','$tgl_sekarang')");
+	}
+
+	if ($success) {
+		$success = (bool) mysqli_query($conn, "UPDATE kdbm SET stt_kdbm = 'OFF' WHERE id_admin = '$_SESSION[idadmin]' AND id_resto = 'pusat' AND kd_trbmasuk = '$_POST[kd_trbmasuk]'");
+	}
+
+	if ($success) {
+		mysqli_commit($conn);
+	} else {
+		mysqli_rollback($conn);
+	}
+
 	//echo "<script type='text/javascript'>alert('Transkasi berhasil ditambahkan !');window.location='../../media_admin.php?module=".$module."'</script>";
-	
+
 
 }
  //updata trbmasukpbf
  elseif ($module=='trbmasukpbf' AND $act=='ubah_trbmasuk'){
- 
 
-    mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE trbmasuk SET tgl_trbmasuk = '$_POST[tgl_trbmasuk]',
+
+    mysqli_query($conn, "UPDATE trbmasuk SET tgl_trbmasuk = '$_POST[tgl_trbmasuk]',
 									id_supplier = '$_POST[id_supplier]',
 									nm_supplier = '$_POST[nm_supplier]',
 									tlp_supplier = '$_POST[tlp_supplier]',
@@ -91,40 +102,55 @@ if ($module=='trbmasukpbf' AND $act=='input_trbmasuk'){
 //Hapus Proyek
 elseif ($module=='trbmasukpbf' AND $act=='hapus'){
 
+  mysqli_begin_transaction($conn);
+  $success = true;
+
   //update bagian stok dulu
   //ambil data induk
-	$ambildatainduk=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT id_trbmasuk, kd_trbmasuk FROM trbmasuk 
+	$ambildatainduk=mysqli_query($conn, "SELECT id_trbmasuk, kd_trbmasuk FROM trbmasuk
 	WHERE id_trbmasuk='$_GET[id]'");
 	$r1=mysqli_fetch_array($ambildatainduk);
 	$kd_trbmasuk = $r1['kd_trbmasuk'];
-	
+
 	//loop data detail
 	//ambil data induk
-	$ambildatadetail=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT id_dtrbmasuk, kd_trbmasuk, id_barang, qty_dtrbmasuk FROM trbmasuk_detail WHERE kd_trbmasuk='$kd_trbmasuk'");
-	while ($r=mysqli_fetch_array($ambildatadetail)){
-	
+	$ambildatadetail=mysqli_query($conn, "SELECT id_dtrbmasuk, kd_trbmasuk, id_barang, qty_dtrbmasuk FROM trbmasuk_detail WHERE kd_trbmasuk='$kd_trbmasuk'");
+	while ($success && ($r=mysqli_fetch_array($ambildatadetail))){
+
 	$id_dtrbmasuk = $r['id_dtrbmasuk'];
 	$id_barang = $r['id_barang'];
 	$qty_dtrbmasuk = $r['qty_dtrbmasuk'];
 
 	//update stok
-	$cekstok=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT id_barang, stok_barang FROM barang 
+	$cekstok=mysqli_query($conn, "SELECT id_barang, stok_barang FROM barang
 	WHERE id_barang='$id_barang'");
 	$rst=mysqli_fetch_array($cekstok);
 
 	$stok_barang = $rst['stok_barang'];
 	$stokakhir = $stok_barang - $qty_dtrbmasuk;
 
-	mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE barang SET stok_barang = '$stokakhir' WHERE id_barang = '$id_barang'");
-	
-	mysqli_query($GLOBALS["___mysqli_ston"], "DELETE FROM trbmasuk_detail WHERE id_dtrbmasuk = '$id_dtrbmasuk'");
-	
+	$success = (bool) mysqli_query($conn, "UPDATE barang SET stok_barang = '$stokakhir' WHERE id_barang = '$id_barang'");
+
+	if ($success) {
+		$success = (bool) mysqli_query($conn, "DELETE FROM trbmasuk_detail WHERE id_dtrbmasuk = '$id_dtrbmasuk'");
 	}
 
-  mysqli_query($GLOBALS["___mysqli_ston"], "DELETE FROM trbmasuk WHERE id_trbmasuk = '$_GET[id]'");
-  mysqli_query($GLOBALS["___mysqli_ston"], "DELETE FROM kartu_stok WHERE kode_transaksi = '$kd_trbmasuk'");
+	}
 
-  echo "<script type='text/javascript'>alert('Data berhasil dihapus !');window.location='../../media_admin.php?module=".$module."'</script>";
+  if ($success) {
+	  $success = (bool) mysqli_query($conn, "DELETE FROM trbmasuk WHERE id_trbmasuk = '$_GET[id]'");
+  }
+  if ($success) {
+	  $success = (bool) mysqli_query($conn, "DELETE FROM kartu_stok WHERE kode_transaksi = '$kd_trbmasuk'");
+  }
+
+  if ($success) {
+	  mysqli_commit($conn);
+	  echo "<script type='text/javascript'>alert('Data berhasil dihapus !');window.location='../../media_admin.php?module=".$module."'</script>";
+  } else {
+	  mysqli_rollback($conn);
+	  echo "<script type='text/javascript'>alert('Data gagal dihapus, transaksi dibatalkan !');window.location='../../media_admin.php?module=".$module."'</script>";
+  }
 }
 
 }

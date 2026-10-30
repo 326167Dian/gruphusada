@@ -310,10 +310,11 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                         <tbody>
                             <?php
                                 $kdbarang = $_GET['id'];
-                                $dataQuery = "SELECT * FROM kartu_stok
+                                $dataQuery = "SELECT MIN(id_kartu) AS id_kartu, kode_transaksi, MIN(tgl_sekarang) AS tgl_sekarang FROM kartu_stok
                                             WHERE kartu_stok.kode_transaksi IN (SELECT trbmasuk_detail.kd_trbmasuk FROM trbmasuk_detail WHERE trbmasuk_detail.kd_barang = '$kdbarang')
                                             OR kartu_stok.kode_transaksi IN (SELECT trkasir_detail.kd_trkasir FROM trkasir_detail WHERE trkasir_detail.kd_barang = '$kdbarang')
-                                            ORDER BY kartu_stok.tgl_sekarang ASC";
+                                            GROUP BY kode_transaksi
+                                            ORDER BY tgl_sekarang ASC";
                                 
                                 $dataResult = $db->query($dataQuery);
                                 
@@ -327,8 +328,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                                     $brgKeluar  = $db->query("SELECT qty_dtrkasir FROM trkasir_detail WHERE kd_trkasir = '$row[kode_transaksi]' AND kd_barang = '$kdbarang'");
                                     $keluar     = $brgKeluar->fetch_assoc();
                                     
-                                    $msk = (int) ($masuk['qty_dtrbmasuk'] ?? 0);
-                                    $klr = (int) ($keluar['qty_dtrkasir'] ?? 0);
+                                    $msk = ($masuk['qty_dtrbmasuk'] ?? 0);
+                                    $klr = ($keluar['qty_dtrkasir'] ?? 0);
                                     $totalStok += ($msk - $klr);
                                     
                                     $sisa = $sisa + $msk;
