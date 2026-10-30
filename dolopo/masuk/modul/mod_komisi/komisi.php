@@ -27,6 +27,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				<div class="box-body table-responsive">
 					<?php if ($_SESSION['level'] == 'pemilik'): ?>
 						<a class='btn  btn-success btn-flat' href='?module=komisi&act=tambah'>ATUR KOMISI</a>
+						<a class='btn  btn-info btn-flat' href='?module=komisi&act=massal'>ATUR KOMISI MASSAL</a>
 						<a class='btn  btn-primary btn-flat' href='?module=komisi&act=global'>KOMISI GLOBAL</a>
 						<a class='btn  btn-warning btn-flat' href='<?= $aksi . "?module=komisi&act=hapus&id=all" ?>'>HAPUS SEMUA
 							KOMISI</a>
@@ -96,6 +97,104 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 			<?php
 
+			break;
+
+		case "massal":
+			?>
+			<div class='box box-primary box-solid'>
+				<div class='box-header with-border'>
+					<h3 class='box-title'>ATUR KOMISI (INPUT MASSAL)</h3>
+					<div class='box-tools pull-right'>
+						<button class='btn btn-box-tool' data-widget='collapse'><i class='fa fa-minus'></i></button>
+					</div><!-- /.box-tools -->
+				</div>
+				<div class='box-body table-responsive'>
+					<a class='btn btn-default btn-flat' href='?module=komisi'>Kembali</a>
+					<p class="text-muted" style="margin-top:10px;">
+						Barang yang tampil: stok &gt; 0. Isi Komisi langsung tersimpan otomatis.
+					</p>
+
+					<table id="tabel_komisi_massal" class="table table-bordered table-striped">
+						<thead>
+							<tr>
+								<th>No</th>
+								<th>Kode Barang</th>
+								<th>Nama Barang</th>
+								<th>Satuan</th>
+								<th style="text-align: right;">Harga Beli</th>
+								<th style="text-align: right;">Harga Jual</th>
+								<th style="text-align: right; width: 160px;">Komisi</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<script>
+				$(document).ready(function () {
+					var tabelMassal = $('#tabel_komisi_massal').DataTable({
+						"processing": true,
+						"serverSide": true,
+						"ajax": {
+							"url": "modul/mod_komisi/komisi_massal_serverside.php?action=table_data",
+							"type": "post"
+						},
+						"columns": [
+							{ "data": "no", "className": "text-center", "orderable": false },
+							{ "data": "kd_barang" },
+							{ "data": "nm_barang" },
+							{ "data": "sat_barang", "className": "text-center" },
+							{
+								"data": "hrgsat_barang", "className": "text-right",
+								"render": function (data) { return formatRupiah(data); }
+							},
+							{
+								"data": "hrgjual_barang", "className": "text-right",
+								"render": function (data) { return formatRupiah(data); }
+							},
+							{
+								"data": "komisi", "className": "text-right", "orderable": false,
+								"render": function (data, type, row) {
+									if (type !== 'display') return data;
+									return "<input type='number' min='0' step='1' class='form-control input-komisi-massal' "
+										+ "data-id='" + row.id_barang + "' value='" + (data ? data : 0) + "'>";
+								}
+							}
+						]
+					});
+
+					var timerKomisi = {};
+
+					$('#tabel_komisi_massal tbody').on('input', '.input-komisi-massal', function () {
+						var el = $(this);
+						var id = el.data('id');
+						var komisi = el.val();
+
+						clearTimeout(timerKomisi[id]);
+						el.removeClass('is-valid is-invalid').css('border-color', '');
+
+						timerKomisi[id] = setTimeout(function () {
+							$.ajax({
+								url: 'modul/mod_komisi/aksi_komisi.php?module=komisi&act=update_komisi_massal',
+								type: 'POST',
+								dataType: 'json',
+								data: { id_barang: id, komisi: komisi }
+							}).done(function (res) {
+								if (res && res.success) {
+									el.css('border-color', '#00a65a');
+								} else {
+									el.css('border-color', '#dd4b39');
+								}
+							}).fail(function () {
+								el.css('border-color', '#dd4b39');
+							});
+						}, 600);
+					});
+				});
+			</script>
+			<?php
 			break;
 
 		case "tambah":

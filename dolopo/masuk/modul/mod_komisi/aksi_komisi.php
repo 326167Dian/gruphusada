@@ -14,8 +14,26 @@ else{
     $module=$_GET['module'];
     $act=$_GET['act'];
     
+    // Input komisi massal (inline, AJAX, tanpa reload)
+    if ($module=='komisi' AND $act=='update_komisi_massal'){
+        header('Content-Type: application/json');
+
+        $id_barang = intval($_POST['id_barang']);
+        $komisi = is_numeric($_POST['komisi']) ? $_POST['komisi'] : 0;
+
+        $success = (bool) mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE barang SET
+                                    komisi = '$komisi'
+                                    WHERE id_barang = '$id_barang' AND stok_barang > 0");
+
+        echo json_encode([
+            'success'   => $success,
+            'id_barang' => $id_barang,
+            'komisi'    => $komisi
+        ]);
+        exit;
+    }
     // Input admin
-    if ($module=='komisi' AND $act=='input_komisi'){
+    elseif ($module=='komisi' AND $act=='input_komisi'){
         // echo $_POST['barang'];
         // die();
         if(strtolower($_POST['barang']) == 'all'){
