@@ -19,6 +19,12 @@ if ($qty_dtrbmasuk == "") {
 } else {
 }
 
+if (trim($no_batch) == "") {
+	header('Content-Type: application/json');
+	echo json_encode(['success' => false, 'message' => 'No Batch tidak boleh kosong']);
+	exit;
+}
+
 //cek apakah barang sudah ada
 $cekdetail = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT id_barang, kd_barang, kd_trbmasuk, id_dtrbmasuk, qty_dtrbmasuk 
 FROM trbmasuk_detail 
@@ -97,3 +103,6 @@ if ($ketemucekdetail > 0) {
 }
 
 sinkronisasi_stok($kd_barang);
+
+header('Content-Type: application/json');
+echo json_encode(['success' => true, 'message' => '']);

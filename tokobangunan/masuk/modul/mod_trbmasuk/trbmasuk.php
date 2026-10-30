@@ -1066,6 +1066,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 			alert('Qty tidak boleh kosong');
 		} else if (hrgsat_dtrbmasuk == "") {
 			alert('Harga tidak boleh kosong');
+		} else if (no_batch == "") {
+			alert('No Batch tidak boleh kosong');
 		} else {
 
 			//cek stok barang apakah cukup
@@ -1089,7 +1091,12 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					'no_batch': no_batch,
 					'exp_date': exp_date
 				},
+				dataType: 'json',
 				success: function(data) {
+					if (data && data.success === false) {
+						alert(data.message || 'Gagal menyimpan detail');
+						return;
+					}
 					//alert('Tambah data detail berhasil');
 					document.getElementById("id_barang").value = "";
 					document.getElementById("kd_barang").value = "";

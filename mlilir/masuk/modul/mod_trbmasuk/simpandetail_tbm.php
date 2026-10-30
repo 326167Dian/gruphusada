@@ -21,6 +21,12 @@ if ($qty_dtrbmasuk == "") {
 } else {
 }
 
+if (trim($no_batch) == "") {
+	header('Content-Type: application/json');
+	echo json_encode(['success' => false, 'message' => 'No Batch tidak boleh kosong']);
+	exit;
+}
+
 mysqli_begin_transaction($conn);
 
 //cek apakah barang sudah ada
@@ -110,3 +116,6 @@ if ($success) {
 } else {
 	mysqli_rollback($conn);
 }
+
+header('Content-Type: application/json');
+echo json_encode(['success' => $success, 'message' => $success ? '' : 'Gagal menyimpan detail']);
