@@ -48,6 +48,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 								<th style="text-align: right; ">Harga Beli</th>
 								<th style="text-align: right; ">Harga Jual</th>
 								<th style="text-align: center; ">Komposisi dan Indikasi</th>
+								<th style="text-align: center; ">Kartu Stok</th>
 								<th style="text-align: center; ">Aksi</th>
 								<?php
 								// $lupa = $_SESSION['level'];
@@ -399,8 +400,17 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					"className": 'text-justify'
 				},
 				{
+					"data": "kd_barang",
+					"className": 'text-center',
+					"orderable": false,
+					"render": function(data, type, row) {
+						return "<a href='?module=kartustok&act=view&id="+data+"' class='btn btn-info btn-xs' target='_blank'>KARTU STOK</a>";
+					}
+				},
+				{
 					"data": "aksi",
 					"visible": <?= ($_SESSION['level'] == 'pemilik') ? 'true' : 'false'; ?>,
+					"orderable": false,
 					"render": function(data, type, row) {
 						var btn = "<div style='text-align:center'><button type='button' id='btn_edit' class='btn btn-warning btn-xs' data-id='"+data+"'>EDIT</button> <button type='button' id='btn_hapus' class='btn btn-danger btn-xs' data-id='"+data+"'>HAPUS</button></div>";
 						
