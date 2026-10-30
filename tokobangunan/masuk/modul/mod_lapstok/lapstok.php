@@ -1611,7 +1611,10 @@ case "edit":
             trkasir_detail.nmbrg_dtrkasir,
             trkasir_detail.sat_dtrkasir,
             trkasir_detail.hrgjual_dtrkasir,
-            trkasir_detail.qty_dtrkasir
+            trkasir_detail.qty_dtrkasir,
+            trkasir_detail.id_dtrkasir,
+            trkasir_detail.no_batch,
+            trkasir_detail.exp_date
             FROM trkasir_detail join trkasir on (trkasir_detail.kd_trkasir=trkasir.kd_trkasir)
             WHERE trkasir_detail.kd_barang ='$jokul' ORDER BY trkasir.tgl_trkasir DESC";
             $penjualan = mysqli_query($GLOBALS["___mysqli_ston"], $jual);
@@ -1646,15 +1649,18 @@ case "edit":
                         </thead>
                         <tbody>
                             <?php
-                            // trkasir_detail tidak pernah mencatat no_batch/exp_date, jadi kolom
-                            // Batch & ED di riwayat penjualan ini akan selalu kosong -- bukan bug,
-                            // memang tidak ada datanya.
                             while ($r = mysqli_fetch_array($penjualan)) {
                                 // $w = $r['nmbrg_dtrkasir'];
                                  $text = $r['kd_trkasir'];
                                  $text1 = substr($text, 10,2);
                                  $text2 = substr($text, 12,2);
                                  $text3 = substr($text, 14,2);
+                                $noBatch = htmlspecialchars((string) ($r['no_batch'] ?? ''), ENT_QUOTES, 'UTF-8');
+                                $expDate = $r['exp_date'] ?? '';
+                                $expDateDisplay = (!empty($expDate) && $expDate != '0000-00-00' && $expDate != '1970-01-01')
+                                    ? date('d-m-Y', strtotime($expDate))
+                                    : '-';
+                                $noBatch = $noBatch !== '' ? $noBatch : '-';
                                 echo "
                             <tr>
                                 <td align=center>$r[id_dtrkasir]</td>
@@ -1666,8 +1672,8 @@ case "edit":
                                 <td align=center>$r[tgl_trkasir]</td> 
                                 <td align=center>$text1.$text2.$text3</td>
                                 <td align=center>$r[qty_dtrkasir]</td>
-                                <td align=center></td>
-                                <td align=center></td>
+                                <td align=center>$noBatch</td>
+                                <td align=center>$expDateDisplay</td>
 
                             </tr>";
                             }
