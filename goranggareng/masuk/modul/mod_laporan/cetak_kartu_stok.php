@@ -83,7 +83,7 @@ $query2 = $db->query("SELECT id_dtrbmasuk AS id_detail, kd_trbmasuk AS kode_tran
                         FROM trbmasuk_detail WHERE kd_barang = '$id'
                         UNION ALL
                         SELECT id_dtrkasir AS id_detail, kd_trkasir AS kode_transaksi, waktu AS tgl_sekarang,
-                            0 AS msk, qty_dtrkasir AS klr, '' AS no_batch, NULL AS exp_date
+                            0 AS msk, qty_dtrkasir AS klr, no_batch, exp_date
                         FROM trkasir_detail WHERE kd_barang = '$id'
                         ORDER BY tgl_sekarang ASC, id_detail ASC");
 

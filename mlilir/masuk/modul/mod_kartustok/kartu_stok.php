@@ -321,7 +321,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                                             FROM trbmasuk_detail WHERE kd_barang = '$kdbarang'
                                             UNION ALL
                                             SELECT id_dtrkasir AS id_detail, kd_trkasir AS kode_transaksi, waktu AS tgl_sekarang,
-                                                    0 AS msk, qty_dtrkasir AS klr, '' AS no_batch, NULL AS exp_date
+                                                    0 AS msk, qty_dtrkasir AS klr, no_batch, exp_date
                                             FROM trkasir_detail WHERE kd_barang = '$kdbarang'
                                             ORDER BY tgl_sekarang ASC, id_detail ASC";
 
