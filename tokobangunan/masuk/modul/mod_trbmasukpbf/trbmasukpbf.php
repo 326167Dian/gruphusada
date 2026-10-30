@@ -1118,6 +1118,10 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
             alert('Qty tidak boleh kosong');
         } else if (hnasat_dtrbmasuk == "") {
             alert('Harga tidak boleh kosong');
+        } else if (no_batch == "") {
+            alert('No Batch tidak boleh kosong');
+        } else if (exp_date == "") {
+            alert('Exp. Date tidak boleh kosong');
         } else {
 
             //cek stok barang apakah cukup
@@ -1143,7 +1147,12 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                     'no_batch': no_batch,
                     'exp_date': exp_date
                 },
+                dataType: 'json',
                 success: function(data) {
+                    if (data && data.success === false) {
+                        alert(data.message || 'Gagal menyimpan detail');
+                        return;
+                    }
                     //alert('Tambah data detail berhasil');
                     document.getElementById("id_barang").value = "";
                     document.getElementById("kd_barang").value = "";
@@ -1153,7 +1162,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                     document.getElementById("hnasat_dtrbmasuk").value = "";
                     document.getElementById("hrgjual_dtrbmasuk").value = "";
                     document.getElementById("diskon").value = "";
-                    
+
                     document.getElementById("no_batch").value = "";
                     document.getElementById("exp_date").value = "";
                     tabel_detail();
@@ -1235,6 +1244,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                 document.getElementById('sat_dtrbmasuk').value = datab.sat_barang;
                 document.getElementById('hnasat_dtrbmasuk').value = datab.hna;
                 document.getElementById('diskon').value = datab.diskon;
+                document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(Math.round(datab.hrgjual_barang));
             });
 
         }

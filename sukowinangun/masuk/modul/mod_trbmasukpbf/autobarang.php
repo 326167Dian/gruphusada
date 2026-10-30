@@ -11,7 +11,8 @@ include "../../../configurasi/koneksi.php";
 					'stok_barang'=> $re['stok_barang'],
 					'sat_barang'=> $re['sat_barang'],
 					'hna'=> $re['hna'],
-					'diskon'=> $re['diskon']
+					'diskon'=> $re['diskon'],
+					'hrgjual_barang'=> $re['hrgjual_barang']
 	  );
  
 	echo json_encode($json);

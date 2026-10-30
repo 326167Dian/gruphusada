@@ -24,6 +24,17 @@ if($diskon == ""){
     $diskon = "0";
 }else{}
 
+if (trim($no_batch) == "") {
+	header('Content-Type: application/json');
+	echo json_encode(['success' => false, 'message' => 'No Batch tidak boleh kosong']);
+	exit;
+}
+if (trim($_POST['exp_date']) == "") {
+	header('Content-Type: application/json');
+	echo json_encode(['success' => false, 'message' => 'Exp. Date tidak boleh kosong']);
+	exit;
+}
+
 //cek apakah barang sudah ada
 $cekdetail=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT id_barang, kd_barang, kd_trbmasuk, id_dtrbmasuk, qty_dtrbmasuk 
 FROM trbmasuk_detail 
@@ -112,5 +123,8 @@ mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE barang SET
 
 }
 
-sinkronisasi_stok($kd_barang);				  
+sinkronisasi_stok($kd_barang);
+
+header('Content-Type: application/json');
+echo json_encode(['success' => true, 'message' => '']);
 ?>
