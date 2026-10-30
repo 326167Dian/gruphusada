@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^git ls-files dolopo/masuk/modul/mod_trkasir/tbl_detail\\.php dolopo/masuk/modul/mod_trkasir/simpandetail_trkasir\\.php; php -v$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}
