@@ -1639,11 +1639,16 @@ case "edit":
                                 <th style="text-align: center; ">Tanggal</th>
                                 <th style="text-align: center; ">Waktu</th>
                                 <th style="text-align: center; ">Keluar</th>
+                                <th style="text-align: center; ">Batch</th>
+                                <th style="text-align: center; ">ED</th>
 
                             </tr>
                         </thead>
                         <tbody>
                             <?php
+                            // trkasir_detail tidak pernah mencatat no_batch/exp_date, jadi kolom
+                            // Batch & ED di riwayat penjualan ini akan selalu kosong -- bukan bug,
+                            // memang tidak ada datanya.
                             while ($r = mysqli_fetch_array($penjualan)) {
                                 // $w = $r['nmbrg_dtrkasir'];
                                  $text = $r['kd_trkasir'];
@@ -1661,8 +1666,8 @@ case "edit":
                                 <td align=center>$r[tgl_trkasir]</td> 
                                 <td align=center>$text1.$text2.$text3</td>
                                 <td align=center>$r[qty_dtrkasir]</td>
-                                 
-                               
+                                <td align=center></td>
+                                <td align=center></td>
 
                             </tr>";
                             }
@@ -1684,7 +1689,9 @@ case "edit":
                 trbmasuk_detail.nmbrg_dtrbmasuk,
                 trbmasuk_detail.sat_dtrbmasuk,
                 trbmasuk_detail.qty_dtrbmasuk,
-                trbmasuk_detail.hrgsat_dtrbmasuk
+                trbmasuk_detail.hrgsat_dtrbmasuk,
+                trbmasuk_detail.no_batch,
+                trbmasuk_detail.exp_date
                 FROM trbmasuk_detail join trbmasuk on (trbmasuk_detail.kd_trbmasuk=trbmasuk.kd_trbmasuk)
                 WHERE kd_barang ='$jokul' order by trbmasuk.tgl_trbmasuk desc ";
             $pembelian = mysqli_query($GLOBALS["___mysqli_ston"], $beli);
@@ -1711,6 +1718,8 @@ case "edit":
                                 <th style="text-align: center; ">Tanggal</th>
                                 <th style="text-align: center; ">Waktu</th>
                                 <th style="text-align: center; ">Masuk</th>
+                                <th style="text-align: center; ">Batch</th>
+                                <th style="text-align: center; ">ED</th>
 
                             </tr>
                         </thead>
@@ -1721,17 +1730,20 @@ case "edit":
                                  $text1 = substr($text, 10,2);
                                  $text2 = substr($text, 12,2);
                                  $text3 = substr($text, 14,2);
+                                 $expDate = $q['exp_date'] ?? '';
+                                 $expDateDisplay = (!empty($expDate) && $expDate != '0000-00-00' && $expDate != '1970-01-01') ? date('d-m-Y', strtotime($expDate)) : '';
                                 echo "
                             <tr>
                                 <td align=center >$q[id_dtrbmasuk]</td>
                                 <td align=center >$q[kd_trbmasuk]</td>
                                 <td align=center>$q[nm_supplier]</td>
                                 <td align=center>$q[petugas]</td>
-                                <td align=center>$q[hrgsat_dtrbmasuk]</td> 
+                                <td align=center>$q[hrgsat_dtrbmasuk]</td>
                                 <td align=center>$q[tgl_trbmasuk]</td>
-                                <td align=center>$text1.$text2.$text3</td>                               
+                                <td align=center>$text1.$text2.$text3</td>
                                 <td align=center>$q[qty_dtrbmasuk]</td>
-                               
+                                <td align=center>$q[no_batch]</td>
+                                <td align=center>$expDateDisplay</td>
 
                             </tr>";
                             }

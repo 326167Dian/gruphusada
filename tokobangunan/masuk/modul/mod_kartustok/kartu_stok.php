@@ -336,7 +336,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
                                     $noBatch = $row['no_batch'] ?? '';
                                     $expDate = $row['exp_date'] ?? '';
-                                    $expDateDisplay = (!empty($expDate) && $expDate != '0000-00-00') ? date('d-m-Y', strtotime($expDate)) : '';
+                                    $expDateDisplay = (!empty($expDate) && $expDate != '0000-00-00' && $expDate != '1970-01-01') ? date('d-m-Y', strtotime($expDate)) : '';
 
                                     $rowsKartuStok[] = [
                                         'tgl_sekarang' => $row['tgl_sekarang'],
