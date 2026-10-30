@@ -1532,6 +1532,9 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 					let displayStok = stok_barang - qty_dtrkasir;
 					$('#stok_' + id_barang).html(displayStok);
+				},
+				error: function(xhr) {
+					alert('Gagal menyimpan detail: respons server tidak valid.');
 				}
 			});
 		}

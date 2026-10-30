@@ -1,26 +1,27 @@
 <?php
+ob_start();
 session_start();
 include "../../../configurasi/koneksi.php";
 include "../../../configurasi/fungsi_sinkronisasi.php";
 
 $conn = $GLOBALS["___mysqli_ston"];
 
-$kd_trkasir = $_POST['kd_trkasir'];
-$id_dtrkasir = $_POST['id_dtrkasir'];
-$id_barang = $_POST['id_barang'];
+$kd_trkasir = isset($_POST['kd_trkasir']) ? $_POST['kd_trkasir'] : '';
+$id_dtrkasir = isset($_POST['id_dtrkasir']) ? $_POST['id_dtrkasir'] : '';
+$id_barang = isset($_POST['id_barang']) ? $_POST['id_barang'] : '';
 $beli = $db->query("SELECT * FROM barang WHERE id_barang='$id_barang'");
 $rbeli = mysqli_fetch_array($beli);
 $hrgbeli = $rbeli['hrgsat_barang'];
 
-$kd_barang = $_POST['kd_barang'];
-$nmbrg_dtrkasir = $_POST['nmbrg_dtrkasir'];
-$qty_dtrkasir = $_POST['qty_dtrkasir'];
-$sat_dtrkasir = $_POST['sat_dtrkasir'];
-$hrgjual_dtrkasir = $_POST['hrgjual_dtrkasir'];
-$indikasi = $_POST['indikasi'];
-$komisi = $_POST['komisi_dtrkasir'];
+$kd_barang = isset($_POST['kd_barang']) ? $_POST['kd_barang'] : '';
+$nmbrg_dtrkasir = isset($_POST['nmbrg_dtrkasir']) ? $_POST['nmbrg_dtrkasir'] : '';
+$qty_dtrkasir = isset($_POST['qty_dtrkasir']) ? $_POST['qty_dtrkasir'] : '';
+$sat_dtrkasir = isset($_POST['sat_dtrkasir']) ? $_POST['sat_dtrkasir'] : '';
+$hrgjual_dtrkasir = isset($_POST['hrgjual_dtrkasir']) ? $_POST['hrgjual_dtrkasir'] : 0;
+$indikasi = isset($_POST['indikasi']) ? $_POST['indikasi'] : '';
+$komisi = isset($_POST['komisi_dtrkasir']) ? $_POST['komisi_dtrkasir'] : 0;
 $currentdate = date('Y-m-d',time());
-$id_admin = $_POST['id_admin'];
+$id_admin = isset($_POST['id_admin']) ? $_POST['id_admin'] : '';
 
 if($qty_dtrkasir == ""){
 $qty_dtrkasir = "1";
@@ -46,6 +47,7 @@ if ($id_dtrkasir == "" || $id_dtrkasir == null) {
         $rBatch = mysqli_fetch_array($qBatch);
 
         if (!$rBatch || $rBatch['sisa'] < $qty_dtrkasir) {
+            ob_clean();
             header('Content-Type: application/json');
             echo json_encode(['success' => false, 'message' => "Stok batch $no_batch tidak mencukupi"]);
             exit;
@@ -242,5 +244,6 @@ if ($success) {
 	mysqli_rollback($conn);
 }
 
+ob_clean();
 header('Content-Type: application/json');
 echo json_encode(['success' => $success, 'message' => $success ? '' : 'Gagal menyimpan detail', 'no_batch' => $no_batch]);

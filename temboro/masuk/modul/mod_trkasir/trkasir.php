@@ -1154,7 +1154,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 							<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Pilih</th>
 							<!--<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Harga Grosir</th>-->
 							<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Harga Jual</th>
-							<!--<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Komisi</th>-->
+							<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Komisi</th>
 							<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Komposisi</th>
 						</tr>
 					</thead>
@@ -1382,13 +1382,13 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 						return formatRupiah(data);
 					}
 				},
-				// {
-				// 	"data": "komisi",
-				// 	"className": 'text-right',
-				// 	"render": function(data, type, row) {
-				// 		return formatRupiah(data);
-				// 	}
-				// },
+				{
+					"data": "komisi",
+					"className": 'text-right',
+					"render": function(data, type, row) {
+						return formatRupiah(data);
+					}
+				},
 				{
 					"data": "indikasi",
 					"className": 'text-center'
@@ -1532,6 +1532,9 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 					let displayStok = stok_barang - qty_dtrkasir;
 					$('#stok_' + id_barang).html(displayStok);
+				},
+				error: function(xhr) {
+					alert('Gagal menyimpan detail: respons server tidak valid.');
 				}
 			});
 		}

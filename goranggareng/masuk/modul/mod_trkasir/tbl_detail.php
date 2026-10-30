@@ -49,7 +49,7 @@ color: white;
 							// $nm_carabayar = $rf['nm_carabayar'];
 							// $dp_bayar = format_rupiah($rf['dp_bayar']);
 							$diskon = 0 ;
-                            $carabayar = $rf['id_carabayar'];
+                            $carabayar = $rf['id_carabayar'] ?? null;
 							   
 							$sumprice=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT kd_trkasir, SUM(hrgttl_dtrkasir) as grandnya FROM trkasir_detail 
 							WHERE kd_trkasir='$kd_trkasir'");

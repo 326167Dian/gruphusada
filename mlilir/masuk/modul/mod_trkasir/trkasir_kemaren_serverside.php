@@ -35,21 +35,27 @@ $tgl_akhir = date('Y-m-d', strtotime('-60 days', strtotime( $tgl_awal)));
 
 $where = "";
 if (!empty($search)) {
-    $where = "AND trkasir.kd_trkasir LIKE '%$search%' OR trkasir.nm_pelanggan LIKE '%$search%' OR trkasir.tgl_trkasir LIKE '%$search%'";
+    $where = "AND (trkasir.kd_trkasir LIKE '%$search%' OR trkasir.nm_pelanggan LIKE '%$search%' OR trkasir.tgl_trkasir LIKE '%$search%')";
 }
 
-$sqlTotal = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT COUNT(*) AS total FROM trkasir 
-    JOIN carabayar ON trkasir.id_carabayar = carabayar.id_carabayar
+$sqlTotal = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT COUNT(*) AS total FROM trkasir
+    LEFT JOIN carabayar ON trkasir.id_carabayar = carabayar.id_carabayar
     WHERE trkasir.tgl_trkasir BETWEEN '$tgl_akhir' AND '$tgl_kemarin'");
 $totalData = mysqli_fetch_assoc($sqlTotal)['total'];
 
-$query = mysqli_query($GLOBALS["___mysqli_ston"], "
-    SELECT trkasir.*, carabayar.nm_carabayar 
-    FROM trkasir 
-    JOIN carabayar ON trkasir.id_carabayar = carabayar.id_carabayar 
+$sqlFiltered = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT COUNT(*) AS total FROM trkasir
+    LEFT JOIN carabayar ON trkasir.id_carabayar = carabayar.id_carabayar
     WHERE trkasir.tgl_trkasir BETWEEN '$tgl_akhir' AND '$tgl_kemarin'
-    $where 
-    ORDER BY $order_column $order_dir 
+    $where");
+$totalFiltered = mysqli_fetch_assoc($sqlFiltered)['total'];
+
+$query = mysqli_query($GLOBALS["___mysqli_ston"], "
+    SELECT trkasir.*, carabayar.nm_carabayar
+    FROM trkasir
+    LEFT JOIN carabayar ON trkasir.id_carabayar = carabayar.id_carabayar
+    WHERE trkasir.tgl_trkasir BETWEEN '$tgl_akhir' AND '$tgl_kemarin'
+    $where
+    ORDER BY $order_column $order_dir
     LIMIT $start, $length
 ");
 
@@ -99,7 +105,7 @@ while ($row = mysqli_fetch_assoc($query)) {
 $response = [
     "draw" => intval($draw),
     "recordsTotal" => intval($totalData),
-    "recordsFiltered" => intval($totalData),
+    "recordsFiltered" => intval($totalFiltered),
     "data" => $data
 ];
 

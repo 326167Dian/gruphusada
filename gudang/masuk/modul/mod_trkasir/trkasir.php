@@ -53,7 +53,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					<!--<a  class ='btn  btn-warning  btn-flat' href='?module=trkasir&act=jualsebelumnya'>PENJUALAN SEBELUMNYA</a>
 					<small>* Pembayaran belum lunas</small> -->
 					<br><br>
-
+    
                     <?php if($_SESSION['level']=='pemilik'): ?>
 					<table id="example1" class="table table-bordered table-striped">
 						<thead align="center">
@@ -1085,6 +1085,38 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 
 			break;
+			
+// 		case "ubah3":
+		    
+// 		    $ubah = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir_restore 
+// 	                            WHERE kd_trkasir='TKP-010626172446'");
+	       
+	        
+// 	        while($re = mysqli_fetch_array($ubah)){
+	            
+// 	            mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO trkasir_detail(
+// 	                                    kd_trkasir,
+// 										id_barang,
+// 										kd_barang,
+// 										nmbrg_dtrkasir,
+// 										qty_dtrkasir,
+// 										sat_dtrkasir,
+//                                         profit,
+// 										hrgjual_dtrkasir,
+// 										hrgttl_dtrkasir,
+// 										waktu)
+// 								  VALUES('$re[kd_trkasir]',
+// 										'$re[id_barang]',
+// 										'$re[kd_barang]',
+// 										'$re[nmbrg_dtrkasir]',
+// 										'$re[qty_dtrkasir]',
+// 										'$re[sat_dtrkasir]',
+// 										'$re[profit]',
+// 										'$re[hrgjual_dtrkasir]',
+// 										'$re[hrgttl_dtrkasir]',
+// 										'$re[tgl_trkasir]')");
+// 	        }
+// 		    break;
 	}
 }
 ?>
@@ -1122,7 +1154,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 							<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Pilih</th>
 							<!--<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Harga Grosir</th>-->
 							<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Harga Jual</th>
-							<!--<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Komisi</th>-->
+							<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Komisi</th>
 							<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Komposisi</th>
 						</tr>
 					</thead>
@@ -1350,13 +1382,13 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 						return formatRupiah(data);
 					}
 				},
-				// {
-				// 	"data": "komisi",
-				// 	"className": 'text-right',
-				// 	"render": function(data, type, row) {
-				// 		return formatRupiah(data);
-				// 	}
-				// },
+				{
+					"data": "komisi",
+					"className": 'text-right',
+					"render": function(data, type, row) {
+						return formatRupiah(data);
+					}
+				},
 				{
 					"data": "indikasi",
 					"className": 'text-center'
@@ -1500,6 +1532,9 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 					let displayStok = stok_barang - qty_dtrkasir;
 					$('#stok_' + id_barang).html(displayStok);
+				},
+				error: function(xhr) {
+					alert('Gagal menyimpan detail: respons server tidak valid.');
 				}
 			});
 		}
