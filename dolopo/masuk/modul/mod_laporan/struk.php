@@ -9,7 +9,7 @@ $ah = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM setheader ");
 $rh = mysqli_fetch_array($ah);
 
 $dt = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir
-    JOIN carabayar ON trkasir.id_carabayar = carabayar.id_carabayar
+    LEFT JOIN carabayar ON trkasir.id_carabayar = carabayar.id_carabayar
     WHERE trkasir.kd_trkasir='$_GET[kd_trkasir]'");
 $r1 = mysqli_fetch_array($dt);
 
@@ -217,7 +217,7 @@ $bayar = mysqli_fetch_array($carabayar);
         
         <table width="100%" class="item">
             <tr>
-                <td width="50%"><?=$bayar['nm_carabayar']?></td>
+                <td width="50%"><?=$bayar['nm_carabayar'] ?? ''?></td>
                 <td class="txt-right" width="25%" style="padding-right:5px">PPN(%)</td>
                 <td class="txt-right" width="25%" style="padding-right:5px"><?=$r1['ppn_trkasir']?></td>
             </tr>
