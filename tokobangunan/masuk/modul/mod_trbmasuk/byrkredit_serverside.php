@@ -69,7 +69,7 @@ if ($_GET['action'] == "table_data") {
     if (!empty($query)) {
         $no = $start + 1;
         while ($value = $query->fetch_array()) {
-            $link = ($r['jatuhtempo']=="")?"?module=byrkredit&act=ubah&id=$value[id_trbmasuk]":"?module=byrkreditpbf&act=ubah&id=$value[id_trbmasuk]";
+            $link = ($value['jatuhtempo']=="")?"?module=byrkredit&act=ubah&id=$value[id_trbmasuk]":"?module=byrkreditpbf&act=ubah&id=$value[id_trbmasuk]";
             // for column
             $nestedData['no'] = $no;
             $nestedData['kd_trbmasuk'] = $value['kd_trbmasuk'];
