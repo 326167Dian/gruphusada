@@ -64,7 +64,7 @@
             $totalharga = array();
             while ($r = mysqli_fetch_array($noreq)) {
                 $brg = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT hrgjual_barang FROM barang WHERE kd_barang ='$r[kd_barang]'");
-				$rbrg = mysqli_fetch_array($brg);
+				$rbrg = mysqli_fetch_array($brg) ?: ['hrgjual_barang' => 0];
 				$hrgjual = ($r['hrgjual_dtrbmasuk']==0)?$rbrg['hrgjual_barang']:$r['hrgjual_dtrbmasuk'];
                 $hrgjual1 = format_rupiah($hrgjual);				
                 $hrgsat_dtrbmasuk = format_rupiah($r['hrgsat_dtrbmasuk']);
@@ -84,7 +84,7 @@
 											 <td align=right>$r[qty_dtrbmasuk]</td>
 											 <td align=center>$r[sat_dtrbmasuk]</td>
 											 <td align=center>$r[no_batch]</td>
-											 <td align=center>".tgl_indo($r[exp_date])."</td>
+											 <td align=center>".tgl_indo($r['exp_date'])."</td>
 											 <td align=right>$hnasat_dtrbmasuk</td>
 											 <td align=right>$r[diskon]</td>
 											 <td align=right>$hnadisc1</td>

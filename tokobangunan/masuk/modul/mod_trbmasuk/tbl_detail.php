@@ -28,7 +28,7 @@ color: white;
 							
 							//AMBIL DATA UNTUK FOOTER
 							$dfoot=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trbmasuk WHERE kd_trbmasuk='$kd_trbmasuk'");
-							$rf=mysqli_fetch_array($dfoot);
+							$rf=mysqli_fetch_array($dfoot) ?: ['jatuhtempo' => ''];
 							
 ?>
 			<div class="box-body table-responsive">
@@ -73,7 +73,7 @@ color: white;
 								while ($r=mysqli_fetch_array($noreq)){
 								
 								$brg = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT hrgjual_barang, hna FROM barang WHERE kd_barang ='$r[kd_barang]'");
-								$rbrg = mysqli_fetch_array($brg);
+								$rbrg = mysqli_fetch_array($brg) ?: ['hrgjual_barang' => 0, 'hna' => 0];
 								
 								$hrgsat_dtrbmasuk = format_rupiah($r['hrgsat_dtrbmasuk']);
 								$hrgjual = ($r['hrgjual_dtrbmasuk']==0)?$rbrg['hrgjual_barang']:$r['hrgjual_dtrbmasuk'];
@@ -86,10 +86,12 @@ color: white;
 								$hnadisc1 = format_rupiah($hnadisc);
 								
 								echo "<tr style='font-size: 13px;'>
-											<td align=center>$no</td>           
+											<td align=center>$no</td>
 											 <td align=left>$r[kd_barang]</td>
 											 <td>$r[nmbrg_dtrbmasuk]</td>
-											 <td align=right>$r[qty_dtrbmasuk]</td>
+											 <td align=right>
+											 <input type='number' class='form-control input-qty-edit' style='width:90px; display:inline-block;' data-id='$r[id_dtrbmasuk]' value='$r[qty_dtrbmasuk]' min='0.01' step='any'>
+											 </td>
 											 <td align=center>$r[sat_dtrbmasuk]</td>
 											 <td align=center>$r[no_batch]</td>
 											 <td align=center>".tgl_indo($r['exp_date'])."</td>
@@ -186,6 +188,36 @@ $(document).ready(function () {
         });
         HitungDP();
         $("#example5").DataTable();
+    });
+
+    //inline edit qty
+    var timerQtyEditTbm = {};
+    $(document).off('input', '.input-qty-edit').on('input', '.input-qty-edit', function() {
+        var el = $(this);
+        var id = el.data('id');
+        var qty = el.val();
+
+        clearTimeout(timerQtyEditTbm[id]);
+        el.css('border-color', '');
+
+        timerQtyEditTbm[id] = setTimeout(function() {
+            $.ajax({
+                url: 'modul/mod_trbmasuk/update_qty_detail.php',
+                type: 'POST',
+                dataType: 'json',
+                data: { id_dtrbmasuk: id, qty_dtrbmasuk: qty }
+            }).done(function(res) {
+                if (res && res.success) {
+                    el.css('border-color', '#00a65a');
+                    tabel_detail();
+                } else {
+                    el.css('border-color', '#dd4b39');
+                    alert(res && res.message ? res.message : 'Gagal menyimpan qty');
+                }
+            }).fail(function() {
+                el.css('border-color', '#dd4b39');
+            });
+        }, 600);
     });
 		
 		
