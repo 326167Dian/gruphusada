@@ -2,9 +2,9 @@
 include_once '../../../configurasi/koneksi.php';
 date_default_timezone_set('Asia/Jakarta');
 
-$jenisobat = $_REQUEST['jenisobat'];
-$tgl = $_REQUEST['tgl_awal'];
-
+$jenisobat = $_POST['jenisobat'];
+$tgl = $_POST['tgl_awal'];
+// echo $tgl; die();
 $where = "";
 $query = $db->query("
     SELECT 
@@ -70,7 +70,7 @@ while ($r = $query->fetch_assoc()) {
     ];
     
 }
-
+// echo json_encode($data);
 // Ambil parameter dari DataTables
 $start  = $_POST['start'] ?? 0;
 $length = $_POST['length'] ?? 5;

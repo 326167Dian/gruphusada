@@ -103,14 +103,14 @@ while ($row = $dataResult->fetch_assoc()) {
         "no"             => $no++,
         "kd_barang"      => $row['kd_barang'],
         "nm_barang"      => $row['nm_barang'],
-        "stok_barang"    => round($row['stok_barang']),
+        "stok_barang"    => $row['stok_barang'],
         "t30"            => $t30,
         "t60"            => $selisih,
         "gr"             => $gr,
         "q30"            => $q30,
         "sat_barang"     => $row['sat_barang'],
-        "hrgsat_barang"  => $row['hrgsat_barang'],
-        "nilai_barang"   => $nilai_barang,
+        "hrgsat_barang"  => round($row['hrgsat_barang']),
+        "nilai_barang"   => round($nilai_barang),
         "kartu_stok"     => "<button type='button' id='btn_kartustok' data-id='{$row['kd_barang']}' class='btn btn-warning btn-xs'>Kartu Stok</button>"
     ];
 }

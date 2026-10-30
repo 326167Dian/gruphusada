@@ -152,7 +152,7 @@ if (empty($_SESSION['username']) AND empty($_SESSION['passuser'])){
             });
             
             // Tombol hapus
-            $('#tes tbody').on('click', '#btn_hapus', function () {
+            $('#example11 tbody').on('click', '#btn_hapus', function () {
                 var id = $(this).data('id');
             
                 if (confirm('Anda yakin ingin menghapus?') == true) {

@@ -31,6 +31,7 @@
                 <th style="vertical-align: middle; background-color: #008000; text-align: right; ">HNA</th>
                 <th style="vertical-align: middle; background-color: #008000; text-align: right; ">Disc</th>
                 <th style="vertical-align: middle; background-color: #008000; text-align: right; ">HNA+Disc</th>
+                <th style="vertical-align: middle; background-color: #008000; text-align: right; ">HNA+PPN</th>
                 <th style="vertical-align: middle; background-color: #008000; text-align: right; ">Harga Jual</th>
                 <th style="vertical-align: middle; background-color: #008000; text-align: right; ">Total</th>
                 <th style="vertical-align: middle; background-color: #008000; text-align: center; ">Aksi</th>
@@ -71,7 +72,9 @@
                 $hnasat_dtrbmasuk = format_rupiah($r['hnasat_dtrbmasuk']);
                 $hrgttl_dtrbmasuk = format_rupiah($r['hrgttl_dtrbmasuk']);
                 $hnadisc = $r['hnasat_dtrbmasuk'] * (1 - ($r['diskon'] / 100));
+                $hnappn = $r['hnasat_dtrbmasuk'] * 1.11;
                 $hnadisc1 = format_rupiah($hnadisc);
+                $hnappn1 = format_rupiah($hnappn);
                 $totalharga[] = $hnadisc * $r['qty_dtrbmasuk'];
                 echo "<tr style='font-size: 13px;'>
 											<td align=center>$no</td>           
@@ -84,6 +87,7 @@
 											 <td align=right>$hnasat_dtrbmasuk</td>
 											 <td align=right>$r[diskon]</td>
 											 <td align=right>$hnadisc1</td>
+											 <td align=right>$hnappn1</td>
 											 <td align=right>$hrgjual1</td>
 											 <td align=right>$hrgttl_dtrbmasuk</td>
 											 <td align=center>

@@ -78,7 +78,8 @@ if ($_GET['action'] == "table_data") {
             $nestedData['sisa_bayar'] = $value['sisa_bayar'];
             $nestedData['carabayar'] = $value['carabayar'];
             // $nestedData['aksi'] = "<a href='?module=trbmasuk&act=ubah&id=$value[id_trbmasuk]' title='EDIT' class='btn btn-warning btn-xs'>TAMPIL</a>";
-            $nestedData['aksi'] = "<button type='button' id='btn_tampil' data-id='$value[id_trbmasuk]' title='EDIT' class='btn btn-warning btn-xs'>TAMPIL</button>";
+            $nestedData['aksi'] = "<button type='button' id='btn_tampil' data-id='$value[id_trbmasuk]' title='EDIT' class='btn btn-warning btn-xs'>TAMPIL</button>
+            <button type='button' id='btn_print' data-id='$value[id_trbmasuk]' data-kd_trbmasuk='$value[kd_trbmasuk]' title='CETAK' class='btn btn-primary btn-xs'>PRINT</button>";
             $data[] = $nestedData;
             $no++;
         }

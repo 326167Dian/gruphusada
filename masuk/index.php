@@ -46,14 +46,18 @@
         </div>
 
         <OL>
-            <li><a style="color:#FFFFFF;font-size:20px;font-weight:bold;" class='btn  btn-success btn-flat' href='../aulia/index.php'>Apotek Aulia Husada Taufiqurrohman </a></li>
-            <li><a style="color:#FFFFFF;font-size:20px;font-weight:bold;" class='btn  btn-info btn-flat' href='../anugrah/index.php'>Apotek Anugrah Husada Taufiqurrohman</a></li>
-            <li><a style="color:#FFFFFF;font-size:20px;font-weight:bold;" class='btn  btn-primary btn-flat' href='../asyfa/index.php'>Apotek Anugrah Husada Baru</a></li>
-            <li><a style="color:#FFFFFF;font-size:20px;font-weight:bold;" class='btn  btn-info btn-flat' href='../temboro/index.php'>Apotek Anugrah Sukowinangun Baru</a></li>
-            <li><a style="color:#FFFFFF;font-size:20px;font-weight:bold;" class='btn  btn-warning btn-flat' href='../sukowinangun/index.php'>Apotek Anugrah Sukowinangun</a></li>
-            <li><a style="color:#FFFFFF;font-size:20px;font-weight:bold;" class='btn  btn-danger btn-flat' href='../assyfanew/index.php'>Apotek As Sifa Baru</a></li>
-            <li><a style="color:#FFFFFF;font-size:20px;font-weight:bold;" class='btn  btn-danger btn-flat' href='../auliabaru/index.php'>Apotek Anugrah Temboro</a></li>
-
+            <li><a style="color:#FFFFFF;font-size:20px;font-weight:bold;" class='btn  btn-success btn-flat' href='../dolopo/index.php'>
+                Apotek Aulia Dolopo</a></li>
+            <!--<li><a style="color:#FFFFFF;font-size:20px;font-weight:bold;" class='btn  btn-info btn-flat' href='../anugrah/index.php'>Apotek Anugrah Husada Taufiqurrohman</a></li>-->
+            
+            <li><a style="color:#FFFFFF;font-size:20px;font-weight:bold;" class='btn  btn-primary btn-flat' href='../goranggareng/index.php'>Apotek Anugrah Gorang Gareng</a></li>
+            <li><a style="color:#FFFFFF;font-size:20px;font-weight:bold;" class='btn  btn-info btn-flat' href='../sukowinangun/index.php'>Apotek Anugrah Sukowinangun</a></li>
+            <!--<li><a style="color:#FFFFFF;font-size:20px;font-weight:bold;" class='btn  btn-warning btn-flat' href='../sukowinangun/index.php'>Apotek Anugrah Sukowinangun</a></li>-->
+            
+            <li><a style="color:#FFFFFF;font-size:20px;font-weight:bold;" class='btn  btn-danger btn-flat' href='../mlilir/index.php'>Apotek Asyfa mlilir</a></li>
+            <li><a style="color:#FFFFFF;font-size:20px;font-weight:bold;" class='btn  btn-danger btn-flat' href='../temboro/index.php'>Apotek Anugrah Temboro</a></li>
+            <li><a style="color:#FFFFFF;font-size:20px;font-weight:bold;" class='btn  btn-info btn-flat' href='../gudang/index.php'>Gudang Apotek</a></li>
+            <li><a style="color:#FFFFFF;font-size:20px;font-weight:bold;" class='btn  btn-warning btn-flat' href='../tokobangunan/index.php'>Toko Bangunan</a></li>
         </OL>
 
 

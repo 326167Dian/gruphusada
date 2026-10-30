@@ -102,8 +102,8 @@ if ($_GET['action'] == "table_data") {
         while ($value = $query->fetch_array()) {
             $getbrg = $db->query("SELECT * FROM barang WHERE id_barang = '$value[id_barang]' ORDER BY id_barang");
             $brg = $getbrg->fetch_array();
-            $hargabeli = $brg['hrgsat_barang'];
-            $nilaibarang = $brg['hrgsat_barang'] * $brg['stok_barang'];
+            $hargabeli = round($brg['hrgsat_barang']);
+            $nilaibarang = round($brg['hrgsat_barang'] * $brg['stok_barang']);
 
             $t30 = $value['t30'];
             $q30 = $value['q30'];

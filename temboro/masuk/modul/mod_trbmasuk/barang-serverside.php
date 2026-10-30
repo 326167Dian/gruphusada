@@ -56,21 +56,24 @@ if ($_GET['action'] == "table_data") {
     if (!empty($query)) {
         $no = $start + 1;
         while ($value = $query->fetch_array()) {
+            $hrgsat_barang  = round($value['hrgsat_barang']);
+            $hrgjual_barang = round($value['hrgjual_barang']);
+            
             $nestedData['no'] = $no;
-            $nestedData['kd_barang'] = $value['kd_barang'];
-            $nestedData['nm_barang'] = $value['nm_barang'];
-            $nestedData['stok_barang'] = $value['stok_barang'];
-            $nestedData['sat_barang'] = $value['sat_barang'];
-            $nestedData['hrgsat_barang'] = $value['hrgsat_barang'];
-            $nestedData['hrgjual_barang'] = $value['hrgjual_barang'];
+            $nestedData['kd_barang']        = $value['kd_barang'];
+            $nestedData['nm_barang']        = $value['nm_barang'];
+            $nestedData['stok_barang']      = $value['stok_barang'];
+            $nestedData['sat_barang']       = $value['sat_barang'];
+            $nestedData['hrgsat_barang']    = $hrgsat_barang;
+            $nestedData['hrgjual_barang']   = $hrgjual_barang;
             $nestedData['pilih'] = "<button class='btn btn-xs btn-info' id='pilihbarang' 
             data-id_barang='$value[id_barang]'
             data-kd_barang='$value[kd_barang]'
             data-nm_barang='$value[nm_barang]'
             data-stok_barang='$value[stok_barang]'
             data-sat_barang='$value[sat_barang]'
-            data-hrgsat_barang='$value[hrgsat_barang]'
-            data-hrgjual_barang='$value[hrgjual_barang]'>
+            data-hrgsat_barang='$hrgsat_barang'
+            data-hrgjual_barang='$hrgjual_barang'>
             <i class='fa fa-check'></i>
             </button>";
             $data[] = $nestedData;

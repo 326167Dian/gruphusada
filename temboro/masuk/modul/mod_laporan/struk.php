@@ -334,6 +334,30 @@ $bayar = mysqli_fetch_array($carabayar);
                 }    
                 
             });
+            
+            // window.addEventListener('beforeprint', function () {
+            //     console.log('User membuka print');
+            // });
+            
+            window.addEventListener('afterprint', function () {
+                console.log('Print dialog ditutup');
+                window.close();
+            });
+        });
+        
+        document.addEventListener('keydown', function (event) {
+            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'p') {
+                event.preventDefault();
+                event.stopPropagation();
+        
+                // alert('Fitur Print dinonaktifkan.');
+                window.close();
+                return false;
+            }
+        });
+        
+        document.addEventListener('contextmenu', function (event) {
+            event.preventDefault();
         });
     </script>
     

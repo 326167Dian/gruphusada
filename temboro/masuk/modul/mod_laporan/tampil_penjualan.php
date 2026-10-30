@@ -48,8 +48,9 @@ trkasir.kd_trkasir,
 trkasir.tgl_trkasir
 FROM trkasir_detail 
 JOIN trkasir ON trkasir_detail.kd_trkasir = trkasir.kd_trkasir
-WHERE shift in ($shift) and trkasir.tgl_trkasir BETWEEN '$tgl_awal' AND '$tgl_akhir'
-GROUP BY trkasir_detail.kd_barang");
+WHERE shift in ($shift) AND trkasir.tgl_trkasir BETWEEN '$tgl_awal' AND '$tgl_akhir'
+GROUP BY trkasir_detail.kd_barang
+ORDER BY trkasir.id_trkasir ASC");
 
 
 

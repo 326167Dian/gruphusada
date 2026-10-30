@@ -16,9 +16,7 @@ $tgl = $_POST['tgl_awal'];
             <th class="text-center">Kode Barang</th>
             <th class="text-center">Nama Obat</th>
             <th class="text-center">Satuan</th>
-            <?php //if($_SESSION['level']=='pemilik'):?>
             <th class="text-center">Stok Sistem</th>
-            <?php //endif;?>
             <th class="text-center">Stok Fisik</th>
             <th class="text-center">Exp Date</th>
             <th class="text-center">jumlah</th>

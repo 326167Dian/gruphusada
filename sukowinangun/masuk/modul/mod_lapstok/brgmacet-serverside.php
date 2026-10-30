@@ -118,8 +118,8 @@ if ($_GET['action'] == "table_data") {
             $nestedData['t30'] = $pass1['jumlah'];
             $nestedData['q30'] = (($pass1['pw'] <= 0) ? 0 : $pass1['pw']);
             $nestedData['satuan'] = $value['sat_barang'];
-            $nestedData['harga_beli'] = $value['hrgsat_barang'];
-            $nestedData['nilai_barang'] = $nilaibarang;
+            $nestedData['harga_beli'] = round($value['hrgsat_barang']);
+            $nestedData['nilai_barang'] = round($nilaibarang);
             // $nestedData['kartu_stok'] = "<a href='?module=lapstok&act=edit&id=$value[kd_barang]' title='Riwayat' class='btn btn-warning btn-xs'>Riwayat</a>";
             $nestedData['kartu_stok'] = "<button type='button' id='btn_riwayat' data-id='$value[kd_barang]' title='Riwayat' class='btn btn-warning btn-xs'>Riwayat</button>";
             $data[] = $nestedData;

@@ -30,14 +30,14 @@ if ($_GET['action'] == "table_data") {
     if (empty($_POST['search']['value'])) {
         $query = $db->query("SELECT *
             FROM trbmasuk
-            WHERE trbmasuk.id_resto = 'pusat' AND trbmasuk.jenis = 'nonpbf'
+            WHERE trbmasuk.id_resto = 'pusat'
             ORDER BY id_trbmasuk DESC LIMIT $limit OFFSET $start");
             // ORDER BY $order DESC LIMIT $limit OFFSET $start");
     } else {
         $search = $_POST['search']['value'];
         $query = $db->query("SELECT * 
             FROM trbmasuk
-            WHERE trbmasuk.id_resto = 'pusat' AND trbmasuk.jenis = 'nonpbf'
+            WHERE trbmasuk.id_resto = 'pusat'
                         AND kd_trbmasuk LIKE '%$search%'
                         OR petugas LIKE '%$search%'
                         OR tgl_trbmasuk LIKE '%$search%'
@@ -50,7 +50,7 @@ if ($_GET['action'] == "table_data") {
 
         $querycount = $db->query("SELECT count(id_trbmasuk) as jumlah 
             FROM trbmasuk
-            WHERE trbmasuk.id_resto = 'pusat' AND trbmasuk.jenis = 'nonpbf'
+            WHERE trbmasuk.id_resto = 'pusat'
                         AND trbmasuk.kd_trbmasuk LIKE '%$search%'
                         OR trbmasuk.petugas LIKE '%$search%'
                         OR trbmasuk.tgl_trbmasuk LIKE '%$search%'
@@ -84,7 +84,8 @@ if ($_GET['action'] == "table_data") {
 								// 	<a href=javascript:confirmdelete('$aksi?module=trbmasuk&act=hapus&id=$r[id_trbmasuk]') title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</a>";
             $nestedData['aksi'] = " <button type='button' id='btn_edit' data-url='$link' title='EDIT' class='btn btn-warning btn-xs'>EDIT</button> 
 								    <button type='button' id='btn_pbf' data-id='$value[id_trbmasuk]' title='EDIT' class='btn btn-primary btn-xs'>EDIT PBF</button>
-									<button type='button' id='btn_hapus' data-id='$value[id_trbmasuk]' title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</button>";
+									<button type='button' id='btn_hapus' data-id='$value[id_trbmasuk]' title='HAPUS' class='btn btn-danger btn-xs'>HAPUS</button>
+									<button type='button' id='btn_print' data-id='$value[id_trbmasuk]' data-kd_trbmasuk='$value[kd_trbmasuk]' title='CETAK' class='btn btn-primary btn-xs'>PRINT</button>";
             $data[] = $nestedData;
             $no++;
         }

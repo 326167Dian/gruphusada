@@ -70,9 +70,9 @@ color: white;
 							   WHERE kd_trbmasuk='$kd_trbmasuk'
 							   ORDER BY id_dtrbmasuk ASC");
 								$no=1;
-								while ($r=mysqli_fetch_array($noreq)){
+							while ($r=mysqli_fetch_array($noreq)){
 								
-								$brg = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT hrgjual_barang FROM barang WHERE kd_barang ='$r[kd_barang]'");
+								$brg = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT hrgjual_barang, hna FROM barang WHERE kd_barang ='$r[kd_barang]'");
 								$rbrg = mysqli_fetch_array($brg);
 								
 								$hrgsat_dtrbmasuk = format_rupiah($r['hrgsat_dtrbmasuk']);
@@ -81,7 +81,7 @@ color: white;
 								$hrgjual_dtrbmasuk = format_rupiah($hrgjual);
 								$hrgttl_dtrbmasuk = format_rupiah($r['hrgttl_dtrbmasuk']);
 								
-								$hnasat_dtrbmasuk = format_rupiah($r['hnasat_dtrbmasuk']);
+								$hnasat_dtrbmasuk = ($r['hnasat_dtrbmasuk']==0)?format_rupiah($rbrg['hna']):format_rupiah($r['hnasat_dtrbmasuk']);
 								$hnadisc = $r['hnasat_dtrbmasuk'] * (1 - ($r['diskon'] / 100));
 								$hnadisc1 = format_rupiah($hnadisc);
 								

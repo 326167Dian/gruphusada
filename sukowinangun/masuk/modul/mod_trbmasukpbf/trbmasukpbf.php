@@ -186,6 +186,14 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                         var currentPage = table.page() + 1;
                         location.href = '?module=trbmasukpbf&act=ubah&id='+id+'&lastpage=trbmasukpbf&page='+currentPage; 
                     });
+                    
+                    // Button Print
+                    $('#tes tbody').on('click', '#btn_print', function () {
+                        var id = $(this).data('id');
+                        var kd_trbmasuk = $(this).data('kd_trbmasuk');
+                        var currentPage = table.page() + 1;
+                        window.open('modul/mod_laporan/faktur_trbmasuk.php?kd_trbmasuk='+kd_trbmasuk, '_blank') 
+                    });
                 });
             </script>
         <?php
@@ -312,7 +320,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 											<div class='input-group'>
 												<input type='text' class='form-control' name='kd_barang' id='kd_barang' autocomplete='off'>
 													<div class='input-group-addon'>
-														<button type=button data-toggle='modal' data-target='#ModalItem' href='#' id='kode'><span class='glyphicon glyphicon-search'></span></button>
+														<button type='button' data-toggle='modal' data-target='#ModalItem' href='#' id='kode'><span class='glyphicon glyphicon-search'></span></button>
 													</div>
 											</div>
 										</div>
@@ -473,7 +481,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                                                     <div class='input-group-addon'>
                                                         <span class='glyphicon glyphicon-th'></span>
                                                     </div>
-													<input type='text' class='datepicker' name='tgl_trbmasuk' id='tgl_trbmasuk' required='required' value='$re[jatuhtempo]' autocomplete='off'>
+													<input type='text' class='datepicker' name='jatuhtempo' id='jatuhtempo' required='required' value='$re[jatuhtempo]' autocomplete='off'>
 											    </div>	
 											<div class='buttons'>
 											  <button type='button' class='btn btn-primary right-block' onclick='simpan_transaksi();'>SIMPAN TRANSAKSI [F2]</button>
@@ -501,7 +509,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 											<div class='input-group'>
 												<input type='text' class='form-control' name='kd_barang' id='kd_barang' autocomplete='off'>
 													<div class='input-group-addon'>
-														<button type=button data-toggle='modal' data-target='#ModalItem' href='#'><span class='glyphicon glyphicon-search'></span></button>
+														<button type='button' data-toggle='modal' data-target='#ModalItem' id='kode'><span class='glyphicon glyphicon-search'></span></button>
 													</div>
 											</div>
 										</div>
@@ -625,13 +633,13 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
       <!--                      </h3>-->
       <!--                  </td>-->
       <!--                  <td colspan='2'>-->
-      <!--                      <h3><strong> Rp. <?php echo $sisabayar1 ?> ,- </strong></h3>-->
+      <!--                      <h3><strong> Rp. <?php //echo $sisabayar1 ?> ,- </strong></h3>-->
       <!--                  </td>-->
       <!--              </tr>-->
 
       <!--          </table>-->
       <!--      </div>-->
-      <!--      </div>-->
+            </div>
 <?php
             break;
             
@@ -763,7 +771,6 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
             </div>
 
 
-
             <div class="modal-body table-responsive">
                 <table id="example" class="table table-condensed table-bordered table-striped table-hover">
 
@@ -833,8 +840,6 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                 </div>
             </div>
 
-
-
             <div class="modal-body table-responsive">
                 <table id="example1" class="table table-condensed table-bordered table-striped table-hover">
 
@@ -880,7 +885,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 <!-- end modul supplier -->
 
 
-<script type="text/javascript">
+<!--<script type="text/javascript">-->
     // $(function() {
     //     $(".datepicker").datepicker({
     //         format: 'yyyy-mm-dd',
@@ -888,7 +893,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
     //         todayHighlight: true,
     //     });
     // });
-</script>
+<!--</script>-->
 
 <script>
     $(document).ready(function() {
@@ -947,8 +952,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 						document.getElementById('qty_dtrbmasuk').value = qty_default;
 						document.getElementById('sat_dtrbmasuk').value = data.sat_barang;
-						document.getElementById('hnasat_dtrbmasuk').value = formatRupiah(Math.ceil(data.hna));
-						document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(data.hrgjual_barang);
+						document.getElementById('hnasat_dtrbmasuk').value = formatRupiah(Math.round(data.hna));
+						document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(Math.round(data.hrgjual_barang));
 						document.getElementById('diskon').value = diskon_default;
 					}
 
@@ -980,8 +985,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 				document.getElementById('qty_dtrbmasuk').value = qty_default;
 				document.getElementById('sat_dtrbmasuk').value = data.sat_barang;
-				document.getElementById('hnasat_dtrbmasuk').value = formatRupiah(data.hna);
-				document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(data.hrgjual_barang);
+				document.getElementById('hnasat_dtrbmasuk').value = formatRupiah(Math.round(data.hna));
+				document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(Math.round(data.hrgjual_barang));
 				document.getElementById('diskon').value = diskon_default;
 			}
 
@@ -1059,8 +1064,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
         document.getElementById('stok_barang').value = stok_barang;
         document.getElementById('qty_dtrbmasuk').value = qty_default;
         document.getElementById('sat_dtrbmasuk').value = sat_barang;
-        document.getElementById('hnasat_dtrbmasuk').value = formatRupiah(hna);
-        document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(hrgjual_dtrbmasuk);
+        document.getElementById('hnasat_dtrbmasuk').value = formatRupiah(Math.round(hna));
+        document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(Math.round(hrgjual_dtrbmasuk));
         document.getElementById('diskon').value = diskon_default;
 
         //hilangkan modal

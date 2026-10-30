@@ -57,8 +57,8 @@ while ($row = $query2->fetch_assoc()) {
         $brgKeluar  = $db->query("SELECT qty_dtrkasir FROM trkasir_detail WHERE kd_trkasir = '$row[kode_transaksi]' AND kd_barang = '$id'");
         $keluar     = $brgKeluar->fetch_assoc();
         
-        $msk = (int) ($masuk['qty_dtrbmasuk'] ?? 0);
-        $klr = (int) ($keluar['qty_dtrkasir'] ?? 0);
+        $msk = ($masuk['qty_dtrbmasuk'] ?? 0);
+        $klr = ($keluar['qty_dtrkasir'] ?? 0);
         $totalStok += ($msk - $klr);
         
     	$pdf->Cell(1, 0.7, $no, 1, 0, 'C');

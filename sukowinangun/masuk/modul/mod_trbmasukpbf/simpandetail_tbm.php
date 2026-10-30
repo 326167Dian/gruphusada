@@ -1,5 +1,8 @@
-<?php 
+<?php
 include "../../../configurasi/koneksi.php";
+include "../../../configurasi/fungsi_sinkronisasi.php";
+
+$conn = $GLOBALS["___mysqli_ston"];
 
 $kd_trbmasuk = $_POST['kd_trbmasuk'];
 $id_barang = $_POST['id_barang'];
@@ -23,9 +26,11 @@ if($diskon == ""){
     $diskon = "0";
 }else{}
 
+mysqli_begin_transaction($conn);
+
 //cek apakah barang sudah ada
-$cekdetail=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT id_barang, kd_barang, kd_trbmasuk, id_dtrbmasuk, qty_dtrbmasuk 
-FROM trbmasuk_detail 
+$cekdetail=mysqli_query($conn, "SELECT id_barang, kd_barang, kd_trbmasuk, id_dtrbmasuk, qty_dtrbmasuk
+FROM trbmasuk_detail
 WHERE kd_barang='$kd_barang' AND kd_trbmasuk='$kd_trbmasuk'");
 
 $ketemucekdetail=mysqli_num_rows($cekdetail);
@@ -37,37 +42,39 @@ $qtylama = $rcek['qty_dtrbmasuk'];
 $ttlqty = $qtylama + $qty_dtrbmasuk;
 $ttlharga = $ttlqty * $hnasat_dtrbmasuk;
 
-mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE trbmasuk_detail SET 
+$success = (bool) mysqli_query($conn, "UPDATE trbmasuk_detail SET
                                         qty_dtrbmasuk = '$ttlqty',
 										hnasat_dtrbmasuk = '$hnasat_dtrbmasuk',
 										diskon = '$diskon',
-										hrgsat_dtrbmasuk = '$hrgsat_dtrbmasuk',										
-										hrgjual_dtrbmasuk = '$hrgjual_dtrbmasuk',										
+										hrgsat_dtrbmasuk = '$hrgsat_dtrbmasuk',
+										hrgjual_dtrbmasuk = '$hrgjual_dtrbmasuk',
 										hrgttl_dtrbmasuk = '$ttlharga',
 										no_batch = '$no_batch',
 										exp_date = '$exp_date'
 										WHERE id_dtrbmasuk = '$id_dtrbmasuk'");
-										
+
 //update stok
-$cekstok=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM barang 
-WHERE id_barang='$id_barang'");
-$rst=mysqli_fetch_array($cekstok);
+if ($success) {
+    $cekstok=mysqli_query($conn, "SELECT * FROM barang
+    WHERE id_barang='$id_barang'");
+    $rst=mysqli_fetch_array($cekstok);
 
-$stok_barang = $rst['stok_barang'];
-$stokakhir = (($stok_barang - $qtylama) + $ttlqty);
+    $stok_barang = $rst['stok_barang'];
+    $stokakhir = (($stok_barang - $qtylama) + $ttlqty);
 
-mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE barang SET 
-                                          stok_barang = '$stokakhir', 
+    $success = (bool) mysqli_query($conn, "UPDATE barang SET
+                                          stok_barang = '$stokakhir',
                                           hna = '$hnasat_dtrbmasuk',
-                                          hrgsat_barang = '$hrgsat_dtrbmasuk,
+                                          hrgsat_barang = '$hrgsat_dtrbmasuk',
                                           hrgjual_barang = '$hrgjual_dtrbmasuk'
                                           WHERE id_barang = '$id_barang'");
-									
+}
+
 }else{
 $faktordiskon = (1-($diskon/100));
 $ttlharga = $qty_dtrbmasuk * $hnasat_dtrbmasuk * $faktordiskon ;
 
-mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO trbmasuk_detail(kd_trbmasuk,
+$success = (bool) mysqli_query($conn, "INSERT INTO trbmasuk_detail(kd_trbmasuk,
 										id_barang,
 										kd_barang,
 										nmbrg_dtrbmasuk,
@@ -75,8 +82,8 @@ mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO trbmasuk_detail(kd_trbmasu
 										sat_dtrbmasuk,
 										hnasat_dtrbmasuk,
 										diskon,
-										hrgsat_dtrbmasuk,										
-										hrgjual_dtrbmasuk,										
+										hrgsat_dtrbmasuk,
+										hrgjual_dtrbmasuk,
 										hrgttl_dtrbmasuk,
 										no_batch,
 										exp_date)
@@ -93,22 +100,30 @@ mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO trbmasuk_detail(kd_trbmasu
 										'$ttlharga',
 										'$no_batch',
 										'$exp_date')");
-										
+
 //update stok,hna,hrgbrg+ppn
-$cekstok=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM barang 
-WHERE id_barang='$id_barang'");
-$rst=mysqli_fetch_array($cekstok);
+if ($success) {
+	$cekstok=mysqli_query($conn, "SELECT * FROM barang
+	WHERE id_barang='$id_barang'");
+	$rst=mysqli_fetch_array($cekstok);
 
-$stok_barang = $rst['stok_barang'];
-$stokakhir = $stok_barang + $qty_dtrbmasuk;
+	$stok_barang = $rst['stok_barang'];
+	$stokakhir = $stok_barang + $qty_dtrbmasuk;
 
-mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE barang SET 
+	$success = (bool) mysqli_query($conn, "UPDATE barang SET
                                                 stok_barang = '$stokakhir',
                                                 hna = '$hnasat_dtrbmasuk',
                                                 hrgsat_barang = '$hrgsat_dtrbmasuk',
                                                 hrgjual_barang = '$hrgjual_dtrbmasuk'
                                                 WHERE id_barang = '$id_barang'");
+}
 
 }
-				  
+
+if ($success) {
+	mysqli_commit($conn);
+	sinkronisasi_stok($kd_barang);
+} else {
+	mysqli_rollback($conn);
+}
 ?>

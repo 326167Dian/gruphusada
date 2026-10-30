@@ -1721,13 +1721,15 @@ case "edit":
                                  $text1 = substr($text, 10,2);
                                  $text2 = substr($text, 12,2);
                                  $text3 = substr($text, 14,2);
+                                 
+                                 $rphrgsat_dtrbmasuk = format_rupiah($q['hrgsat_dtrbmasuk']);
                                 echo "
                             <tr>
                                 <td align=center >$q[id_dtrbmasuk]</td>
                                 <td align=center >$q[kd_trbmasuk]</td>
                                 <td align=center>$q[nm_supplier]</td>
                                 <td align=center>$q[petugas]</td>
-                                <td align=center>$q[hrgsat_dtrbmasuk]</td> 
+                                <td align=center>$rphrgsat_dtrbmasuk</td> 
                                 <td align=center>$q[tgl_trbmasuk]</td>
                                 <td align=center>$text1.$text2.$text3</td>                               
                                 <td align=center>$q[qty_dtrbmasuk]</td>

@@ -53,8 +53,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					<!--<a  class ='btn  btn-warning  btn-flat' href='?module=trkasir&act=jualsebelumnya'>PENJUALAN SEBELUMNYA</a>
 					<small>* Pembayaran belum lunas</small> -->
 					<br><br>
-
-
+    
+                    <?php if($_SESSION['level']=='pemilik'): ?>
 					<table id="example1" class="table table-bordered table-striped">
 						<thead align="center">
 							<tr>
@@ -134,7 +134,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 							echo "</tbody>
                         </table>               
                         ";
-                            if($_SESSION['level']=='pemilik'):
+                            // if($_SESSION['level']=='pemilik'):
 							?>
                             <table class="table table-striped table-bordered table-responsive">
                                 <h4>Ringkasan Transaksi</h4>
@@ -1073,6 +1073,38 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 
 			break;
+			
+// 		case "ubah3":
+		    
+// 		    $ubah = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir_restore 
+// 	                            WHERE kd_trkasir='TKP-010626172446'");
+	       
+	        
+// 	        while($re = mysqli_fetch_array($ubah)){
+	            
+// 	            mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO trkasir_detail(
+// 	                                    kd_trkasir,
+// 										id_barang,
+// 										kd_barang,
+// 										nmbrg_dtrkasir,
+// 										qty_dtrkasir,
+// 										sat_dtrkasir,
+//                                         profit,
+// 										hrgjual_dtrkasir,
+// 										hrgttl_dtrkasir,
+// 										waktu)
+// 								  VALUES('$re[kd_trkasir]',
+// 										'$re[id_barang]',
+// 										'$re[kd_barang]',
+// 										'$re[nmbrg_dtrkasir]',
+// 										'$re[qty_dtrkasir]',
+// 										'$re[sat_dtrkasir]',
+// 										'$re[profit]',
+// 										'$re[hrgjual_dtrkasir]',
+// 										'$re[hrgttl_dtrkasir]',
+// 										'$re[tgl_trkasir]')");
+// 	        }
+// 		    break;
 	}
 }
 ?>

@@ -55,12 +55,14 @@ if ($_GET['action'] == "table_data") {
     if (!empty($query)) {
         $no = $start + 1;
         while ($value = $query->fetch_array()) {
+            $hna    = round($value['hna']);
+            
             $nestedData['no'] = $no;
-            $nestedData['kd_barang'] = $value['kd_barang'];
-            $nestedData['nm_barang'] = $value['nm_barang'];
-            $nestedData['stok_barang'] = $value['stok_barang'];
-            $nestedData['sat_barang'] = $value['sat_barang'];
-            $nestedData['hna'] = $value['hna'];
+            $nestedData['kd_barang']    = $value['kd_barang'];
+            $nestedData['nm_barang']    = $value['nm_barang'];
+            $nestedData['stok_barang']  = $value['stok_barang'];
+            $nestedData['sat_barang']   = $value['sat_barang'];
+            $nestedData['hna']          = $hna;
             $nestedData['pilih'] = "<button class='btn btn-xs btn-info' id='pilihbarang' 
             data-id_barang='$value[id_barang]'
             data-kd_barang='$value[kd_barang]'

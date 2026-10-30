@@ -200,6 +200,14 @@ switch($_GET['act']){
                 			});
                         } 
                     });
+                    
+                    // Button Print
+                    $('#tes tbody').on('click', '#btn_print', function () {
+                        var id = $(this).data('id');
+                        var kd_trbmasuk = $(this).data('kd_trbmasuk');
+                        var currentPage = table.page() + 1;
+                        window.open('modul/mod_laporan/faktur_trbmasuk.php?kd_trbmasuk='+kd_trbmasuk, '_blank') 
+                    });
             });
         </script>
 <?php
@@ -578,7 +586,8 @@ switch($_GET['act']){
 												 data-nm_barang='$rd[nm_barang]'
 												 data-stok_barang='$rd[stok_barang]'
 												 data-sat_barang='$rd[sat_barang]'
-												 data-hrgsat_barang='$rd[hrgsat_barang]'>
+												 data-hrgsat_barang='$rd[hrgsat_barang]'
+												 data-hrgjual_barang='$rd[hrgjual_barang]'>
 												 <i class='fa fa-check'></i>
 												 </button>
 												
@@ -719,8 +728,8 @@ switch($_GET['act']){
 
 						document.getElementById('qty_dtrbmasuk').value = qty_default;
 						document.getElementById('sat_dtrbmasuk').value = data.sat_barang;
-						document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(data.hrgjual_barang);
-						document.getElementById('hrgsat_dtrbmasuk').value = formatRupiah(data.hrgsat_barang);
+						document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(Math.round(data.hrgjual_barang));
+						document.getElementById('hrgsat_dtrbmasuk').value = formatRupiah(Math.round(data.hrgsat_barang));
 						document.getElementById('indikasi').value = data.indikasi;
 					}
 
@@ -745,14 +754,24 @@ switch($_GET['act']){
 					for (let i = 0; i < data.length; i++) {
 						data = data[i];
 						
-						document.getElementById('id_barang').value= data.id_barang ;
-            			document.getElementById('kd_barang').value= data.kd_barang ;
-            			document.getElementById('nmbrg_dtrbmasuk').value= data.nm_barang ;
-            			document.getElementById('stok_barang').value= data.stok_barang ;
-            			document.getElementById('qty_dtrbmasuk').value= qty_default ;
-            			document.getElementById('sat_dtrbmasuk').value= data.sat_barang ;
-            			document.getElementById('hrgsat_dtrbmasuk').value= data.hrgsat_barang ;
-			
+				// 		document.getElementById('id_barang').value= data.id_barang ;
+    //         			document.getElementById('kd_barang').value= data.kd_barang ;
+    //         			document.getElementById('nmbrg_dtrbmasuk').value= data.nm_barang ;
+    //         			document.getElementById('stok_barang').value= data.stok_barang ;
+    //         			document.getElementById('qty_dtrbmasuk').value= qty_default ;
+    //         			document.getElementById('sat_dtrbmasuk').value= data.sat_barang ;
+    //         			document.getElementById('hrgsat_dtrbmasuk').value= formatRupiah(Math.round(data.hrgsat_barang)) ;
+			            
+			            document.getElementById('id_barang').value = data.id_barang;
+						document.getElementById('kd_barang').value = data.kd_barang;
+						document.getElementById('nmbrg_dtrbmasuk').value = data.nm_barang;
+						document.getElementById('stok_barang').value = data.stok_barang;
+
+						document.getElementById('qty_dtrbmasuk').value = qty_default;
+						document.getElementById('sat_dtrbmasuk').value = data.sat_barang;
+						document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(Math.round(data.hrgjual_barang));
+						document.getElementById('hrgsat_dtrbmasuk').value = formatRupiah(Math.round(data.hrgsat_barang));
+						document.getElementById('indikasi').value = data.indikasi;
 					}
 
 				});
@@ -760,25 +779,27 @@ switch($_GET['act']){
 	
 	$(document).on('click', '#pilihbarang', function(){
 
-	 var id_barang = $(this).data('id_barang');
-	 var kd_barang = $(this).data('kd_barang');
-	  var nm_barang = $(this).data('nm_barang');
-	  var stok_barang = $(this).data('stok_barang');
-	   var sat_barang = $(this).data('sat_barang');
+	    var id_barang = $(this).data('id_barang');
+	    var kd_barang = $(this).data('kd_barang');
+	    var nm_barang = $(this).data('nm_barang');
+	    var stok_barang = $(this).data('stok_barang');
+	    var sat_barang = $(this).data('sat_barang');
 	    var hrgsat_barang = $(this).data('hrgsat_barang');
-		 var qty_default = "1";
+	    var hrgjual_barang = $(this).data('hrgjual_barang');
+		var qty_default = "1";
 		 
-			document.getElementById('id_barang').value= id_barang ;
-			document.getElementById('kd_barang').value= kd_barang ;
-			document.getElementById('nmbrg_dtrbmasuk').value= nm_barang ;
-			document.getElementById('stok_barang').value= stok_barang ;
-			document.getElementById('qty_dtrbmasuk').value= qty_default ;
-			document.getElementById('sat_dtrbmasuk').value= sat_barang ;
-			document.getElementById('hrgsat_dtrbmasuk').value= hrgsat_barang ;
-			//hilangkan modal
-			$(".close").click();
+		document.getElementById('id_barang').value= id_barang ;
+		document.getElementById('kd_barang').value= kd_barang ;
+		document.getElementById('nmbrg_dtrbmasuk').value= nm_barang ;
+		document.getElementById('stok_barang').value= stok_barang ;
+		document.getElementById('qty_dtrbmasuk').value= qty_default ;
+		document.getElementById('sat_dtrbmasuk').value= sat_barang ;
+		document.getElementById('hrgsat_dtrbmasuk').value = formatRupiah(Math.round(hrgsat_barang));
+		document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(Math.round(hrgjual_barang));
+		//hilangkan modal
+		$(".close").click();
 
-			});
+	});
 			
 			
 	$(document).on('click', '#pilihsupplier', function(){
@@ -800,14 +821,17 @@ switch($_GET['act']){
 	
 	function simpan_detail(){
 	
-	var kd_trbmasuk = document.getElementById('kd_trbmasuk').value;
-	var id_barang = document.getElementById('id_barang').value;
-	var kd_barang = document.getElementById('kd_barang').value;
-	var nmbrg_dtrbmasuk = document.getElementById('nmbrg_dtrbmasuk').value;
-	var stok_barang = document.getElementById('stok_barang').value;
-	var qty_dtrbmasuk = document.getElementById('qty_dtrbmasuk').value;
-	var sat_dtrbmasuk = document.getElementById('sat_dtrbmasuk').value;
-	var hrgsat_dtrbmasuk = document.getElementById('hrgsat_dtrbmasuk').value;
+	var kd_trbmasuk         = document.getElementById('kd_trbmasuk').value;
+	var id_barang           = document.getElementById('id_barang').value;
+	var kd_barang           = document.getElementById('kd_barang').value;
+	var nmbrg_dtrbmasuk     = document.getElementById('nmbrg_dtrbmasuk').value;
+	var stok_barang         = document.getElementById('stok_barang').value;
+	var qty_dtrbmasuk       = document.getElementById('qty_dtrbmasuk').value;
+	var sat_dtrbmasuk       = document.getElementById('sat_dtrbmasuk').value;
+	var hrgsat_dtrbmasuk    = document.getElementById('hrgsat_dtrbmasuk').value;
+	var hrgjual_dtrbmasuk   = document.getElementById('hrgjual_dtrbmasuk').value;
+	var no_batch            = document.getElementById('no_batch').value;
+	var exp_date            = document.getElementById('exp_date').value;
 	
 	if(nmbrg_dtrbmasuk == ""){
 	alert('Belum ada Item terpilih');
@@ -827,13 +851,18 @@ switch($_GET['act']){
 					
 			type: 'post',
 			url: "modul/mod_trbmasuk/simpandetail_tbm.php",
-			data: {'kd_trbmasuk': kd_trbmasuk,
-				   'id_barang': id_barang,
-				   'kd_barang': kd_barang,
-				   'nmbrg_dtrbmasuk': nmbrg_dtrbmasuk,
-				   'qty_dtrbmasuk': qty_dtrbmasuk,
-				   'sat_dtrbmasuk': sat_dtrbmasuk,
-				   'hrgsat_dtrbmasuk': hrgsat_dtrbmasuk},
+			data: {
+			    'kd_trbmasuk': kd_trbmasuk,
+				'id_barang': id_barang,
+				'kd_barang': kd_barang,
+				'nmbrg_dtrbmasuk': nmbrg_dtrbmasuk,
+				'qty_dtrbmasuk': qty_dtrbmasuk,
+				'sat_dtrbmasuk': sat_dtrbmasuk,
+				'hrgsat_dtrbmasuk': hrgsat_dtrbmasuk,
+			    'hrgjual_dtrbmasuk': hrgjual_dtrbmasuk,
+			    'no_batch': no_batch,
+			    'exp_date': exp_date
+			},
                 success: function(data) {
                 //alert('Tambah data detail berhasil');
 				document.getElementById("id_barang").value = "";
@@ -842,6 +871,7 @@ switch($_GET['act']){
 				document.getElementById("qty_dtrbmasuk").value = "";
 				document.getElementById("sat_dtrbmasuk").value = "";
 				document.getElementById("hrgsat_dtrbmasuk").value = "";
+				document.getElementById("hrgjual_dtrbmasuk").value = "";
 				tabel_detail();
             }
 		});

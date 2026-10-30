@@ -179,6 +179,14 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                         var currentPage = table.page() + 1;
                         location.href = '?module=trbmasuk&act=ubah&id='+id+'&lastPage=trbmasuk&page='+currentPage; 
                     });
+                    
+                    // Button Print
+                    $('#tes tbody').on('click', '#btn_print', function () {
+                        var id = $(this).data('id');
+                        var kd_trbmasuk = $(this).data('kd_trbmasuk');
+                        var currentPage = table.page() + 1;
+                        window.open('modul/mod_laporan/faktur_trbmasuk.php?kd_trbmasuk='+kd_trbmasuk, '_blank') 
+                    });
 				});
 			</script>
 		<?php
@@ -895,8 +903,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 						document.getElementById('qty_dtrbmasuk').value = qty_default;
 						document.getElementById('sat_dtrbmasuk').value = data.sat_barang;
-						document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(data.hrgjual_barang);
-						document.getElementById('hrgsat_dtrbmasuk').value = formatRupiah(data.hrgsat_barang);
+						document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(Math.round(data.hrgjual_barang));
+						document.getElementById('hrgsat_dtrbmasuk').value = formatRupiah(Math.round(data.hrgsat_barang));
 						document.getElementById('indikasi').value = data.indikasi;
 					}
 
@@ -927,8 +935,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 				document.getElementById('qty_dtrbmasuk').value = qty_default;
 				document.getElementById('sat_dtrbmasuk').value = data.sat_barang;
-				document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(data.hrgjual_barang);
-				document.getElementById('hrgsat_dtrbmasuk').value = formatRupiah(data.hrgsat_barang);
+				document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(Math.round(data.hrgjual_barang));
+				document.getElementById('hrgsat_dtrbmasuk').value = formatRupiah(Math.round(data.hrgsat_barang));
 				document.getElementById('indikasi').value = data.indikasi;
 			}
 
@@ -1012,9 +1020,10 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 		document.getElementById('stok_barang').value = stok_barang;
 		document.getElementById('qty_dtrbmasuk').value = qty_default;
 		document.getElementById('sat_dtrbmasuk').value = sat_barang;
-		document.getElementById('hrgsat_dtrbmasuk').value = formatRupiah(hrgsat_barang);
-		document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(hrgjual_barang);
+		document.getElementById('hrgsat_dtrbmasuk').value = formatRupiah(Math.round(hrgsat_barang));
+		document.getElementById('hrgjual_dtrbmasuk').value = formatRupiah(Math.round(hrgjual_barang));
 		//hilangkan modal
+		
 		$(".close").click();
 
 	});

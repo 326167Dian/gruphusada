@@ -127,7 +127,7 @@ color: white;
 									 </div>
 								</div>
 								
-								<div class='text-right'>
+								<div class='text-right' style='display:none'>
 									<label class='col-sm-6 control-label'>DISKON (% & Nominal)</label>        		
 									 <div class='col-sm-2'>
 										<input type='text' name='diskon' id='diskon' value='' class='form-control'  style='font-size: 18px; color: #000000; font-weight: bold; text-align: right;' autocomplete='off'>
@@ -137,7 +137,7 @@ color: white;
 									 </div>
 								</div>			
 													
-								<div class='text-right'>
+								<div class='text-right' style='display:none'>
 									<label class='col-sm-6 control-label'>PPN (%)</label>        		
 									 <div class='col-sm-6'>
 										<input type='text' name='ppn_trkasir' id='ppn_trkasir' value='' class='form-control'  style='font-size: 18px; color: #000000; font-weight: bold; text-align: right;' autocomplete='off'>

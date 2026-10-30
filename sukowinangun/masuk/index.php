@@ -42,7 +42,8 @@ if (!empty($_SESSION['namauser']) and !empty($_SESSION['passuser'])) {
     <div class="login-box-body">
       <div class="container-fluid text-center">
         <img align="center" src="images/mysifalogo.png">
-        <h3 style="text-align:center"><marquee><b>Apotek Anugrah Suko Winangun</b></marquee></h3>
+        <!--<h3 style="text-align:center"><marquee><b>Apotek Anugrah Sukowinangun Baru</b></marquee></h3>-->
+        <h3 style="text-align:center"><marquee><b>Apotek Anugrah Sukowinangun</b></marquee></h3>
       </div>
 
 
@@ -73,7 +74,7 @@ if (!empty($_SESSION['namauser']) and !empty($_SESSION['passuser'])) {
     </div><!-- /.login-box-body -->
 <center>BEKASI 05 Desember 2024</center>
   </div><!-- /.login-box -->
-  
+ 
   <!-- jQuery 2.1.4 -->
   <script src="../../plugins/jQuery/jQuery-2.1.4.min.js"></script>
   <!-- Bootstrap 3.3.5 -->

@@ -74,11 +74,11 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                                 <a class='btn  btn-primary' onclick='javascript:tampil()' target='_blank'>
                                     TAMPIL
                                 </a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-
+                                <?php if($_SESSION['level'] == 'pemilik'): ?>
                                 <a class='btn  btn-success' onclick='javascript:exportExcel()' target='_blank'>
                                     <i class='fa fa-fw fa-file-excel-o'></i>EXPORT EXCEL
                                 </a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-
+                                <?php endif; ?>    
                                 <a class='btn  btn-danger' href='?module=home'>KEMBALI</a>
                             </div>
                         </div>
@@ -148,10 +148,12 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
                     <hr>
 
+                    <?php if($_SESSION['level'] == 'pemilik'):?>
                     <CENTER><strong>REKAP STOK OPNAME</strong><br>
                     <a  class ='btn  btn-success btn-flat' href='modul/mod_laporan/cetak_rekap_stokopname.php?jenisobat=<?=$_GET['jenisobat']?>&tgl=<?=$_GET['tgl']?>' target="_blank"><i class="fa fa-print"></i>&nbsp; Cetak</a></CENTER>
 					<hr>
                     <div id="tabel_stokopname_rekap"></div>
+                    <?php endif; ?>
                 </div>
 
             </div>

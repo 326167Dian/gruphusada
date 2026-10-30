@@ -88,7 +88,7 @@ while ($r1 = mysqli_fetch_array($header)) {
 		if ($lihat['selisih'] > 0) {
 			$total_lebih += $lihat['ttl_hrgbrg'];
 		}
-
+		
 		$pdf->Cell(1, 0.5, $no2, 1, 0, 'C');
 		$pdf->Cell(3.5, 0.5, $lihat['nama_lengkap'], 1, 0, 'C');
 // 		$pdf->Cell(1.5, 0.5, $lihat['jenisobat'], 1, 0, 'L');
@@ -97,8 +97,8 @@ while ($r1 = mysqli_fetch_array($header)) {
 		$pdf->Cell(1.5, 0.5, $lihat['sat_barang'], 1, 0, 'C');
 
 		if($tgl_awal>$start_date){
-        $pdf->SetTextColor(255, 0, 0);
-		$pdf->Cell(2, 0.5, $lihat['exp_date'], 1, 0, 'C');}
+            $pdf->SetTextColor(255, 0, 0);
+    		$pdf->Cell(2, 0.5, $lihat['exp_date'], 1, 0, 'C');}
 		else {
             $pdf->SetTextColor(0, 0, 0);
             $pdf->Cell(2, 0.5, $lihat['exp_date'], 1, 0, 'C');

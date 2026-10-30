@@ -72,11 +72,13 @@ while ($row = mysqli_fetch_assoc($query)) {
                 <a href='#' id='btn_edit' data-id='$row[id_trkasir]' class='glyphicon glyphicon-pencil'>&nbsp;</a>
                 <a href='#' id='btn_print' data-id='$row[id_trkasir]' data-kd_trkasir='$row[kd_trkasir]' class='glyphicon glyphicon-print' >&nbsp;</a>
                 <a href='#' id='btn_hapus' data-id='$row[id_trkasir]' class='glyphicon glyphicon-remove'>&nbsp;</a>
+                <a href='modul/mod_laporan/kwitansi.php?kd_trkasir=". $row['kd_trkasir'] ."' target='_blank' title='KWITANSI' class='btn btn-warning btn-xs'>KWITANSI</a>
                 <a href='#' id='btn_faktur' data-id='$row[id_trkasir]' data-kd_trkasir='$row[kd_trkasir]' class='btn btn-primary btn-xs'>FAKTUR</a>
                 ";
     } else {
         $aksi = "
                 <a href='#' id='btn_print' data-id='$row[id_trkasir]' data-kd_trkasir='$row[kd_trkasir]' class='glyphicon glyphicon-print' >&nbsp;</a>
+                <a href='modul/mod_laporan/kwitansi.php?kd_trkasir=". $row['kd_trkasir'] ."' target='_blank' title='KWITANSI' class='btn btn-warning btn-xs'>KWITANSI</a>
                 <a href='#' id='btn_faktur' data-id='$row[id_trkasir]' data-kd_trkasir='$row[kd_trkasir]' class='btn btn-primary btn-xs'>FAKTUR</a>
                 ";
     }

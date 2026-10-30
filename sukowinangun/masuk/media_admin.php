@@ -217,7 +217,7 @@ if ($_SESSION['login'] == 0) {
 							</li>
 
 
-
+                            <?php if ($_SESSION['level'] == "pemilik"): ?>
 							<li class="treeview">
 								<a href="#">
 									<i class="glyphicon glyphicon-file"></i> <span>Laporan</span> <i class="fa fa-angle-left pull-right"></i>
@@ -233,9 +233,10 @@ if ($_SESSION['login'] == 0) {
 									<?php if ($_SESSION['neraca'] == "Y") { ?><li><a href="?module=neraca"><i class='glyphicon glyphicon-print'></i> Neraca Laba Rugi</a></li><?php } ?>
 									<?php if ($_SESSION['level'] == "pemilik" and $_SESSION['komisi'] == "Y") { ?><li><a href="?module=lapkomisi"><i class='glyphicon glyphicon-print'></i> Komisi Pegawai</a></li><?php } ?>
 									<?php if ($_SESSION['level'] == "pemilik") { ?><li><a href="?module=evaluasi"><i class='glyphicon glyphicon-print'></i> Evaluasi Pegawai</a></li><?php } ?>
-									<?php if ($_SESSION['level'] == "pemilik" || "petugas") { ?><li><a href="?module=lapstokopname"><i class='glyphicon glyphicon-print'></i> Stok Opname</a></li><?php } ?>
+									<?php if ($_SESSION['level'] == "pemilik") { ?><li><a href="?module=lapstokopname"><i class='glyphicon glyphicon-print'></i> Stok Opname</a></li><?php } ?>
 								</ul>
 							</li>
+							<?php endif; ?>
 
 						</ul>
 					</section>
@@ -326,6 +327,13 @@ if ($_SESSION['login'] == 0) {
 			"info": true,
 			"autoWidth": true
 		});
+		$("#example100").DataTable({
+		    "aLengthMenu": [
+                [10, 50, 100, -1],
+                [10, 50, 100, "All"]
+            ],
+            "iDisplayLength": 100
+		});
 	});
 
 	function formatRupiah(num) {
@@ -336,6 +344,16 @@ if ($_SESSION['login'] == 0) {
 		return rupiahFormat;
 	}
 
+    document.addEventListener('keydown', function (event) {
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'p') {
+            event.preventDefault();
+            event.stopPropagation();
+    
+            // alert('Fitur Print dinonaktifkan.');
+    
+            return false;
+        }
+    });
 // 	setTimeout(function() {
 // 		$.ajax({
 // 			type: 'post',
