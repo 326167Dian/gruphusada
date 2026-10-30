@@ -1616,7 +1616,7 @@ case "edit":
             trkasir_detail.no_batch,
             trkasir_detail.exp_date
             FROM trkasir_detail join trkasir on (trkasir_detail.kd_trkasir=trkasir.kd_trkasir)
-            WHERE trkasir_detail.kd_barang ='$jokul' ORDER BY trkasir.tgl_trkasir DESC";
+            WHERE trkasir_detail.kd_barang ='$jokul' ORDER BY trkasir_detail.id_dtrkasir DESC";
             $penjualan = mysqli_query($GLOBALS["___mysqli_ston"], $jual);
         
         ?>
@@ -1630,7 +1630,7 @@ case "edit":
                 </div>
 
                 <div class='box-body'>
-                    <table id="example1" class="table table-condensed table-bordered table-striped table-hover">
+                    <table id="riwayatPenjualan" class="table table-condensed table-bordered table-striped table-hover">
                         <thead>
                             <tr>
                                 <th style="text-align: center; ">ID</th>
@@ -1686,6 +1686,13 @@ case "edit":
                 </div>
 
             </div>
+            <script>
+                $(function() {
+                    $('#riwayatPenjualan').DataTable({
+                        order: [[0, 'desc']]
+                    });
+                });
+            </script>
             <?php
 
             $beli = "SELECT trbmasuk.tgl_trbmasuk,
