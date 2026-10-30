@@ -491,31 +491,43 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 											<input type=text name='sat_dtrkasir' id='sat_dtrkasir' class='form-control' autocomplete='off' disabled>
 										</div>
 										
-									<label class='col-sm-4 control-label'>Harga</label>        		
+									<label class='col-sm-4 control-label'>Harga</label>
 										<div class='col-sm-7'>
 											<input type=text name='hrgjual_dtrkasir' id='hrgjual_dtrkasir' class='form-control' autocomplete='off' $disabled>
 										</div>
-										
-									<label class='col-sm-4 control-label'>Komposisi dan Indikasi</label>        		
+
+									<label class='col-sm-4 control-label'>No. Batch</label>
 										<div class='col-sm-7'>
-											<input type=text name='indikasi' id='indikasi' class='form-control' autocomplete='off'>
+										<div class='input-group'>
+											<input type=text name='no_batch' id='no_batch' class='form-control' autocomplete='off' placeholder='kosongkan untuk otomatis FEFO'>
+											<div class='input-group-addon'>
+												<button type=button id='btnCariBatch'><span class='glyphicon glyphicon-search'></span></button>
+											</div>
+										</div>
+										</div>
+
+									<label class='col-sm-4 control-label'>Tgl. Kadaluarsa</label>
+										<div class='col-sm-7'>
+											<input type=text name='exp_date_display' id='exp_date_display' class='form-control' autocomplete='off' placeholder='otomatis mengikuti batch' disabled>
+										</div>
+
+										<input type='hidden' name='indikasi' id='indikasi'>
 											</p>
 												<div class='buttons'>
 													<button type='button' class='btn btn-success right-block' onclick='simpan_detail();'>SIMPAN DETAIL [F1]</button>
 												</div>
-										</div>
-										
+
 								</div>
-								
+
 						</div>
 						</form>
-							  
-				</div> 
-				
+
+				</div>
+
 				<div id='tabeldata'>
-				
+
 			</div>";
-			
+
 			}
 
 			break;
@@ -1207,6 +1219,34 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 </div>
 <!-- end modal item -->
 
+<!-- Modal batch -->
+<div id="ModalBatch" class="modal fade" role="dialog">
+	<div class="modal-dialog" style="width:60%">
+		<div class="modal-content table-responsive">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">PILIH NO. BATCH (Urut FEFO - ED Terdekat)</h4>
+			</div>
+			<div class="modal-body table-responsive">
+				<table id="tabel_batch" class="table table-condensed table-bordered table-striped table-hover">
+					<thead>
+						<tr class="judul-table">
+							<th style="vertical-align: middle; background-color: #008000; color: white; text-align: center; ">No</th>
+							<th style="vertical-align: middle; background-color: #008000; color: white; text-align: left; ">No. Batch</th>
+							<th style="vertical-align: middle; background-color: #008000; color: white; text-align: center; ">Exp. Date</th>
+							<th style="vertical-align: middle; background-color: #008000; color: white; text-align: right; ">Sisa Stok</th>
+							<th style="vertical-align: middle; background-color: #008000; color: white; text-align: center; ">Pilih</th>
+						</tr>
+					</thead>
+					<tbody id="tbody_batch">
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- end modal batch -->
+
 <script type="text/javascript">
 	$(function() {
 		$(".datepicker").datepicker({
@@ -1386,6 +1426,10 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 		document.getElementById('indikasi').value = indikasi;
 		document.getElementById('komisi_dtrkasir').value = komisi_dtrkasir;
 		$('#jenisobat').val(jenisobat).change();
+		if (document.getElementById('no_batch')) {
+			document.getElementById('no_batch').value = '';
+			document.getElementById('exp_date_display').value = '';
+		}
 
 		// $.ajax({
 		// 	url: 'modul/mod_trkasir/gettabel_barang.php',
@@ -1432,15 +1476,16 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 		let jenisobat           = document.getElementById('jenisobat').value;
         let komisi_dtrkasir     = document.getElementById('komisi_dtrkasir').value;
         let id_admin            = document.getElementById('id_admin').value;
+        let no_batch            = document.getElementById('no_batch') ? document.getElementById('no_batch').value : '';
 
 		if (nmbrg_dtrkasir == "") {
 			alert('Belum ada Item terpilih');
 		} else if (qty_dtrkasir == "") {
 			alert('Qty tidak boleh kosong');
-    	} 
+    	}
 //      	else if (parseInt(stok_barang) < parseInt(qty_dtrkasir)) {
 //   			alert('Stok barang tidak mencukupi');
-//  		} 
+//  		}
 		else {
 
 
@@ -1460,8 +1505,14 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					'jenisobat': jenisobat,
 					'komisi_dtrkasir': komisi_dtrkasir,
 					'id_admin': id_admin,
+					'no_batch': no_batch,
 				},
+				dataType: 'json',
 				success: function(data) {
+					if (data && data.success === false) {
+						alert(data.message || 'Gagal menyimpan detail');
+						return;
+					}
 					//alert('Tambah data detail berhasil');
 					document.getElementById("id_barang").value = "";
 					document.getElementById("kd_barang").value = "";
@@ -1473,6 +1524,10 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					document.getElementById("komisi_dtrkasir").value = "";
 					document.getElementById("jenisobat").value = "";
 				// 	$('#jenisobat').val().change();
+					if (document.getElementById('no_batch')) {
+						document.getElementById('no_batch').value = '';
+						document.getElementById('exp_date_display').value = '';
+					}
 					tabel_detail();
 
 					let displayStok = stok_barang - qty_dtrkasir;
@@ -1600,10 +1655,55 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				document.getElementById('sat_dtrkasir').value = datab.sat_barang;
 				document.getElementById('hrgjual_dtrkasir').value = datab.hrgjual_barang;
 				document.getElementById('indikasi').value = datab.indikasi;
+				if (document.getElementById('no_batch')) {
+					document.getElementById('no_batch').value = '';
+					document.getElementById('exp_date_display').value = '';
+				}
 
 			});
 
 		}
+	});
+
+	//cari no batch
+	$(document).on('click', '#btnCariBatch', function() {
+		var kd_barang = document.getElementById('kd_barang').value;
+		if (kd_barang == "") {
+			alert('Pilih barang terlebih dahulu');
+			return;
+		}
+
+		$.ajax({
+			url: 'modul/mod_trkasir/get_batch_list.php',
+			type: 'post',
+			dataType: 'json',
+			data: {
+				'kd_barang': kd_barang
+			}
+		}).done(function(list) {
+			var rows = '';
+			if (list && list.length > 0) {
+				$.each(list, function(i, b) {
+					rows += "<tr>" +
+						"<td align=center>" + (i + 1) + "</td>" +
+						"<td>" + b.no_batch + "</td>" +
+						"<td align=center>" + b.exp_date_display + "</td>" +
+						"<td align=right>" + b.sisa + "</td>" +
+						"<td align=center><button type='button' class='btn btn-xs btn-info btn-pilih-batch' data-no_batch='" + b.no_batch + "' data-exp_date_display='" + b.exp_date_display + "'><i class='fa fa-check'></i></button></td>" +
+						"</tr>";
+				});
+			} else {
+				rows = "<tr><td colspan='5' align=center>Tidak ada batch tersedia untuk barang ini</td></tr>";
+			}
+			$('#tbody_batch').html(rows);
+			$('#ModalBatch').modal('show');
+		});
+	});
+
+	$(document).on('click', '.btn-pilih-batch', function() {
+		document.getElementById('no_batch').value = $(this).data('no_batch');
+		document.getElementById('exp_date_display').value = $(this).data('exp_date_display');
+		$('#ModalBatch').modal('hide');
 	});
 
 

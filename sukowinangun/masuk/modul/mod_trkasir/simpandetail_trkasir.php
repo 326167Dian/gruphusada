@@ -28,15 +28,71 @@ $qty_dtrkasir = "1";
 
 }
 
+// Resolusi No. Batch: kalau dipilih manual pakai batch itu (gagal kalau sisanya kurang),
+// kalau dikosongkan pakai FEFO (batch dengan ED paling dekat yang sisanya cukup).
+$no_batch = isset($_POST['no_batch']) ? trim($_POST['no_batch']) : '';
+$resolvedExpDate = null;
+
+if ($id_dtrkasir == "" || $id_dtrkasir == null) {
+    $kd_barang_esc = mysqli_real_escape_string($conn, $kd_barang);
+
+    if ($no_batch !== '') {
+        $no_batch_esc = mysqli_real_escape_string($conn, $no_batch);
+        $qBatch = mysqli_query($conn, "SELECT tb.exp_date,
+                SUM(tb.qty_dtrbmasuk) - COALESCE((SELECT SUM(td.qty_dtrkasir) FROM trkasir_detail td WHERE td.kd_barang='$kd_barang_esc' AND td.no_batch='$no_batch_esc'), 0) AS sisa
+            FROM trbmasuk_detail tb
+            WHERE tb.kd_barang='$kd_barang_esc' AND tb.no_batch='$no_batch_esc'
+            GROUP BY tb.exp_date");
+        $rBatch = mysqli_fetch_array($qBatch);
+
+        if (!$rBatch || $rBatch['sisa'] < $qty_dtrkasir) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => "Stok batch $no_batch tidak mencukupi"]);
+            exit;
+        }
+
+        $expRaw = $rBatch['exp_date'];
+        $resolvedExpDate = (!empty($expRaw) && $expRaw != '0000-00-00' && $expRaw != '1970-01-01') ? $expRaw : null;
+    } else {
+        $qList = mysqli_query($conn, "SELECT tb.no_batch, tb.exp_date,
+                SUM(tb.qty_dtrbmasuk) - COALESCE(jual.terjual, 0) AS sisa
+            FROM trbmasuk_detail tb
+            LEFT JOIN (
+                SELECT no_batch, SUM(qty_dtrkasir) AS terjual
+                FROM trkasir_detail
+                WHERE kd_barang='$kd_barang_esc' AND no_batch IS NOT NULL AND no_batch != ''
+                GROUP BY no_batch
+            ) jual ON jual.no_batch = tb.no_batch
+            WHERE tb.kd_barang='$kd_barang_esc' AND tb.no_batch IS NOT NULL AND tb.no_batch != ''
+            GROUP BY tb.no_batch, tb.exp_date
+            HAVING sisa > 0
+            ORDER BY (tb.exp_date IS NULL OR tb.exp_date IN ('0000-00-00','1970-01-01')) ASC, tb.exp_date ASC");
+
+        while ($rB = mysqli_fetch_array($qList)) {
+            if ($rB['sisa'] >= $qty_dtrkasir) {
+                $no_batch = $rB['no_batch'];
+                $expRaw = $rB['exp_date'];
+                $resolvedExpDate = (!empty($expRaw) && $expRaw != '0000-00-00' && $expRaw != '1970-01-01') ? $expRaw : null;
+                break;
+            }
+        }
+        // Kalau tidak ada 1 batch pun yang sisanya cukup untuk seluruh qty,
+        // no_batch dibiarkan kosong (tidak diatribusikan ke batch manapun).
+    }
+}
+
+$no_batch_sql = ($no_batch !== '') ? "'" . mysqli_real_escape_string($conn, $no_batch) . "'" : "NULL";
+$exp_date_sql = $resolvedExpDate ? "'" . mysqli_real_escape_string($conn, $resolvedExpDate) . "'" : "NULL";
+
 mysqli_begin_transaction($conn);
 $success = true;
 
 if($id_dtrkasir == "" || $id_dtrkasir == null){
 
-//cek apakah barang sudah ada
+//cek apakah barang dengan batch yang sama sudah ada (batch beda = baris baru)
 $cekdetail=mysqli_query($conn, "SELECT id_barang, kd_barang, kd_trkasir, id_dtrkasir, qty_dtrkasir
 FROM trkasir_detail
-WHERE kd_barang='$kd_barang' AND kd_trkasir='$kd_trkasir'");
+WHERE kd_barang='$kd_barang' AND kd_trkasir='$kd_trkasir' AND IFNULL(no_batch,'') = IFNULL($no_batch_sql,'')");
 
 $ketemucekdetail=mysqli_num_rows($cekdetail);
 $rcek=mysqli_fetch_array($cekdetail);
@@ -88,6 +144,8 @@ $success = (bool) mysqli_query($conn, "INSERT INTO trkasir_detail(kd_trkasir,
 										nmbrg_dtrkasir,
 										qty_dtrkasir,
 										sat_dtrkasir,
+										no_batch,
+										exp_date,
                                         profit,
 										hrgjual_dtrkasir,
 										hrgttl_dtrkasir,
@@ -98,6 +156,8 @@ $success = (bool) mysqli_query($conn, "INSERT INTO trkasir_detail(kd_trkasir,
 										'$nmbrg_dtrkasir',
 										'$qty_dtrkasir',
 										'$sat_dtrkasir',
+										$no_batch_sql,
+										$exp_date_sql,
 										'$profit',
 										'$hrgjual_dtrkasir',
 										'$ttlharga',
@@ -181,4 +241,6 @@ if ($success) {
 } else {
 	mysqli_rollback($conn);
 }
-?>
+
+header('Content-Type: application/json');
+echo json_encode(['success' => $success, 'message' => $success ? '' : 'Gagal menyimpan detail', 'no_batch' => $no_batch]);
