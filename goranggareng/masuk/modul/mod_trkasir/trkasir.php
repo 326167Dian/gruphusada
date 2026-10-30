@@ -1730,6 +1730,13 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 		document.getElementById('no_batch').value = $(this).data('no_batch');
 		document.getElementById('exp_date_display').value = $(this).data('exp_date_display');
 		$('#ModalBatch .close').trigger('click');
+		//failsafe: backdrop modal kadang tidak ikut hilang (transisi CSS-nya tidak kelar),
+		//sehingga menutupi seluruh halaman dan bikin semua tombol lain tidak bisa diklik.
+		setTimeout(function() {
+			$('#ModalBatch').removeClass('in').css('display', 'none');
+			$('.modal-backdrop').remove();
+			$('body').removeClass('modal-open');
+		}, 300);
 	});
 
 
