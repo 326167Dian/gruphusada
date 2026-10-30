@@ -862,6 +862,9 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
             $kdunik = date('dmyHis');
             $kdtransaksi = "MINUS-" . $kdunik;
             $petugas = $_SESSION['namalengkap'];
+            $conn = $GLOBALS["___mysqli_ston"];
+            mysqli_begin_transaction($conn);
+            $success = true;
 
             $sominus = $db->query("SELECT * FROM stok_opname 
                 WHERE ttl_hrgbrg<0 and shift='$shift' and tgl_stokopname between '$tgl_awal' and '$tgl_akhir' ");
@@ -869,44 +872,96 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
             $waktu = date('Y-m-d H:i:s', time());
             
             $ttlharga = 0;
-            while ($so = $sominus->fetch_array()) {
+            while ($success && ($so = $sominus->fetch_array())) {
                 $barang = $db->query("select nm_barang,sat_barang,hrgjual_barang from barang where id_barang='$so[id_barang]' ");
                 $brg = $barang->fetch_array();
                 $qtymin = abs($so['selisih']);
                 $hrgtot = $brg['hrgjual_barang'] * $qtymin;
                 $ttlharga += $hrgtot;
                 
-                mysqli_query($GLOBALS["___mysqli_ston"], "insert into trkasir_detail(
-                                kd_trkasir,
-                                id_barang,
-                                kd_barang,
-                                nmbrg_dtrkasir,
-                                qty_dtrkasir,
-                                sat_dtrkasir,
-                                hrgjual_dtrkasir,
-                                hrgttl_dtrkasir,
-                                waktu)
-                                values (
-                                '$kdtransaksi',
-                                '$so[id_barang]',
-                                '$so[kd_barang]',
-                                '$brg[nm_barang]',
-                                '$qtymin',
-                                '$brg[sat_barang]',
-                                '$brg[hrgjual_barang]',
-                                '$hrgtot',
-                                '$waktu')
-               ");
+                $kdBarangEscaped = mysqli_real_escape_string($conn, $so['kd_barang']);
+                $batchQuery = mysqli_query($conn, "SELECT tb.no_batch, tb.exp_date,
+                        SUM(tb.qty_dtrbmasuk) - COALESCE(jual.terjual, 0) AS sisa
+                    FROM trbmasuk_detail tb
+                    LEFT JOIN (
+                        SELECT no_batch, SUM(qty_dtrkasir) AS terjual
+                        FROM trkasir_detail
+                        WHERE kd_barang = '$kdBarangEscaped'
+                          AND no_batch IS NOT NULL AND no_batch != ''
+                        GROUP BY no_batch
+                    ) jual ON jual.no_batch = tb.no_batch
+                    WHERE tb.kd_barang = '$kdBarangEscaped'
+                      AND tb.no_batch IS NOT NULL AND tb.no_batch != ''
+                    GROUP BY tb.no_batch, tb.exp_date
+                    HAVING sisa > 0
+                    ORDER BY (tb.exp_date IS NULL OR tb.exp_date IN ('0000-00-00','1970-01-01')) ASC,
+                             tb.exp_date ASC, tb.no_batch ASC");
+
+                if (!$batchQuery) {
+                    $success = false;
+                    break;
+                }
+
+                $qtyBelumDialokasikan = $qtymin;
+                while ($success && $qtyBelumDialokasikan > 0 && ($batch = mysqli_fetch_assoc($batchQuery))) {
+                    $qtyBatch = min($qtyBelumDialokasikan, (float) $batch['sisa']);
+                    if ($qtyBatch <= 0) {
+                        continue;
+                    }
+
+                    $noBatchEscaped = mysqli_real_escape_string($conn, $batch['no_batch']);
+                    $expDate = $batch['exp_date'];
+                    $expDateSql = (!empty($expDate) && $expDate != '0000-00-00' && $expDate != '1970-01-01')
+                        ? "'" . mysqli_real_escape_string($conn, $expDate) . "'"
+                        : "NULL";
+                    $hargaBatch = $brg['hrgjual_barang'] * $qtyBatch;
+                    $namaBarangEscaped = mysqli_real_escape_string($conn, $brg['nm_barang']);
+                    $satuanEscaped = mysqli_real_escape_string($conn, $brg['sat_barang']);
+
+                    $success = (bool) mysqli_query($conn, "INSERT INTO trkasir_detail(
+                                kd_trkasir, id_barang, kd_barang, nmbrg_dtrkasir,
+                                qty_dtrkasir, sat_dtrkasir, no_batch, exp_date,
+                                hrgjual_dtrkasir, hrgttl_dtrkasir, waktu)
+                            VALUES (
+                                '$kdtransaksi', '$so[id_barang]', '$kdBarangEscaped',
+                                '$namaBarangEscaped', '$qtyBatch', '$satuanEscaped',
+                                '$noBatchEscaped', $expDateSql,
+                                '$brg[hrgjual_barang]', '$hargaBatch', '$waktu')");
+
+                    $qtyBelumDialokasikan -= $qtyBatch;
+                }
+
+                if ($success && $qtyBelumDialokasikan > 0) {
+                    $namaBarangEscaped = mysqli_real_escape_string($conn, $brg['nm_barang']);
+                    $satuanEscaped = mysqli_real_escape_string($conn, $brg['sat_barang']);
+                    $hargaSisa = $brg['hrgjual_barang'] * $qtyBelumDialokasikan;
+                    $success = (bool) mysqli_query($conn, "INSERT INTO trkasir_detail(
+                                kd_trkasir, id_barang, kd_barang, nmbrg_dtrkasir,
+                                qty_dtrkasir, sat_dtrkasir, no_batch, exp_date,
+                                hrgjual_dtrkasir, hrgttl_dtrkasir, waktu)
+                            VALUES (
+                                '$kdtransaksi', '$so[id_barang]', '$kdBarangEscaped',
+                                '$namaBarangEscaped', '$qtyBelumDialokasikan',
+                                '$satuanEscaped', NULL, NULL,
+                                '$brg[hrgjual_barang]', '$hargaSisa', '$waktu')");
+                }
                 $no1++;
             }
 
             $tglharini = date('Y-m-d');
-            $cekshift = mysqli_query($GLOBALS["___mysqli_ston"], "select * from waktukerja where tanggal = '$tglharini'
+            if ($success) {
+                $cekshift = mysqli_query($conn, "select * from waktukerja where tanggal = '$tglharini'
             and status='ON' ");
-            $sshift = mysqli_fetch_array($cekshift);
-            $shiftin = $sshift['shift'];
+                $sshift = $cekshift ? mysqli_fetch_array($cekshift) : false;
+                if (!$sshift) {
+                    $success = false;
+                } else {
+                    $shiftin = $sshift['shift'];
+                }
+            }
 
-            mysqli_query($GLOBALS["___mysqli_ston"], "insert into trkasir(
+            if ($success) {
+                $success = (bool) mysqli_query($conn, "insert into trkasir(
                                 kd_trkasir,
                                 petugas,
                                 shift,
@@ -922,10 +977,19 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                                 'SINKRONISASI MINUS',
                                 '1',
                                 '$ttlharga')
-            ");
+                ");
+            }
 
-            mysqli_query($GLOBALS["___mysqli_ston"], "INSERT IGNORE INTO kartu_stok(kode_transaksi, tgl_sekarang) VALUES('$kdtransaksi','$waktu')");
-            echo '<script>window.location.href = "?module=trkasir";</script>';
+            if ($success) {
+                $success = (bool) mysqli_query($conn, "INSERT IGNORE INTO kartu_stok(kode_transaksi, tgl_sekarang) VALUES('$kdtransaksi','$waktu')");
+            }
+            if ($success) {
+                mysqli_commit($conn);
+                echo '<script>window.location.href = "?module=trkasir";</script>';
+            } else {
+                mysqli_rollback($conn);
+                echo '<script>alert("Sinkronisasi gagal, transaksi dibatalkan !");window.history.back();</script>';
+            }
             // echo '<script>window.history.back();</script>';
             break;
         case "sinkron_plus":
