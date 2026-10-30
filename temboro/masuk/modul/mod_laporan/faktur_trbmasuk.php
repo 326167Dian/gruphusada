@@ -119,12 +119,12 @@ else {
     $pdf->ln(0.2);
     $pdf->SetX(0.6);
     $pdf->SetFont('Arial', '', 9);
-    $pdf->Cell(20, 0.2, $r1['nm_pelanggan'], 0, 1, 'L');
+    $pdf->Cell(20, 0.2, $r1['nm_supplier'], 0, 1, 'L');
 
     $pdf->ln(0.2);
     $pdf->SetX(0.6);
     $pdf->SetFont('Arial', '', 9);
-    $pdf->Cell(3.3, 0.2, strip_tags($r1['alamat_pelanggan']), 0, 1, 'L');
+    $pdf->Cell(3.3, 0.2, strip_tags($r1['alamat_trbmasuk']), 0, 1, 'L');
 
     $pdf->ln(0.3);
     $pdf->SetX(0.6);
@@ -233,12 +233,11 @@ else {
 
     }
 
-    if ($r1['id_carabayar'] == 1) {
+    if ($r1['carabayar'] == 'LUNAS' || $r1['carabayar'] == 'TUNAI') {
         $dana = format_rupiah($niltransaksi);
-    } elseif ($r1['id_carabayar'] == 2)
-        {$dana = 'Menunggu Validasi'; } 
-      elseif ($r1['id_carabayar'] == 3)
-       {$dana = 'Belum diterima'; }
+    } else {
+        $dana = 'Belum diterima';
+    }
 
     $pdf->SetX(0.6);
     $pdf->SetFont('Arial', 'B', 9);
@@ -261,7 +260,7 @@ else {
     $pdf->SetFont('Arial', '', 9);
     $pdf->Cell(2, 0.4, 'Pembayaran', 'L', 0, 'L');
     $pdf->Cell(0.3, 0.4, ':', 0, 0, 'L');
-    $pdf->Cell(7.7, 0.4, $r1['nm_carabayar'], 'R', 1, 'L');
+    $pdf->Cell(7.7, 0.4, $r1['carabayar'], 'R', 1, 'L');
 
     $pdf->ln(0.1);
     $pdf->SetX(0.6);
@@ -293,7 +292,7 @@ else {
    
 
 
-    $pdf->Output("faktur_penjualan_" . $r1['nm_pelanggan'] . $r1['tgl_trkasir'], "I");
+    $pdf->Output("faktur_barangmasuk_" . $r1['nm_supplier'] . $r1['tgl_trbmasuk'], "I");
 }
 ?>
 
