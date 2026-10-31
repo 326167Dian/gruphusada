@@ -105,9 +105,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 							$no = 1;
 							while ($min = $admin->fetch_array()) {
-								$kom = $db->query("select sum(komisi) as tambahan from trkasir_detail join trkasir 
-															on(trkasir_detail.kd_trkasir=trkasir.kd_trkasir) 
-															where trkasir_detail.idadmin='$min[id_admin]' and trkasir.tgl_trkasir between '$tgl_awal' and '$tgl_akhir' ");
+								$kom = $db->query("select sum(ttl_komisi) as tambahan from komisi_pegawai
+															where id_admin='$min[id_admin]' and tgl_komisi between '$tgl_awal' and '$tgl_akhir' ");
 								$misi = $kom->fetch_array();
 								$pk = $misi['tambahan'];
 
@@ -195,13 +194,13 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 						</thead>
 						<tbody>
 							<?php
-							$person = $db->query("select * from trkasir_detail join trkasir 
-															on(trkasir_detail.kd_trkasir=trkasir.kd_trkasir) 
-															where trkasir_detail.idadmin='$admin' and trkasir_detail.komisi!=0 and trkasir.tgl_trkasir between '$tgl_awal' and '$tgl_akhir' ");
+							$person = $db->query("select kp.ttl_komisi, td.nmbrg_dtrkasir, td.qty_dtrkasir from komisi_pegawai kp
+															join trkasir_detail td on kp.id_dtrkasir = td.id_dtrkasir
+															where kp.id_admin='$admin' and kp.ttl_komisi!=0 and kp.tgl_komisi between '$tgl_awal' and '$tgl_akhir' ");
 							$no2 = 1;
 							while ($per = $person->fetch_array()) {
-								$satuan = format_rupiah($per['komisi'] / $per['qty_dtrkasir']);
-								$subttl = format_rupiah($per['komisi']);
+								$satuan = format_rupiah($per['ttl_komisi'] / $per['qty_dtrkasir']);
+								$subttl = format_rupiah($per['ttl_komisi']);
 								echo "
 																<tr>
 																<td width='30'>$no2</td>
@@ -212,7 +211,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 																</tr>
 																";
 								$no2++;
-								$kumulatif[] = $per['komisi'];
+								$kumulatif[] = $per['ttl_komisi'];
 							}
 
 							?>
