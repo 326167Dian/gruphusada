@@ -1,5 +1,10 @@
 <?php
+session_start();
 include "../../../configurasi/koneksi.php";
+
+if (!isset($_SESSION['level']) || $_SESSION['level'] != 'pemilik') {
+	exit;
+}
 
 $conn = $GLOBALS["___mysqli_ston"];
 

@@ -1,5 +1,10 @@
-<?php 
+<?php
+session_start();
 include "../../../configurasi/koneksi.php";
+
+if (!isset($_SESSION['level']) || $_SESSION['level'] != 'pemilik') {
+	exit;
+}
 
 $id_dtrbmasuk  = $_POST['id_dtrbmasuk'];
 

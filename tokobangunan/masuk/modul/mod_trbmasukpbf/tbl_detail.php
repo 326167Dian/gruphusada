@@ -39,9 +39,14 @@
         </thead>
         <tbody>
             <?php
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
             include "../../../configurasi/koneksi.php";
             include "../../../configurasi/fungsi_rupiah.php";
             include "../../../configurasi/fungsi_indotgl.php";
+
+            $level = isset($_SESSION['level']) ? $_SESSION['level'] : '';
 
             $kd_trbmasuk = $_POST['kd_trbmasuk'];
 
@@ -76,8 +81,14 @@
                 $hnappn = $r['hnasat_dtrbmasuk'] * 1.11;
                 $hnappn1 = format_rupiah($hnappn);
                 $totalharga[] = $hnadisc * $r['qty_dtrbmasuk'];
+                $aksi = ($level == 'pemilik') ? "
+											 <button class='btn btn-xs btn-danger' id='hapusdetail'
+												 data-id_dtrbmasuk='$r[id_dtrbmasuk]'>
+												 <i class='glyphicon glyphicon-remove'></i>
+												 </button>
+												" : "-";
                 echo "<tr style='font-size: 13px;'>
-											<td align=center>$no</td>           
+											<td align=center>$no</td>
 											 <td align=left>$r[kd_barang]</td>
 											 <td>$r[nmbrg_dtrbmasuk]</td>
 											 <td align=right>
@@ -93,11 +104,7 @@
 											 <td align=right>$hrgjual1</td>
 											 <td align=right>$hrgttl_dtrbmasuk</td>
 											 <td align=center>
-											 <button class='btn btn-xs btn-danger' id='hapusdetail' 
-												 data-id_dtrbmasuk='$r[id_dtrbmasuk]'>
-												 <i class='glyphicon glyphicon-remove'></i>
-												 </button>
-												
+											 $aksi
 											</td>
 										</tr>";
 
