@@ -67,7 +67,7 @@ while ($row = mysqli_fetch_assoc($query)) {
 						<a href='#' id='btn_hapus' data-id='$row[id_shift]' title='HAPUS' class='glyphicon glyphicon-remove'>&nbsp</a>
 						<a class='glyphicon glyphicon-print' onclick=\"javascript:window.open('modul/mod_shiftkerja/laporanshiftday.php?idshift=$row[id_shift]','nama window','width=500,height=600,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,copyhistory=no')\">&nbsp</a>";
 	} else {
-		$koreksi = "<a class='glyphicon glyphicon-print' onclick=\"javascript:window.open('modul/mod_shiftkerja/laporanshiftday.php?idshift=$row[id_shift]','nama window','width=500,height=600,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,copyhistory=no')\">&nbsp</a>";
+		$koreksi = "-";
 	}
 
     $data[] = [

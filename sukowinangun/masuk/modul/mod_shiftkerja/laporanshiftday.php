@@ -1,4 +1,8 @@
 <?php
+session_start();
+if (!isset($_SESSION['level']) || $_SESSION['level'] != 'pemilik') {
+	exit('Hanya pemilik yang dapat mengakses Koreksi.');
+}
 include "../../../configurasi/koneksi.php";
 require('../../assets/pdf/fpdf.php');
 include "../../../configurasi/fungsi_indotgl.php";

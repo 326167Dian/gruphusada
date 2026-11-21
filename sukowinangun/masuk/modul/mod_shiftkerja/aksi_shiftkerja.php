@@ -67,7 +67,11 @@ else{
  //updata waktu kerja
  elseif ($module=='shiftkerja' AND $act=='update_waktukerjakoreksi'){
 
-     mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE waktukerja 
+     if (!isset($_SESSION['level']) || $_SESSION['level'] != 'pemilik') {
+         exit;
+     }
+
+     mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE waktukerja
                                 SET petugasbuka = '$_POST[petugasbuka]', 
                                     petugastutup = '$_POST[petugastutup]', 
                                     shift  = '$_POST[shift]',
@@ -85,6 +89,10 @@ else{
 }
 //Hapus Proyek
 elseif ($module=='shiftkerja' AND $act=='hapus'){
+
+  if (!isset($_SESSION['level']) || $_SESSION['level'] != 'pemilik') {
+      exit;
+  }
 
   mysqli_query($GLOBALS["___mysqli_ston"], "DELETE FROM waktukerja WHERE id_shift = '$_GET[id]'");
   //echo "<script type='text/javascript'>alert('Data berhasil dihapus !');window.location='../../media_admin.php?module=".$module."'</script>";

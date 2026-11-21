@@ -312,6 +312,10 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 			break;
 
 		case "editkoreksi":
+			if (!isset($_SESSION['level']) || $_SESSION['level'] != 'pemilik') {
+				echo "<div class='error msg'>Hanya pemilik yang dapat mengakses Koreksi.</div>";
+				break;
+			}
 			$edit = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM waktukerja WHERE id_shift='$_GET[id]'");
 			$r = mysqli_fetch_array($edit);
 
